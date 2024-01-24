@@ -1,0 +1,117 @@
+entity Room {
+	roomName String required
+    address String required
+    description String 
+    price Long min(0) required
+    roomCapacity Integer min(5) required 
+    rating Integer min(0) max(5)
+    status RoomStatus
+}
+
+entity RoomImage {
+	imageUrl String
+}
+
+entity Service {
+	serviceName String required
+    price Long min(0)
+    description String
+}
+
+entity Promotion {
+	startTime Instant required
+    endTime Instant required
+    discount Integer min(0) required
+    minimum Long
+}
+
+entity Booking {
+	customerName String,
+    bookTime Instant required
+    startTime Instant required
+    endTime Instant required
+    totalPrice Long min(0) required
+    status BookingStatus
+    rating Integer min(0)
+    comment String
+}
+
+entity BookingDetails {
+	serviceQuantity Integer min(0)
+}
+
+entity Report {
+	title String
+    description String
+    sentTime Instant
+}
+
+entity Notification {
+	title String
+    description String
+    sentTime Instant
+    enum NotificationType
+}
+
+enum BookingStatus {
+	ACCEPTED, APPROVING, REJECTED, SUCCESS, CANCEL
+}
+
+enum RoomStatus {
+	BLOCKED, VALID, APPROVING, DELETED, REJECTED
+}
+
+enum NotificationType {
+	REPORTED, REJECTED, ACCEPTED, THANK
+}
+
+relationship OneToOne {
+	Booking{room} to Room
+    BookingDetails{service required} to Service
+    Report{room} to Room
+}
+
+relationship OneToMany {
+	Room{imageURLs} to RoomImage
+    Booking{bookingDetails} to BookingDetails
+}
+
+relationship ManyToOne {
+	Room{user required} to User with builtInEntity //Belong to a host
+    Booking{user required} to User with builtInEntity//Belong to a user
+    Notification{user required} to User with builtInEntity
+    Report{user required} to User with builtInEntity
+}
+
+relationship ManyToMany {
+	Room{promotions} to Promotion{rooms}
+    Room{services} to Service{rooms}
+}
+
+paginate * with pagination except BookingDetails, RoomImage
+
+dto * with mapstruct except BookingDetails, RoomImage
+
+service all with serviceImpl except BookingDetails, RoomImage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
