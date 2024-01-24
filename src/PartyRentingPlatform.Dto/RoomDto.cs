@@ -21,7 +21,7 @@ namespace PartyRentingPlatform.Dto
         public int RoomCapacity { get; set; }
         public int? Rating { get; set; }
         public RoomStatus Status { get; set; }
-        public long? UserId { get; set; }
+        public string? UserId { get; set; }
         public UserDto User { get; set; }
         public IList<PromotionDto> Promotions { get; set; } = new List<PromotionDto>();
         public IList<ServiceDto> Services { get; set; } = new List<ServiceDto>();

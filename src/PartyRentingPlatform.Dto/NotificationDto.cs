@@ -13,7 +13,7 @@ namespace PartyRentingPlatform.Dto
         public string? Description { get; set; }
         public DateTime SentTime { get; set; }
         public NotificationType Enum { get; set; }
-        public long? UserId { get; set; }
+        public string? UserId { get; set; }
         public UserDto User { get; set; }
 
         // jhipster-needle-dto-add-field - JHipster will add fields here, do not remove

@@ -23,7 +23,7 @@ namespace PartyRentingPlatform.Dto
         public string? Comment { get; set; }
         public long? RoomId { get; set; }
         public RoomDto Room { get; set; }
-        public long? UserId { get; set; }
+        public string? UserId { get; set; }
         public UserDto User { get; set; }
 
         // jhipster-needle-dto-add-field - JHipster will add fields here, do not remove

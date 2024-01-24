@@ -23,7 +23,7 @@ namespace PartyRentingPlatform.Domain.Entities
         public RoomStatus Status { get; set; }
         public IList<RoomImage> ImageURLs { get; set; } = new List<RoomImage>();
         [Required]
-        public long? UserId { get; set; }
+        public string? UserId { get; set; }
         public User User { get; set; }
         public IList<Promotion> Promotions { get; set; } = new List<Promotion>();
         public IList<Service> Services { get; set; } = new List<Service>();

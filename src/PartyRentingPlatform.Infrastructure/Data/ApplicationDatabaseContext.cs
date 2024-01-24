@@ -68,7 +68,7 @@ namespace PartyRentingPlatform.Infrastructure.Data
 
             builder.Entity<User>()
                 .HasMany(e => e.UserRoles)
-                .WithOne()
+                .WithOne(ur => ur.User) //Need to not generate shadow key
                 .HasForeignKey(e => e.UserId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);

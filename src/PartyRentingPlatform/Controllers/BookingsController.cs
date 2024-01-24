@@ -49,6 +49,8 @@ namespace PartyRentingPlatform.Controllers
                 throw new BadRequestAlertException("A new booking cannot already have an ID", EntityName, "idexists");
 
             Booking booking = _mapper.Map<Booking>(bookingDto);
+            //Should be the one made the request id
+            booking.UserId = booking.User.Id; 
             await _bookingService.Save(booking);
             return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking)
                 .WithHeaders(HeaderUtil.CreateEntityCreationAlert(EntityName, booking.Id.ToString()));

@@ -14,7 +14,7 @@ namespace PartyRentingPlatform.Domain.Entities
         public DateTime SentTime { get; set; }
         public NotificationType Enum { get; set; }
         [Required]
-        public long? UserId { get; set; }
+        public string? UserId { get; set; }
         public User User { get; set; }
 
         // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

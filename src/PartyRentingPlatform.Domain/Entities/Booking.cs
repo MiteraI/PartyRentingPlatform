@@ -25,7 +25,7 @@ namespace PartyRentingPlatform.Domain.Entities
         public Room Room { get; set; }
         public IList<BookingDetails> BookingDetails { get; set; } = new List<BookingDetails>();
         [Required]
-        public long? UserId { get; set; }
+        public string? UserId { get; set; }
         public User User { get; set; }
 
         // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
