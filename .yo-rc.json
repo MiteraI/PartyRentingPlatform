@@ -1,0 +1,34 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "jwt",
+    "baseName": "partyRentingPlatform",
+    "blueprints": [
+      {
+        "name": "generator-jhipster-dotnetcore",
+        "version": "4.1.0"
+      }
+    ],
+    "clientFramework": "react",
+    "clientTestFrameworks": ["cypress"],
+    "clientTheme": "none",
+    "cqrsEnabled": false,
+    "creationTimestamp": 1706086302535,
+    "cypressAudit": true,
+    "cypressCoverage": null,
+    "databaseType": "postgresql",
+    "devServerPort": 9060,
+    "enableTranslation": false,
+    "entities": [],
+    "jhipsterVersion": "8.1.0",
+    "jwtSecretKey": "ZGQ5YjcxMWY4YmEyM2UzOWQ2NjVjYjI5YzEyYTkxYjU1MmY3OWRhZTA3MjIxMzI0OGZiNTQ1NzljMjcyZWIwYjFiMWEyZWRlMzU2ZDM5YmExNWVjNjFiNzJiZGYwYWFkN2Q4Yg==",
+    "microfrontend": null,
+    "microfrontends": [],
+    "namespace": "PartyRentingPlatform",
+    "nativeLanguage": "en",
+    "serverPort": "5000",
+    "testFrameworks": ["cypress"],
+    "withAdminUi": true,
+    "withTerraformAzureScripts": null
+  }
+}

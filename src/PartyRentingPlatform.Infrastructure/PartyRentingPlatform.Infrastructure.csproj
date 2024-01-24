@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>PartyRentingPlatform.Infrastructure</RootNamespace>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
+        <PackageReference Include="Serilog" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\PartyRentingPlatform.Domain\PartyRentingPlatform.Domain.csproj" />
+        <ProjectReference Include="..\PartyRentingPlatform.Dto\PartyRentingPlatform.Dto.csproj" />
+        <ProjectReference Include="..\PartyRentingPlatform.Crosscutting\PartyRentingPlatform.Crosscutting.csproj" />
+    </ItemGroup>
+
+</Project>
