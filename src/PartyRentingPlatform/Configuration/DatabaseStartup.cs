@@ -28,7 +28,7 @@ public static class DatabaseConfiguration
             switch (databaseUri.Scheme)
             {
                 case "postgres":
-                    connectionString = $"Server={databaseUri.Host};Port={databaseUri.Port};Database={db};User Id={userInfo[0]};Password={userInfo[1]};Integrated Security=true;Pooling=true;MinPoolSize=0;MaxPoolSize=20;";
+                    connectionString = $"Server={databaseUri.Host};Port={databaseUri.Port};Database={db};User Id={userInfo[0]};Password={userInfo[1]};Pooling=true;MinPoolSize=0;MaxPoolSize=20;";
                     break;
                 case "mysql":
                     connectionString = $"Server={databaseUri.Host};Port={databaseUri.Port};Database={db};User={userInfo[0]};Password={userInfo[1]};Pooling=true;MinimumPoolSize=0;MaximumPoolsize=10;";

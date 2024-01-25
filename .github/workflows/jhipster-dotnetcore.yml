@@ -1,0 +1,38 @@
+name: Deploy to Heroku
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+
+env:
+  HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+  APP_NAME: ${{ secrets.APP_NAME }}
+
+jobs:
+  build:
+    name: Deploy to Heroku
+    runs-on: ubuntu-latest
+    steps:
+
+    # Clone the repository
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Build Docker image
+    - name: Docker build
+      run: |
+        docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+        docker build -f ./Dockerfile-Back -t jhipster-dotnetcore .
+        docker tag jhipster-dotnetcore registry.heroku.com/$APP_NAME/web
+
+    # Push the Docker image to Heroku Container Registry
+    - name: Publish
+      run: |
+        docker push registry.heroku.com/$APP_NAME/web
+        heroku container:release web --app $APP_NAME
+        
