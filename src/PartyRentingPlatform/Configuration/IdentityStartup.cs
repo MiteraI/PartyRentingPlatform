@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using PartyRentingPlatform.Crosscutting.Constants;
 
 namespace PartyRentingPlatform.Configuration;
 
@@ -31,8 +32,9 @@ public static class IdentityConfiguration
     {
         return new List<Role>
         {
-            new Role {Id = "role_admin", Name = "ROLE_ADMIN"},
-            new Role {Id = "role_user",Name = "ROLE_USER"}
+            new Role {Id = "role_admin", Name = RolesConstants.ADMIN},
+            new Role {Id = "role_user",Name = RolesConstants.USER},
+            new Role {Id = "role_host", Name = RolesConstants.HOST}
         };
     }
 
@@ -40,28 +42,6 @@ public static class IdentityConfiguration
     {
         return new List<User>
         {
-            new User
-            {
-                Id = "user-0",
-                UserName = "system",
-                PasswordHash = "$2a$10$mE.qmcV0mFU5NcKh73TZx.z4ueI/.bDWbj0T1BYyqP481kGGarKLG",
-                FirstName = "",
-                LastName = "System",
-                Email = "system@localhost",
-                Activated = true,
-                LangKey = "en"
-            },
-            new User
-            {
-                Id = "user-1",
-                UserName = "anonymoususer",
-                PasswordHash = "$2a$10$j8S5d7Sr7.8VTOYNviDPOeWX8KcYILUVJBsYV83Y5NtECayypx9lO",
-                FirstName = "Anonymous",
-                LastName = "User",
-                Email = "anonymous@localhost",
-                Activated = true,
-                LangKey = "en"
-            },
             new User
             {
                 Id = "user-2",
@@ -73,17 +53,6 @@ public static class IdentityConfiguration
                 Activated = true,
                 LangKey = "en"
             },
-            new User
-            {
-                Id = "user-3",
-                UserName = "user",
-                PasswordHash = "$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K",
-                FirstName = "",
-                LastName = "User",
-                Email = "user@localhost",
-                Activated = true,
-                LangKey = "en"
-            }
         };
     }
 
@@ -91,9 +60,7 @@ public static class IdentityConfiguration
     {
         return new Dictionary<string, string[]>
         {
-            { "user-0", new[] {"ROLE_ADMIN", "ROLE_USER"}},
-            { "user-2", new[] {"ROLE_ADMIN", "ROLE_USER"}},
-            { "user-3", new[] {"ROLE_USER"}}
+            { "user-2", new[] {RolesConstants.ADMIN, RolesConstants.HOST, RolesConstants.USER}},
         };
     }
 

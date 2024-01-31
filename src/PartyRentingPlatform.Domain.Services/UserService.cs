@@ -180,13 +180,15 @@ public class UserService : IUserService
             Email = userToRegister.Email.ToLowerInvariant(),
             ImageUrl = userToRegister.ImageUrl,
             LangKey = userToRegister.LangKey,
-            // new user is not active
-            Activated = false,
+            // new user is not active | TODO put activated = true until mail server work again
+            Activated = true,
             // new user gets registration key
-            ActivationKey = RandomUtil.GenerateActivationKey()
+            ActivationKey = RandomUtil.GenerateActivationKey(),
             //TODO manage authorities
+            
         };
         await _userManager.CreateAsync(newUser);
+        await CreateUserRoles(newUser, new[] { RolesConstants.USER } );
         _log.LogDebug($"Created Information for User: {newUser}");
         return newUser;
     }

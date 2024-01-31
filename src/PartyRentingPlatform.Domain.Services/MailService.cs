@@ -2,32 +2,34 @@ using System.Threading.Tasks;
 using PartyRentingPlatform.Domain.Entities;
 using PartyRentingPlatform.Domain.Services.Interfaces;
 using Microsoft.Extensions.Options;
+using FluentEmail.Smtp;
+using PartyRentingPlatform.Infrastructure.Configuration;
+using FluentEmail.Core;
 
 namespace PartyRentingPlatform.Domain.Services;
 
 public class MailService : IMailService
 {
-    public MailService()
+    private readonly SecuritySettings _securitySettings;
+    private readonly IFluentEmail _fluentEmail;
+
+    public MailService(IOptions<SecuritySettings> securitySettings, IFluentEmail fluentEmail)
     {
+        _securitySettings = securitySettings.Value;
+        _fluentEmail = fluentEmail;
     }
 
-    // private readonly SecuritySettings _securitySettings;
-
-    // public MailService(IOptions<SecuritySettings> securitySettings)
-    // {
-    //     _securitySettings = securitySettings.Value;
-    // }
-
-    public virtual Task SendPasswordResetMail(User user)
+    public virtual async Task SendPasswordResetMail(User user)
     {
         //TODO send reset Email
-        return Task.FromResult(Task.CompletedTask);
     }
 
-    public virtual Task SendActivationEmail(User user)
+    public virtual async Task SendActivationEmail(User user)
     {
+        var activationKey = user.ActivationKey;
+        await _fluentEmail.To("kiet.hakh@gmail.com").Subject("Account Activation").Body("Testing web" + activationKey).SendAsync();
+
         //TODO Activation Email
-        return Task.FromResult(Task.CompletedTask);
     }
 
     public virtual Task SendCreationEmail(User user)

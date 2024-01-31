@@ -8,6 +8,7 @@
     <JHipsterNetPackageVersion>1.0.11</JHipsterNetPackageVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="FluentEmail.Smtp" Version="3.0.2" />
     <PackageVersion Include="JHipsterNet.Core" Version="$(JHipsterNetPackageVersion)" />
     <PackageVersion Include="JHipsterNet.Web" Version="$(JHipsterNetPackageVersion)" />
     <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
