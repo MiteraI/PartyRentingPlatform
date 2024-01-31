@@ -136,7 +136,7 @@ namespace PartyRentingPlatform.Test.Controllers
             var databaseSizeBeforeTest = await _bookingRepository.CountAsync();
 
             // Set the field to null
-            _booking.BookTime = null;
+            _booking.BookTime = DateTime.UtcNow;
 
             // Create the Booking, which fails.
             BookingDto _bookingDto = _mapper.Map<BookingDto>(_booking);
@@ -153,7 +153,7 @@ namespace PartyRentingPlatform.Test.Controllers
             var databaseSizeBeforeTest = await _bookingRepository.CountAsync();
 
             // Set the field to null
-            _booking.StartTime = null;
+            _booking.StartTime = DateTime.UtcNow;
 
             // Create the Booking, which fails.
             BookingDto _bookingDto = _mapper.Map<BookingDto>(_booking);
@@ -170,7 +170,7 @@ namespace PartyRentingPlatform.Test.Controllers
             var databaseSizeBeforeTest = await _bookingRepository.CountAsync();
 
             // Set the field to null
-            _booking.EndTime = null;
+            _booking.EndTime = DateTime.UtcNow;
 
             // Create the Booking, which fails.
             BookingDto _bookingDto = _mapper.Map<BookingDto>(_booking);

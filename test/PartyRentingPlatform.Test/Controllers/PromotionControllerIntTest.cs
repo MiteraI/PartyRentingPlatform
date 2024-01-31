@@ -115,7 +115,7 @@ namespace PartyRentingPlatform.Test.Controllers
             var databaseSizeBeforeTest = await _promotionRepository.CountAsync();
 
             // Set the field to null
-            _promotion.StartTime = null;
+            _promotion.StartTime = DateTime.UtcNow;
 
             // Create the Promotion, which fails.
             PromotionDto _promotionDto = _mapper.Map<PromotionDto>(_promotion);
@@ -132,7 +132,7 @@ namespace PartyRentingPlatform.Test.Controllers
             var databaseSizeBeforeTest = await _promotionRepository.CountAsync();
 
             // Set the field to null
-            _promotion.EndTime = null;
+            _promotion.EndTime = DateTime.UtcNow;
 
             // Create the Promotion, which fails.
             PromotionDto _promotionDto = _mapper.Map<PromotionDto>(_promotion);
