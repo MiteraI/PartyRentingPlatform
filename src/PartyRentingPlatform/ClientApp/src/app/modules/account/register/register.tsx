@@ -100,12 +100,12 @@ export const RegisterPage = () => {
               }}
               data-cy="secondPassword"
             />
-            <Button id="register-submit" color="primary" type="submit" data-cy="submit">
-              Register
+            <Button id="register-submit" color="primary" type="submit" data-cy="submit" block>
+              Create Account
             </Button>
           </ValidatedForm>
           <p>&nbsp;</p>
-          <Alert color="warning">
+          {/* <Alert color="warning">
             <span>If you want to </span>
             <Link to="/login" className="alert-link">
               sign in
@@ -115,7 +115,7 @@ export const RegisterPage = () => {
               <br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;) <br />- User (login=&quot;user&quot; and
               password=&quot;user&quot;).
             </span>
-          </Alert>
+          </Alert> */}
         </Col>
       </Row>
     </div>

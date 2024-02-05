@@ -1,4 +1,4 @@
-$header-color: #fff;
+$header-color: #353d47;
 $header-color-secondary: #bbb;
 $header-color-hover: darken($header-color, 20%);
 
@@ -22,7 +22,7 @@ Development Ribbon
   pointer-events: none;
   opacity: 0.75;
   a {
-    color: #fff;
+    color: #353d47;
     display: block;
     font-weight: 400;
     margin: 1px 0;
@@ -38,7 +38,7 @@ Development Ribbon
 Navbar styles
 ========================================================================== */
 .jh-navbar {
-  background-color: #353d47;
+  background-color: #FFFFFF;
   padding: 0.2em 1em;
   .profile-image {
     margin: -10px 0px;
@@ -49,7 +49,7 @@ Navbar styles
   .dropdown-item.active,
   .dropdown-item.active:focus,
   .dropdown-item.active:hover {
-    background-color: #353d47;
+    background-color: #FFFFFF;
   }
   .dropdown-toggle::after {
     margin-left: 0.15em;
@@ -67,11 +67,11 @@ Navbar styles
     }
   }
   .jh-navbar-toggler {
-    color: #ccc;
+    color: #353d47;
     font-size: 1.5em;
     padding: 10px;
     &:hover {
-      color: #fff;
+      color: #353d47;
     }
   }
 }

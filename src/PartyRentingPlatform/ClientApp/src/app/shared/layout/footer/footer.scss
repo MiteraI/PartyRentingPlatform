@@ -1,3 +1,33 @@
+/* Footer.scss */
+
 .footer {
-  height: 50px;
+  background-color: #f7f7f7;
+  padding: 20px 0;
+  color: #555;
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      margin-bottom: 8px;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  hr {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border: 0;
+    border-top: 1px solid #ddd;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
 }
