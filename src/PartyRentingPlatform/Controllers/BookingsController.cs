@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace PartyRentingPlatform.Controllers
 {
@@ -49,8 +50,12 @@ namespace PartyRentingPlatform.Controllers
                 throw new BadRequestAlertException("A new booking cannot already have an ID", EntityName, "idexists");
 
             Booking booking = _mapper.Map<Booking>(bookingDto);
-            //Should be the one made the request id
-            booking.UserId = booking.User.Id; 
+
+            //Getting userId from token and adding it to booking, must use ClaimTypes.Name
+            //Noted in TokenProvider.cs
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+
+            booking.UserId = userIdClaim.Value; 
             await _bookingService.Save(booking);
             return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking)
                 .WithHeaders(HeaderUtil.CreateEntityCreationAlert(EntityName, booking.Id.ToString()));
