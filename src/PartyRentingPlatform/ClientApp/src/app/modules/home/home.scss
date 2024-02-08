@@ -4,11 +4,72 @@ Main page styles
 /* Home.scss */
 
 .home-page {
-  // ... (unchanged)
+  background-color: #fafafa;
 
   .apartment-box {
     border-radius: 51%;
-    padding: 20px;
+    padding: 50px;
     text-align: center;
   }
+  
+
+  .apartment-card {
+    box-shadow: none;
+    border-radius: 5%;
+    margin-bottom: 50px;
+    background-color: #fafafa;
+    .rating {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end; // Đặt chúng bên phải
+  
+      .star-icon {
+        color: gold; // Đặt màu vàng
+        font-size: 18px; // Đặt kích thước nhỏ hơn
+        margin-left: 4px; // Khoảng cách giữa các biểu tượng
+      }}
+  }
+
+  .img-room {
+    height: 0;
+    padding-top: 100%;
+    border-radius: 5%;
+
+  }
+
+  .thumbnail {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%; /* Loại bỏ đổ bóng */
+  }
+  
+
+  .slick-slide img {
+    width: inherit;
+    height: inherit;
+    object-fit: fill;
+    /* Đảm bảo ảnh không bị biến đổi tỷ lệ */
+    border-radius: 5%;
+    /* Loại bỏ đổ bóng */
+  }
+
+  .room-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: justify;
+  }
+
+  .description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 2; // Số dòng tối đa
+    text-overflow: ellipsis;
+    text-align: justify;
+    // Thêm chiều cao tối thiểu
+    min-height: 3.2em; // Tương ứng với khoảng 2 dòng văn bản, tùy thuộc vào kích thước font
+  }
+  
+
 }

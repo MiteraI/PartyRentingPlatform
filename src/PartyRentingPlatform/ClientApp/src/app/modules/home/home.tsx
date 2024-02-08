@@ -1,24 +1,42 @@
-// Import necessary React components and styles
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Alert, Carousel, CarouselItem, CarouselControl, CarouselIndicators} from 'reactstrap';
-import { useAppSelector } from 'app/config/store';
-import { Grid, Paper, Typography, CardContent, CardActions, Button } from '@mui/material';
+import { Row, Col, Alert, Carousel, CarouselItem, CarouselControl, CarouselIndicators } from 'reactstrap';
+import { useAppSelector, useAppDispatch } from 'app/config/store';
+import { Grid, Paper, Typography, CardContent, CardActions, Button, CardMedia } from '@mui/material';
 import Slider from 'react-slick';
+import { getEntities, deleteEntity } from 'app/entities/room/room.reducer';
+import RoomIcon from '@mui/icons-material/Room';
 
+//Rating 
+import { Star, StarBorder } from '@mui/icons-material';
 
 // Import slick-carousel styles
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-
-
-// Import your custom styling for the home page
 import './Home.scss';
 
 const Home = () => {
-
-  const roomList = useAppSelector(state => state.room.entities);
+  const dispatch = useAppDispatch();
+  const roomList = useAppSelector((state) => state.room.entities);
+  const loading = useAppSelector((state) => state.room.loading);
   const account = useAppSelector((state) => state.authentication.account);
+
+  const [currentPage, setCurrentPage] = useState(0);
+
+
+  // Bổ sung một số hàm trợ giúp để tạo ra biểu tượng ngôi sao
+  const generateStarIcons = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(i <= rating ? <Star key={i} className="star-icon" /> : <StarBorder key={i} className="star-icon" />);
+    }
+    return stars;
+  };
+
+  // Fetch room entities on component mount
+  useEffect(() => {
+    dispatch(getEntities({ page: currentPage, size: 4, sort: 'id,asc' }));
+  }, [dispatch]);
 
   // Define your carousel items
   const carouselItems = [
@@ -64,9 +82,25 @@ const Home = () => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    // customPaging: function (i) {
+    //   return (
+    //     <a>
+    //       <img src={carouselItems[i].src} alt={carouselItems[i].altText} className="thumbnail" />
+    //     </a>
+    //   );
+    // },
   };
 
+
+
+  const handleDelete = (id) => {
+    dispatch(deleteEntity(id));
+  };
+
+
+
   return (
+
     <div className="home-page">
       <Row>
         <Col md="6">
@@ -89,7 +123,11 @@ const Home = () => {
         <Col md="6">
           {/* Carousel component */}
           <Carousel activeIndex={activeIndex} next={next} previous={previous}>
-            <CarouselIndicators items={carouselItems} activeIndex={activeIndex} onClickHandler={(index) => setActiveIndex(index)} />
+            <CarouselIndicators
+              items={carouselItems}
+              activeIndex={activeIndex}
+              onClickHandler={(index) => setActiveIndex(index)}
+            />
             {carouselItems.map((item, index) => (
               <CarouselItem key={index}>
                 <img src={item.src} alt={item.altText} className="img-fluid rounded" />
@@ -106,7 +144,6 @@ const Home = () => {
       <Row className="mt-4">
         <Col md="12">
           <p className="mb-4">Bạn muốn buổi tiệc được tổ chức ở:</p>
-
           <ul className="destination-list">
             <li>
               <Link to="/destinations/paris">Hà Nội</Link>
@@ -120,43 +157,67 @@ const Home = () => {
             {/* Add more destinations as needed */}
           </ul>
         </Col>
-
-  
-
       </Row>
+      <div className="table-responsive">
+        {roomList && roomList.length > 0 ? (
+          <Grid container spacing={3} mb={4}>
+            {roomList.map((item) => (
+              <Grid item key={item.id} xs={12} sm={6} md={3}>
+                <Paper className="apartment-card" component={Link} to={`/room/${item.id}`} style={{ textDecoration: 'none' }} elevation={3}>
+                  {/* Slick Carousel for images */}
+                  <div>
+                    <Slider {...slickSettings}>
+                      {carouselItems.map((carouselItem, index) => (
+                        <CardMedia className='img-room' key={index} image={carouselItem.src}>
+                          {/* <img src={carouselItem.src} alt={carouselItem.altText} /> */}
 
-       {/* Material-UI Grid for apartment cards */}
-      <Grid container spacing={2}>
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-          <Grid item key={item} xs={12} sm={6} md={3}>
-            <Paper className="apartment-card" elevation={3}>
-              {/* Slick Carousel for images */}
-              <Slider {...slickSettings}>
-                {carouselItems.map((item, index) => (
-                  <div key={index}>
-                    <img src={item.src} alt={item.altText} className="img-fluid rounded" />
+                        </CardMedia>
+                      ))}
+                    </Slider>
                   </div>
-                ))}
-              </Slider>
 
-              {/* Apartment details */}
-              <CardContent>
-                <Typography variant="h6" component="div">
-                  Apartment {item}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Details about the apartment
-                </Typography>
-              </CardContent>
-
-              {/* Card actions */}
-              <CardActions>
-                <Button color="primary">Book Now</Button>
-              </CardActions>
-            </Paper>
+                  {/* Apartment details */}
+                  <div>
+                    <Typography variant="h6" component="div" className='room-name'>
+                      <strong>{item.roomName}</strong>
+                    </Typography>
+                    <div className="rating">
+                      {generateStarIcons(item.rating)}
+                    </div>
+                    <Typography variant="body2" color="text.secondary" className="description">
+                      {item.description}
+                    </Typography>
+                    <div className="address">
+                      <RoomIcon sx={{ color: 'pink', verticalAlign: 'middle', marginRight: '4px' }} /> {/* Icon for address */}
+                      <Typography variant="body2" color="text.secondary" style={{ display: 'inline-block' }}>
+                        {item.address}
+                      </Typography>
+                    </div>
+                    {/* Giá tiền */}
+                    <Typography style={{ marginTop: '2px' }} variant="body2" color="text.primary">
+                      <strong>{item.price} VND</strong> / đêm
+                    </Typography>
+                  </div>
+                  {/* Card actions */}
+                  {/* <CardActions>
+                    <Button color="primary" component={Link} to={`/room/${item.id}`}>
+                      View Details
+                    </Button>
+                    <Button color="primary" component={Link} to={`/room/${item.id}/edit`}>
+                      Edit
+                    </Button>
+                    <Button color="primary" onClick={() => handleDelete(item.id)}>
+                      Delete
+                    </Button>
+                  </CardActions> */}
+                </Paper>
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
+        ) : (
+          !loading && <div className="alert alert-warning">No Rooms found</div>
+        )}
+      </div>
     </div>
   );
 };
