@@ -24,6 +24,7 @@ public class Startup : IStartup
 
         AddDatabase(configuration, services);
         AddMail(configuration, services);
+        AddVnpay(configuration, services);
     }
 
     public virtual void ConfigureServices(IServiceCollection services, IHostEnvironment environment)
@@ -65,5 +66,10 @@ public class Startup : IStartup
     protected virtual void AddMail(IConfiguration configuration, IServiceCollection services)
     {
         services.AddMailModule(configuration);
+    }
+
+    protected virtual void AddVnpay(IConfiguration configuration, IServiceCollection services)
+    {
+        services.AddVnpayModule(configuration);
     }
 }

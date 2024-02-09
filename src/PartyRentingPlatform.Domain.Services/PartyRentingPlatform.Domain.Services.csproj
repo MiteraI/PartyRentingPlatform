@@ -11,6 +11,7 @@
         <PackageReference Include="JHipsterNet.Core" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
         <PackageReference Include="LanguageExt.Core" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
     </ItemGroup>
 
     <ItemGroup>
