@@ -13,6 +13,8 @@ import { Star, StarBorder } from '@mui/icons-material';
 // Import slick-carousel styles
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+
+
 import './Home.scss';
 
 const Home = () => {
@@ -58,6 +60,41 @@ const Home = () => {
     // Add more carousel items as needed
   ];
 
+  //Ảnh tạm để hiển thị từng cái phòng dưới home
+  const sampleRoomImgs = [
+    {
+      src: 'https://a0.muscache.com/im/pictures/hosting/Hosting-1043166044341014938/original/4156904a-dd6e-4935-84d7-cdbb0d75d0fc.jpeg?im_w=960',
+      altText: 'Party Room 1',
+      caption: 'Không gian tuyệt vời!',
+    },
+    {
+      src: 'https://a0.muscache.com/im/pictures/c822f7cd-b3fa-494f-9fd0-03c0f1e7ce61.jpg?im_w=960',
+      altText: 'Party Room 2',
+      caption: 'Dịch vụ hấp dẫn!',
+    },
+    {
+      src: 'https://a0.muscache.com/im/pictures/miso/Hosting-1004014936348720309/original/5c266bac-5852-441f-bebf-47d8de5fd363.jpeg?im_w=960',
+      altText: 'Party Room 3',
+      caption: 'Phục vụ chu đáo!',
+    },
+    {
+      src: 'https://a0.muscache.com/im/pictures/2624b5de-1d28-460d-87e4-827bf97c6fcf.jpg?im_w=960',
+      altText: 'Party Room 3',
+      caption: 'Phục vụ chu đáo!',
+    },
+    {
+      src: 'https://a0.muscache.com/im/pictures/a8ceccf6-6c64-423a-b0f3-c476d07e28e6.jpg?im_w=960',
+      altText: 'Party Room 3',
+      caption: 'Phục vụ chu đáo!',
+    },
+    {
+      src: 'https://a0.muscache.com/im/pictures/miso/Hosting-1065136567884295328/original/e69cf2bf-8aec-49d0-a628-676c481fab91.png?im_w=960',
+      altText: 'Party Room 3',
+      caption: 'Phục vụ chu đáo!',
+    },
+    // Add more carousel items as needed
+  ];
+
   // Carousel state variables
   const [activeIndex, setActiveIndex] = useState(0);
   const [animating, setAnimating] = useState(false);
@@ -82,22 +119,11 @@ const Home = () => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    // customPaging: function (i) {
-    //   return (
-    //     <a>
-    //       <img src={carouselItems[i].src} alt={carouselItems[i].altText} className="thumbnail" />
-    //     </a>
-    //   );
-    // },
   };
-
-
 
   const handleDelete = (id) => {
     dispatch(deleteEntity(id));
   };
-
-
 
   return (
 
@@ -165,12 +191,10 @@ const Home = () => {
               <Grid item key={item.id} xs={12} sm={6} md={3}>
                 <Paper className="apartment-card" component={Link} to={`/room/${item.id}`} style={{ textDecoration: 'none' }} elevation={3}>
                   {/* Slick Carousel for images */}
-                  <div>
+                  <div className='slider-container'>
                     <Slider {...slickSettings}>
-                      {carouselItems.map((carouselItem, index) => (
-                        <CardMedia className='img-room' key={index} image={carouselItem.src}>
-                          {/* <img src={carouselItem.src} alt={carouselItem.altText} /> */}
-
+                      {sampleRoomImgs.sort(() => Math.random() - 0.5).map((carouselItem, index) => (
+                        <CardMedia className='img-room img' key={index} image={carouselItem.src}>
                         </CardMedia>
                       ))}
                     </Slider>
