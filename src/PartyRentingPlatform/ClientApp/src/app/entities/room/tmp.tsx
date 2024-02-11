@@ -12,22 +12,16 @@ import { faShareAlt, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntity } from './room.reducer';
 
-const StyledRoomDetail = styled('div')(({ theme }) => ({
-  padding: '30px', // Default padding for larger screens
-  [theme.breakpoints.down('sm')]: {
-    padding: '15px', // Adjust padding for smaller screens
-  },
-}));
-
 export const RoomDetail = () => {
   const dispatch = useAppDispatch();
   const { id } = useParams<'id'>();
+ 
 
   useEffect(() => {
     dispatch(getEntity(id));
   }, [dispatch, id]);
 
-  const roomEntity = useAppSelector((state) => state.room.entity);
+  const roomEntity = useAppSelector(state => state.room.entity);
 
   const parallaxImages = [
     'https://a0.muscache.com/im/pictures/miso/Hosting-667691518993177053/original/57db1f13-4807-4198-b3a2-2ec5429512e6.jpeg?im_w=960',
@@ -45,7 +39,7 @@ export const RoomDetail = () => {
   };
 
   return (
-    <StyledRoomDetail>
+    <div>
       <Grid container spacing={3} mb={2}>
         <Grid item md={6}>
           <div className="room-detail-header">
@@ -147,7 +141,7 @@ export const RoomDetail = () => {
           </Button>
         </Col>
       </Row>
-    </StyledRoomDetail>
+    </div>
   );
 };
 
