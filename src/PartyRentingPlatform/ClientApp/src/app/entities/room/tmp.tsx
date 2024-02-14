@@ -12,16 +12,22 @@ import { faShareAlt, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntity } from './room.reducer';
 
+const StyledRoomDetail = styled('div')(({ theme }) => ({
+  padding: '30px', // Default padding for larger screens
+  [theme.breakpoints.down('sm')]: {
+    padding: '15px', // Adjust padding for smaller screens
+  },
+}));
+
 export const RoomDetail = () => {
   const dispatch = useAppDispatch();
   const { id } = useParams<'id'>();
- 
 
   useEffect(() => {
     dispatch(getEntity(id));
   }, [dispatch, id]);
 
-  const roomEntity = useAppSelector(state => state.room.entity);
+  const roomEntity = useAppSelector((state) => state.room.entity);
 
   const parallaxImages = [
     'https://a0.muscache.com/im/pictures/miso/Hosting-667691518993177053/original/57db1f13-4807-4198-b3a2-2ec5429512e6.jpeg?im_w=960',
@@ -39,7 +45,7 @@ export const RoomDetail = () => {
   };
 
   return (
-    <div>
+    <StyledRoomDetail>
       <Grid container spacing={3} mb={2}>
         <Grid item md={6}>
           <div className="room-detail-header">
@@ -75,18 +81,20 @@ export const RoomDetail = () => {
         </Grid>
       </Grid>
 
+
+
       {/* Custom layout for room images */}
-      <Row style={{ height: '300px', overflow: 'hidden'}}>
-        <Col md="6" style={{ height: '100%', overflow: 'hidden', paddingRight: '10px'}}>
+      <Row style={{ height: '300px', overflow: 'hidden' }}>
+        <Col md="6" style={{ height: '100%', overflow: 'hidden', paddingRight: '10px' }}>
           <img src={parallaxImages[0]} alt={`Room Image 0`} className="full-width" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </Col>
-        <Col md="6" style={{ height: '100%', overflow: 'hidden'}}>
-          <Row style={{ height: '100%', overflow: 'hidden'}}>
-            <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '10px'}}>
+        <Col md="6" style={{ height: '100%', overflow: 'hidden' }}>
+          <Row style={{ height: '100%', overflow: 'hidden' }}>
+            <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '10px' }}>
               <img src={parallaxImages[1]} alt={`Room Image 1`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
-              <img src={parallaxImages[3]} alt={`Room Image 3`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover'}} />
+              <img src={parallaxImages[3]} alt={`Room Image 3`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
             </Col>
-            <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '5px'}}>
+            <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '5px' }}>
               <img src={parallaxImages[2]} alt={`Room Image 2`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
               <img src={parallaxImages[4]} alt={`Room Image 4`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
             </Col>
@@ -94,44 +102,62 @@ export const RoomDetail = () => {
         </Col>
       </Row>
 
+      <Grid container spacing={3} mt={1}>
+        <Grid item xs={12} md={8} pr={8}>
+          <div className="room-detail-header">
+            <h4>{roomEntity.roomName}</h4>
+            <Typography mb={3} variant="subtitle1">{roomEntity.address}</Typography>
+          </div>
+
+          <Grid container spacing={3} mb={3}>
+            <Grid item xs={12} md={8}>
+              <div className="host-info" style={{ display: 'flex', alignItems: 'center' }}>
+                <Avatar
+                  src="https://th.bing.com/th/id/OIP.Rx2i9gGIkn78qbbIF_m3IgHaJ0?pid=ImgDet&w=208&h=276&c=7&dpr=2"
+                  alt="Host Avatar"
+                  style={{ width: '50px', height: '50px' }} // Adjust the width and height as needed
+                />
+                <div style={{ marginLeft: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                  <Typography variant="subtitle1"><strong>{roomEntity.user?.login}</strong></Typography>
+                  <Typography variant="body2">Superhost • 10 months hosting</Typography>
+                </div>
+              </div>
+            </Grid>
+          </Grid>
+
+          <Divider style={{ marginBottom: '24px' }}></Divider>
 
 
+          <Row mt={1}>
+            <p>{roomEntity.description}</p>
+          </Row>
 
-      <Divider>Bỏ khúc dưới ra</Divider>
+        </Grid>
+
+        <Grid item xs={12} md={4}>
+          <div className="booking-info" style={{ boxShadow: 'rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px', padding: '24px', borderRadius: '10px' }}>
+            <Typography mb={2} variant="h6"><strong>${roomEntity.price}</strong> night</Typography>
+            <Divider />
+            <Typography variant="subtitle2">Availability Calendar</Typography>
+            <Button
+              color="primary"
+              size="large"
+              data-cy="bookButton"
+              onClick={handleBookClick}
+              style={{ backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px' }}
+            >
+              <strong>Reserve</strong>
+            </Button>
+
+          </div>
+        </Grid>
+      </Grid>
+
+      {/* <Divider>Bỏ khúc dưới ra</Divider>
+
+
       <Row>
         <Col md="8">
-          <div className="room-detail-header">
-            <h1>{roomEntity.roomName}</h1>
-            <Typography variant="subtitle1">{roomEntity.address}</Typography>
-          </div>
-
-          <div className="room-detail-content">
-            <Row>
-              <Col md="8">
-                <Typography variant="h6">About this space</Typography>
-                <p>{roomEntity.description}</p>
-
-                <div className="host-info">
-                  <Avatar src="path/to/host-avatar.jpg" alt="Host Avatar" />
-                  <Typography variant="subtitle2">{roomEntity.user?.login}</Typography>
-                </div>
-              </Col>
-
-              <Col md="4">
-                <div className="booking-info">
-                  <Typography variant="h6">Booking Info</Typography>
-                  <Divider />
-                  <Typography variant="subtitle2">Availability Calendar</Typography>
-                  {/* Add your calendar component here */}
-                  <Typography variant="subtitle2">Price: ${roomEntity.price} / night</Typography>
-                  <Button color="primary" size="large" data-cy="bookButton" onClick={handleBookClick}>
-                    Book
-                  </Button>
-                </div>
-              </Col>
-            </Row>
-          </div>
-
           <Button tag={Link} to="/room" replace color="info" data-cy="entityDetailsBackButton">
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
           </Button>
@@ -140,8 +166,8 @@ export const RoomDetail = () => {
             <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
           </Button>
         </Col>
-      </Row>
-    </div>
+      </Row> */}
+    </StyledRoomDetail>
   );
 };
 
