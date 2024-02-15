@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using FluentEmail.Smtp;
 using PartyRentingPlatform.Infrastructure.Configuration;
 using FluentEmail.Core;
+using Microsoft.Extensions.Configuration;
 
 namespace PartyRentingPlatform.Domain.Services;
 
@@ -12,11 +13,13 @@ public class MailService : IMailService
 {
     private readonly SecuritySettings _securitySettings;
     private readonly IFluentEmail _fluentEmail;
+    private readonly IConfiguration _configuration;
 
-    public MailService(IOptions<SecuritySettings> securitySettings, IFluentEmail fluentEmail)
+    public MailService(IOptions<SecuritySettings> securitySettings, IFluentEmail fluentEmail, IConfiguration configuration)
     {
         _securitySettings = securitySettings.Value;
         _fluentEmail = fluentEmail;
+        _configuration = configuration;
     }
 
     public virtual async Task SendPasswordResetMail(User user)
@@ -27,9 +30,10 @@ public class MailService : IMailService
     public virtual async Task SendActivationEmail(User user)
     {
         var activationKey = user.ActivationKey;
-        await _fluentEmail.To("kiet.hakh@gmail.com").Subject("Account Activation").Body("Testing web" + activationKey).SendAsync();
-
-        //TODO Activation Email
+        await _fluentEmail.To(user.Email)
+            .Subject("Account Activation")
+            .Body(_configuration.GetValue<string>("hostUrl") + "/api/activate?key=" + activationKey)
+            .SendAsync();
     }
 
     public virtual Task SendCreationEmail(User user)

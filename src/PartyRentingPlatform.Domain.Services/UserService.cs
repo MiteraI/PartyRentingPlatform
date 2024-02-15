@@ -180,8 +180,6 @@ public class UserService : IUserService
             Email = userToRegister.Email.ToLowerInvariant(),
             ImageUrl = userToRegister.ImageUrl,
             LangKey = userToRegister.LangKey,
-            // new user is not active | TODO put activated = true until mail server work again
-            Activated = true,
             // new user gets registration key
             ActivationKey = RandomUtil.GenerateActivationKey(),
             //TODO manage authorities

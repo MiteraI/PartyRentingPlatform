@@ -35,8 +35,7 @@ public class AuthenticationService : IAuthenticationService
 
         var user = await LoadUserByUsername(username);
 
-        //Uncomment to add activation function
-        //if (!user.Activated) throw new UserNotActivatedException($"User {user.UserName} was not activated.");
+        if (!user.Activated) throw new UserNotActivatedException($"User {user.UserName} was not activated.");
 
         if (await _userManager.CheckPasswordAsync(user, password)) return await CreatePrincipal(user);
 
