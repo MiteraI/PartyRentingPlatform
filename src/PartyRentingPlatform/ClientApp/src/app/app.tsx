@@ -51,16 +51,16 @@ export const App = () => {
             isOpenAPIEnabled={isOpenAPIEnabled}
           />
         </ErrorBoundary>
-        <div className="container-fluid view-container" id="app-view-container">
+        {/* <div className="container-fluid view-container" id="app-view-container"> */}
         <div style={{ paddingLeft, paddingRight }}>
-            <ErrorBoundary>
-              <AppRoutes />
-            </ErrorBoundary>
-          </div>
-          <Footer />
+          <ErrorBoundary>
+            <AppRoutes />
+          </ErrorBoundary>
         </div>
+        <Footer />
+        {/* </div> */}
       </div>
-    </BrowserRouter> 
+    </BrowserRouter>
   );
 };
 
