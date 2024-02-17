@@ -25,6 +25,7 @@ public class Startup : IStartup
         AddDatabase(configuration, services);
         AddMail(configuration, services);
         AddVnpay(configuration, services);
+        AddAzureBlob(configuration, services);
     }
 
     public virtual void ConfigureServices(IServiceCollection services, IHostEnvironment environment)
@@ -71,5 +72,10 @@ public class Startup : IStartup
     protected virtual void AddVnpay(IConfiguration configuration, IServiceCollection services)
     {
         services.AddVnpayModule(configuration);
+    }
+
+    protected virtual void AddAzureBlob(IConfiguration configuration, IServiceCollection services)
+    {
+        services.AddAzureBlobModule(configuration);
     }
 }

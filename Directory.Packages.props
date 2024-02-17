@@ -8,6 +8,7 @@
     <JHipsterNetPackageVersion>1.0.11</JHipsterNetPackageVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.19.1" />
     <PackageVersion Include="FluentEmail.Smtp" Version="3.0.2" />
     <PackageVersion Include="JHipsterNet.Core" Version="$(JHipsterNetPackageVersion)" />
     <PackageVersion Include="JHipsterNet.Web" Version="$(JHipsterNetPackageVersion)" />
