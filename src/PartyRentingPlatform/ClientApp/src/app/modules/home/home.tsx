@@ -219,7 +219,7 @@ const Home = () => {
                     </div>
                     {/* Giá tiền */}
                     <Typography style={{ marginTop: '2px' }} variant="body2" color="text.primary">
-                      <strong>{item.price} VND</strong> / đêm
+                      <strong>{item.price} VND</strong> / ngày
                     </Typography>
                   </div>
                   {/* Card actions */}
