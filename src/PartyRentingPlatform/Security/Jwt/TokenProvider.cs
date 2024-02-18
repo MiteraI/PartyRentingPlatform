@@ -110,9 +110,14 @@ public class TokenProvider : ITokenProvider
     {
         var username = principal.Identity.Name;
         var roles = GetRoles(principal);
+        var userId = GetUserId(principal);
         var authValue = string.Join(",", roles.Map(it => it.Value));
+
+        //Somehow NameIdentifier and Name must be switched to work with the current implementation
+        //NameIdentifier is Id and Name is username is the approriate implementation
         return new ClaimsIdentity(new[] {
-            new Claim(JwtRegisteredClaimNames.Sub, username),
+            new Claim(ClaimTypes.NameIdentifier, username),
+            new Claim(ClaimTypes.Name, userId.Value),
             new Claim(AuthoritiesKey, authValue)
         });
     }
@@ -122,5 +127,10 @@ public class TokenProvider : ITokenProvider
         return principal is ClaimsPrincipal user
             ? user.FindAll(it => it.Type == ClaimTypes.Role)
             : Enumerable.Empty<Claim>();
+    }
+
+    private static Claim GetUserId(IPrincipal principal)
+    {
+        return (principal as ClaimsPrincipal)?.FindFirst(ClaimTypes.NameIdentifier);
     }
 }

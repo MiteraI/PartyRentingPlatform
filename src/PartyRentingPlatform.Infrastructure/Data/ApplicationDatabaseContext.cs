@@ -37,6 +37,8 @@ namespace PartyRentingPlatform.Infrastructure.Data
         public DbSet<BookingDetails> BookingDetails { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
