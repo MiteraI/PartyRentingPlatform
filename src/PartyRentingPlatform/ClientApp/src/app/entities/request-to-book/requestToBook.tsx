@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
 import { isNumber, ValidatedField, ValidatedForm } from 'react-jhipster';
+import StarIcon from '@mui/icons-material/Star';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
@@ -12,9 +13,10 @@ import { getUsers } from 'app/modules/administration/user-management/user-manage
 import { IBooking } from 'app/shared/model/booking.model';
 import { BookingStatus } from 'app/shared/model/enumerations/booking-status.model';
 import { getEntity, updateEntity, createEntity, reset } from '../booking/booking.reducer';
-import { Avatar, Divider, Grid, Typography } from '@mui/material';
+import { Avatar, CardMedia, Divider, Grid, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { AxiosResponse } from 'axios';
+import './requestToBook.scss';
 
 const RequestToBook = () => {
   const dispatch = useAppDispatch();
@@ -139,11 +141,20 @@ const RequestToBook = () => {
     <div>
       <StyledRoomDetail>
         <Grid container spacing={3} mb={2}>
-          <Grid item md={6}>
-            <div className="room-detail-header">
-              <h3>Confirm and pay</h3>
-            </div>
+          <Grid container alignItems="center" spacing={2}>
+            <Grid item>
+              <Button tag={Link} to={`/room/${id}`} replace color="info" style={{ border: 'none', background: 'none' }}>
+                <FontAwesomeIcon icon="arrow-left" />
+              </Button>
+
+            </Grid>
+            <Grid item md={6}>
+              <div className="room-detail-header">
+                <h2>Confirm and pay</h2>
+              </div>
+            </Grid>
           </Grid>
+
           <Grid item md={6} container justifyContent="flex-end" alignItems="center">
           </Grid>
         </Grid>
@@ -203,7 +214,7 @@ const RequestToBook = () => {
                         required: { value: true, message: 'This field is required.' },
                       }}
                     />
-                    <ValidatedField
+                    {/* <ValidatedField
                       label="Total Price"
                       id="booking-totalPrice"
                       name="totalPrice"
@@ -215,14 +226,21 @@ const RequestToBook = () => {
                         min: { value: 0, message: 'This field should be at least 0.' },
                         validate: v => isNumber(v) || 'This field should be a number.',
                       }}
-                    />
+                    /> */}
 
-                    <FormText>This field is required.</FormText>
+                    {/* <FormText>This field is required.</FormText> */}
 
                     &nbsp;
-                    <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
+                    {/* <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
                       <FontAwesomeIcon icon="save" />
-                      &nbsp; Save
+                      &nbsp; Confirm and send request
+                    </Button> */}
+
+                    <Button
+                      id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}
+                      style={{ backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px' }}
+                    >
+                      <strong>Confirm and send request</strong>
                     </Button>
                   </ValidatedForm>
                 )}
@@ -235,55 +253,63 @@ const RequestToBook = () => {
             <div className="booking-info" style={{ boxShadow: 'rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px', padding: '24px', borderRadius: '10px' }}>
 
               <div className="room-detail-content">
-                <Row>
-                  <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '5px' }}>
-                    <img src={parallaxImages[0]} alt={`Room Image 2`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
+                <Row style={{ paddingBottom: '20px' }}>
+                  <Col md="4" style={{ paddingLeft: '15px' }}>
+                    <CardMedia className='img-room' image={parallaxImages[0]} />
                   </Col>
 
-                  <Col md="4">
+                  <Col md="6">
                     <div className="booking-info">
-                      <Typography mb={2} variant="h6"><strong>{roomEntity.roomName}</strong></Typography>
+                      <Typography style={{ height: '60px' }} variant="subtitle1"><strong>{roomEntity.roomName}</strong></Typography>
                       <Typography variant="subtitle2">{roomEntity.address}</Typography>
-                      <Typography variant="subtitle2">{roomEntity.price}</Typography>
+                      <div style={{ display: 'flex', alignItems: 'left' }}>
+                        <StarIcon style={{ height: '20px', color: 'gold' }} />
+                        <Typography variant="subtitle2" style={{ marginLeft: '2px' }}><strong>{roomEntity.rating || 0}</strong></Typography>
+                      </div>
                     </div>
                   </Col>
                 </Row>
               </div>
 
 
-              <Divider />
+              <Divider style={{ marginBottom: '20px', backgroundColor: '#000', opacity: 0.18 }} />
+
 
               <Row>
-                <Col md="8">
+                <h4>Price details</h4>
+
+                <Col md="6">
                   <div className="room-detail-header">
-                    <h4>Price details</h4>
-                    <Typography variant="subtitle1">{roomEntity.address}</Typography>
+                    <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x 2 ngày"}</Typography>
                   </div>
-
-                  <div className="room-detail-content">
-                    <Row>
-                      <Col md="8">
-                        <Typography variant="h6">Booking Information</Typography>
-                        {/* <p>{roomEntity.description}</p> */}
-
-                        <div className="host-info">
-                          <Avatar src="path/to/host-avatar.jpg" alt="Host Avatar" />
-                          <Typography variant="subtitle2">{roomEntity.user?.login}</Typography>
-                        </div>
-                      </Col>
-
-                      <Col md="4">
-                        <div className="booking-info">
-                          <Typography variant="h6">Booking Info</Typography>
-                          <Divider />
-                        </div>
-                      </Col>
-                    </Row>
+                  <div className="room-detail-header">
+                    <Typography variant="subtitle2">Phí dịch vụ</Typography>
                   </div>
+                </Col>
 
-                  <Button tag={Link} to={`/room/${id}`} replace color="info">
-                    <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back to Room Details</span>
-                  </Button>
+                <Col md="4" style={{ marginLeft: 'auto' }}>
+                  <div className="room-detail-header">
+                    <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * 2}</Typography>
+                  </div>
+                  <div className="room-detail-header">
+                    <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + 100.000}</Typography>
+                  </div>
+                </Col>
+              </Row>
+
+              <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
+              <Row>
+
+                <Col md="6">
+                  <div className="room-detail-header">
+                    <Typography variant="subtitle1"><strong>Total (VNĐ)</strong></Typography>
+                  </div>
+                </Col>
+
+                <Col md="4" style={{ marginLeft: 'auto' }}>
+                  <div className="room-detail-header">
+                    <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + roomEntity.price * 2}</strong></Typography>
+                  </div>
                 </Col>
               </Row>
 

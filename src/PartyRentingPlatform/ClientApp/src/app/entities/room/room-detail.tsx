@@ -110,6 +110,8 @@ export const RoomDetail = () => {
             <h4>{roomEntity.roomName}</h4>
             <Typography mb={3} variant="subtitle1">{roomEntity.address}</Typography>
           </div>
+          <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.1 }} />
+
 
           <Grid container spacing={3} mb={3}>
             <Grid item xs={12} md={8}>
@@ -127,7 +129,7 @@ export const RoomDetail = () => {
             </Grid>
           </Grid>
 
-          <Divider style={{ marginBottom: '24px' }}></Divider>
+          <Divider style={{ marginBottom: '24px', backgroundColor: '#000', opacity: 0.1 }} />
 
 
           <Row mt={1}>
