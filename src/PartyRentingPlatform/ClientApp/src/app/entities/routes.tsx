@@ -11,6 +11,9 @@ import Booking from './booking';
 import BookingDetails from './booking-details';
 import Report from './report';
 import Notification from './notification';
+import RequestToBook from './request-to-book/requestToBook';import BookingTracking from './booking-tracking/booking-tracking';
+; // Import component
+
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 export default () => {
@@ -26,6 +29,8 @@ export default () => {
         <Route path="booking-details/*" element={<BookingDetails />} />
         <Route path="report/*" element={<Report />} />
         <Route path="notification/*" element={<Notification />} />
+        <Route path="request-to-book/:id" element={<RequestToBook />} /> {/* Add this line */}
+        <Route path="booking-tracking/:id" element={<BookingTracking />} /> {/* Add this line */}
         {/* jhipster-needle-add-route-path - JHipster will add routes here */}
       </ErrorBoundaryRoutes>
     </div>

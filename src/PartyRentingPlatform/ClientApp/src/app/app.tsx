@@ -16,6 +16,7 @@ import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import ErrorBoundary from 'app/shared/error/error-boundary';
 import { AUTHORITIES } from 'app/config/constants';
 import AppRoutes from 'app/routes';
+import { Padding } from '@mui/icons-material';
 
 const baseHref = document.querySelector('base').getAttribute('href').replace(/\/$/, '');
 
@@ -34,6 +35,9 @@ export const App = () => {
   const isOpenAPIEnabled = useAppSelector(state => state.applicationProfile.isOpenAPIEnabled);
 
   const paddingTop = '60px';
+  const paddingLeft = '25px';
+  const paddingRight = '25px';
+
   return (
     <BrowserRouter basename={baseHref}>
       <div className="app-container" style={{ paddingTop }}>
@@ -47,14 +51,14 @@ export const App = () => {
             isOpenAPIEnabled={isOpenAPIEnabled}
           />
         </ErrorBoundary>
-        <div className="container-fluid view-container" id="app-view-container">
-          <Card className="jh-card">
-            <ErrorBoundary>
-              <AppRoutes />
-            </ErrorBoundary>
-          </Card>
-          <Footer />
+        {/* <div className="container-fluid view-container" id="app-view-container"> */}
+        <div style={{ paddingLeft, paddingRight }}>
+          <ErrorBoundary>
+            <AppRoutes />
+          </ErrorBoundary>
         </div>
+        <Footer />
+        {/* </div> */}
       </div>
     </BrowserRouter>
   );
