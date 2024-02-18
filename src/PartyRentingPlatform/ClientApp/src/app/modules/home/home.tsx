@@ -15,7 +15,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 
-import './Home.scss';
+import './home.scss';
 
 const Home = () => {
   const dispatch = useAppDispatch();
