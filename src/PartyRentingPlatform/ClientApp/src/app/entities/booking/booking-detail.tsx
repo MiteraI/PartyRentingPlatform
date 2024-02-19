@@ -22,7 +22,7 @@ export const BookingDetail = () => {
   return (
     <Row>
       <Col md="8">
-        <h2 data-cy="bookingDetailsHeading">Booking</h2>
+        <h2 data-cy="bookingDetailsHeading">Booking Trị An</h2>
         <dl className="jh-entity-details">
           <dt>
             <span id="id">ID</span>

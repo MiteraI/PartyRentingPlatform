@@ -46,7 +46,7 @@ const Room = () => {
         </Grid>
 
         <Typography variant="h6" gutterBottom sx={{ marginTop: 2 }}>
-          Price: ${room.price}/night
+          Price: ${room.price}/ngày
         </Typography>
 
         <Typography variant="body1" paragraph>

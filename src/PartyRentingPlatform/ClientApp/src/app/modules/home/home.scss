@@ -5,44 +5,119 @@ Main page styles
 
 .home-page {
   background-color: #fafafa;
+  margin-top: 50px;
 
   .apartment-box {
     border-radius: 51%;
     padding: 50px;
     text-align: center;
   }
-  
+
 
   .apartment-card {
     box-shadow: none;
     border-radius: 5%;
     margin-bottom: 50px;
     background-color: #fafafa;
+
     .rating {
       display: flex;
       align-items: center;
       justify-content: flex-end; // Đặt chúng bên phải
-  
+
       .star-icon {
         color: gold; // Đặt màu vàng
         font-size: 18px; // Đặt kích thước nhỏ hơn
         margin-left: 4px; // Khoảng cách giữa các biểu tượng
-      }}
+      }
+    }
   }
 
   .img-room {
     height: 0;
     padding-top: 100%;
     border-radius: 5%;
-
   }
 
   .thumbnail {
     width: 5px;
     height: 5px;
-    border-radius: 50%; /* Loại bỏ đổ bóng */
+    border-radius: 50%;
+    /* Loại bỏ đổ bóng */
   }
-  
+
+  .slick-prev,
+  .slick-next {
+    font-size: 0; // Ẩn văn bản
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: black;
+    background-color: transparent; // Đặt màu nền thành trong suốt
+    transition: background-color 0.3s ease; // Hiệu ứng chuyển động màu nền
+    z-index: 1;
+
+    &:before {
+      font-size: 20px;
+      color: white;
+    }
+
+    &:hover {
+      background-color: rgba(250, 250, 250, 0.3); // Màu nền với độ trong suốt 30% khi hover
+    }
+  }
+
+  .slick-prev {
+    left: 4px; // Đặt vị trí của mũi tên prev
+  }
+
+  .slick-next {
+    right: 4px; // Đặt vị trí của mũi tên next
+  }
+
+  /* Hiển thị mũi tên trên hình */
+  .slick-prev:before,
+  .slick-next:before {
+    font-size: 20px;
+    color: black;
+    opacity: 1;
+    &:hover {
+      color: red;
+    }
+  }
+
+
+  /* Hiển thị mũi tên prev bên trên CardMedia */
+  .img-room {
+    position: relative;
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 10px; // Điều chỉnh vị trí mũi tên trên bên trái
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: white;
+      z-index: 2;
+    }
+  }
+
+  /* Hiển thị mũi tên next bên trên CardMedia */
+  .img-room {
+    position: relative;
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 10px; // Điều chỉnh vị trí mũi tên trên bên phải
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: white;
+      z-index: 2;
+    }
+  }
 
   .slick-slide img {
     width: inherit;
@@ -70,6 +145,6 @@ Main page styles
     // Thêm chiều cao tối thiểu
     min-height: 3.2em; // Tương ứng với khoảng 2 dòng văn bản, tùy thuộc vào kích thước font
   }
-  
+
 
 }
