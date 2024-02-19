@@ -38,9 +38,12 @@ export const App = () => {
   const paddingLeft = '25px';
   const paddingRight = '25px';
 
+
+  console.log("nmmm",isAuthenticated,isAdmin);
+  
   return (
     <BrowserRouter basename={baseHref}>
-      <div className="app-container" style={{ paddingTop }}>
+      <div className="app-container" >
         <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
         <ErrorBoundary>
           <Header
