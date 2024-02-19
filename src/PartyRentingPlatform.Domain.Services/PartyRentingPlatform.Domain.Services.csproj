@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Azure.Storage.Blobs" />
         <PackageReference Include="FluentEmail.Smtp" />
         <PackageReference Include="JHipsterNet.Core" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
