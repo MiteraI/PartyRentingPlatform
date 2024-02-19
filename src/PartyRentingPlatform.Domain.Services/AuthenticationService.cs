@@ -35,8 +35,7 @@ public class AuthenticationService : IAuthenticationService
 
         var user = await LoadUserByUsername(username);
 
-        //Uncomment to add activation function
-        //if (!user.Activated) throw new UserNotActivatedException($"User {user.UserName} was not activated.");
+        if (!user.Activated) throw new UserNotActivatedException($"User {user.UserName} was not activated.");
 
         if (await _userManager.CheckPasswordAsync(user, password)) return await CreatePrincipal(user);
 
@@ -67,7 +66,8 @@ public class AuthenticationService : IAuthenticationService
     private async Task<IPrincipal> CreatePrincipal(User user)
     {
         var claims = new List<Claim> {
-            new Claim(ClaimTypes.Name, user.UserName)
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.NameIdentifier, user.Id)
         };
         var roles = await _userManager.GetRolesAsync(user);
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));

@@ -15,6 +15,7 @@ public static class DatabaseConfiguration
     public static IServiceCollection AddDatabaseModule(this IServiceCollection services, IConfiguration configuration)
     {
         string connectionString = null;
+        //This will use Heroku's config vars
         string databaseUrl = configuration.GetValue<string>("DATABASE_URL");
 
         if (!String.IsNullOrEmpty(databaseUrl) && Uri.IsWellFormedUriString(databaseUrl, UriKind.RelativeOrAbsolute))

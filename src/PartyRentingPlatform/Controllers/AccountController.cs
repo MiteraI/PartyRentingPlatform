@@ -44,7 +44,7 @@ public class AccountController : ControllerBase
     {
         if (!CheckPasswordLength(managedUserDto.Password)) throw new InvalidPasswordException();
         var user = await _userService.RegisterUser(_userMapper.Map<User>(managedUserDto), managedUserDto.Password);
-        await _mailService.SendActivationEmail(user);
+        _mailService.SendActivationEmail(user);
         return CreatedAtAction(nameof(GetAccount), user);
     }
 
