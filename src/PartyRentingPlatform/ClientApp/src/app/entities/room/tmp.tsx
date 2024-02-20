@@ -84,25 +84,23 @@ export const RoomDetail = () => {
 
 
       {/* Custom layout for room images */}
-      <div className="room-detail-header" style={{ height: '300px', overflow: 'hidden', borderRadius: '10px' }}>
-        <Row style={{ height: '300px', overflow: 'hidden' }}>
-          <Col md="6" style={{ height: '100%', overflow: 'hidden', paddingRight: '10px' }}>
-            <img src={parallaxImages[0]} alt={`Room Image 0`} className="full-width" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </Col>
-          <Col md="6" style={{ height: '100%', overflow: 'hidden' }}>
-            <Row style={{ height: '100%', overflow: 'hidden' }}>
-              <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '10px' }}>
-                <img src={parallaxImages[1]} alt={`Room Image 1`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
-                <img src={parallaxImages[3]} alt={`Room Image 3`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
-              </Col>
-              <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '5px' }}>
-                <img src={parallaxImages[2]} alt={`Room Image 2`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
-                <img src={parallaxImages[4]} alt={`Room Image 4`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-      </div>
+      <Row style={{ height: '300px', overflow: 'hidden' }}>
+        <Col md="6" style={{ height: '100%', overflow: 'hidden', paddingRight: '10px' }}>
+          <img src={parallaxImages[0]} alt={`Room Image 0`} className="full-width" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </Col>
+        <Col md="6" style={{ height: '100%', overflow: 'hidden' }}>
+          <Row style={{ height: '100%', overflow: 'hidden' }}>
+            <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '10px' }}>
+              <img src={parallaxImages[1]} alt={`Room Image 1`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
+              <img src={parallaxImages[3]} alt={`Room Image 3`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
+            </Col>
+            <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '5px' }}>
+              <img src={parallaxImages[2]} alt={`Room Image 2`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
+              <img src={parallaxImages[4]} alt={`Room Image 4`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
+            </Col>
+          </Row>
+        </Col>
+      </Row>
 
       <Grid container spacing={3} mt={1}>
         <Grid item xs={12} md={8} pr={8}>
