@@ -20,6 +20,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using PartyRentingPlatform.Dto.Booking;
+using PartyRentingPlatform.Crosscutting.Constants;
 
 namespace PartyRentingPlatform.Controllers
 {
@@ -32,16 +34,23 @@ namespace PartyRentingPlatform.Controllers
         private readonly ILogger<BookingsController> _log;
         private readonly IMapper _mapper;
         private readonly IBookingService _bookingService;
+        private readonly IRoomService _roomService;
+        private readonly IServiceService _serviceService;
 
         public BookingsController(ILogger<BookingsController> log,
         IMapper mapper,
-        IBookingService bookingService)
+        IBookingService bookingService,
+        IRoomService roomService,
+        IServiceService serviceService)
         {
             _log = log;
             _mapper = mapper;
             _bookingService = bookingService;
+            _roomService = roomService;
+            _serviceService = serviceService;
         }
 
+        // Admin related/ Jhipster generated code
         [HttpPost]
         public async Task<ActionResult<BookingDto>> CreateBooking([FromBody] BookingDto bookingDto)
         {
@@ -55,7 +64,7 @@ namespace PartyRentingPlatform.Controllers
             //Noted in TokenProvider.cs
             var userIdClaim = User.FindFirst(ClaimTypes.Name);
 
-            booking.UserId = userIdClaim.Value; 
+            booking.UserId = userIdClaim.Value;
             await _bookingService.Save(booking);
             return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking)
                 .WithHeaders(HeaderUtil.CreateEntityCreationAlert(EntityName, booking.Id.ToString()));
@@ -97,6 +106,145 @@ namespace PartyRentingPlatform.Controllers
             _log.LogDebug($"REST request to delete Booking : {id}");
             await _bookingService.Delete(id);
             return NoContent().WithHeaders(HeaderUtil.CreateEntityDeletionAlert(EntityName, id.ToString()));
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // Customer related/ Custom code
+        [Authorize(Roles = RolesConstants.USER)]
+        [HttpPost("customer")]
+        public async Task<ActionResult<BookingDto>> CreateCustomerBooking([FromBody] BookingCustomerDto bookingDto)
+        {
+            _log.LogDebug($"REST request to save Booking : {bookingDto}");
+            if (bookingDto.Id != 0 && bookingDto.Id != null)
+                throw new BadRequestAlertException("A new booking cannot already have an ID", EntityName, "idexists");
+
+            Booking booking = _mapper.Map<Booking>(bookingDto);
+
+            //Check if StartTime is before EndTime
+            if (booking.StartTime > booking.EndTime) return BadRequest("Start time must be before end time");
+
+            //Check if StartTime is 3 days in advance
+            if (booking.StartTime < DateTime.Now.AddDays(3)) return BadRequest("Start time must be at least 3 days in advance");
+
+            // TODO: Check if room is available
+
+            // TODO: Check if balance is enough
+
+            //Getting userId from token and adding it to booking, must use ClaimTypes.Name
+            //Noted in TokenProvider.cs
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            booking.UserId = userIdClaim.Value;
+
+            booking.BookTime = DateTime.Now;
+
+            booking.Status = BookingStatus.APPROVING;
+
+            //Get room from room id to do TotalPrice = RoomPrice * booking time in hours + ServicePrice
+            Room bookedRoom = await _roomService.FindOne(booking.RoomId);
+
+            //Calculate service price
+            long servicePrice = 0;
+            foreach (var bookingDetail in booking.BookingDetails)
+            {
+                Service service = await _serviceService.FindOne(bookingDetail.ServiceId);
+                servicePrice += service.Price * bookingDetail.ServiceQuantity;
+            }
+
+            //Calculate total price
+            booking.TotalPrice = (long)(bookedRoom.Price * (booking.EndTime - booking.StartTime).TotalHours) + servicePrice;
+
+            //It will automatically generate new booking details to database
+            await _bookingService.Save(booking);
+            return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking)
+                .WithHeaders(HeaderUtil.CreateEntityCreationAlert(EntityName, booking.Id.ToString()));
+        }
+
+        [Authorize(Roles = RolesConstants.USER)]
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> CancelBooking(long? id)
+        {
+            _log.LogDebug($"REST request to cancel Booking : {id}");
+            var booking = await _bookingService.FindOne(id);
+
+            if (booking == null) return BadRequest("Booking not found");
+
+            //Check if booking belong to user
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            if (booking.UserId != userIdClaim.Value) return BadRequest("Booking does not belong to user");
+
+            if (booking.Status != BookingStatus.APPROVING) return BadRequest("Booking cannot be cancelled");
+            booking.Status = BookingStatus.CANCEL;
+            await _bookingService.Save(booking);
+            return Ok(booking)
+                .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
+        }
+
+        [Authorize(Roles = RolesConstants.USER)]
+        [HttpPut("{id}/confirm")]
+        public async Task<IActionResult> ConfirmBookingPayment(long? id)
+        {
+            _log.LogDebug($"REST request to confirm Booking : {id}");
+            var booking = await _bookingService.FindOne(id);
+
+            if (booking == null) return BadRequest("Booking not found");
+
+            //Check if booking belong to user
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            if (booking.UserId != userIdClaim.Value) return BadRequest("Booking does not belong to user");
+
+            if (booking.Status != BookingStatus.ACCEPTED) return BadRequest("Booking cannot be confirmed");
+            booking.Status = BookingStatus.SUCCESS;
+            await _bookingService.Save(booking);
+
+            //TODO: Deduct balance from user
+
+            return Ok(booking)
+                .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
+        }
+
+        [Authorize(Roles = RolesConstants.USER)]
+        [HttpPut("{id}/rate")]
+        public async Task<IActionResult> RateBooking(long? id, [FromBody] BookingRatingDto bookingRatingDto)
+        {
+            _log.LogDebug($"REST request to rate Booking : {id}");
+            var booking = await _bookingService.FindOne(id);
+
+            if (booking == null) return BadRequest("Booking not found");
+
+            //Check if booking belong to user
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            if (booking.UserId != userIdClaim.Value) return BadRequest("Booking does not belong to user");
+
+            if (booking.Status != BookingStatus.SUCCESS) return BadRequest("Booking cannot be rated");
+
+            booking.Rating = bookingRatingDto.Rating;
+            booking.Comment = bookingRatingDto.Comment;
+            await _bookingService.Save(booking);
+            return Ok(booking)
+                .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
+        }
+
+        // -----------------------------------------------------------------------------------------------
+        // Host related/ Custom code
+        [Authorize(Roles = RolesConstants.HOST)]
+        [HttpPut("{id}/accept")]
+        public async Task<IActionResult> AcceptBooking(long? id)
+        {
+            _log.LogDebug($"REST request to accept Booking : {id}");
+            var booking = await _bookingService.FindOne(id);
+
+            if (booking == null) return BadRequest("Booking not found");
+
+            // Check if booking has room belong to user
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            Room room = await _roomService.FindOne(booking.RoomId);
+            if (room.UserId != userIdClaim.Value) return BadRequest("Room does not belong to user");
+
+            if (booking.Status != BookingStatus.APPROVING) return BadRequest("Booking cannot be accepted");
+            booking.Status = BookingStatus.ACCEPTED;
+            await _bookingService.Save(booking);
+            return Ok(booking)
+                .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
         }
     }
 }

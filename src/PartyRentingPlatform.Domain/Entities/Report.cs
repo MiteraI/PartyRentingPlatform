@@ -8,7 +8,7 @@ namespace PartyRentingPlatform.Domain.Entities
     [Table("report")]
     public class Report : BaseEntity<long?>
     {
-        public string? Title { get; set; }
+        public string Title { get; set; }
         public string? Description { get; set; }
         public DateTime SentTime { get; set; }
         public long? RoomId { get; set; }
