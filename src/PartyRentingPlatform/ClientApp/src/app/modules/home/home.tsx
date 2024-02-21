@@ -5,7 +5,9 @@ import { useAppSelector, useAppDispatch } from 'app/config/store';
 import { Grid, Paper, Typography, CardContent, CardActions, Button, CardMedia } from '@mui/material';
 import Slider from 'react-slick';
 import { getEntities, deleteEntity } from 'app/entities/room/room.reducer';
+import { getEntities as getServiceEntities } from 'app/entities/service/service.reducer';
 import RoomIcon from '@mui/icons-material/Room';
+
 
 //Rating 
 import { Star, StarBorder } from '@mui/icons-material';
@@ -15,14 +17,14 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 
-import './Home.scss';
+import './home.scss';
 
 const Home = () => {
   const dispatch = useAppDispatch();
   const roomList = useAppSelector((state) => state.room.entities);
   const loading = useAppSelector((state) => state.room.loading);
   const account = useAppSelector((state) => state.authentication.account);
-
+  const serviceList = useAppSelector(state => state.service.entities);
   const [currentPage, setCurrentPage] = useState(0);
 
 
@@ -37,7 +39,7 @@ const Home = () => {
 
   // Fetch room entities on component mount
   useEffect(() => {
-    dispatch(getEntities({ page: currentPage, size: 4, sort: 'id,asc' }));
+    dispatch(getEntities({ page: currentPage, size: 10, sort: 'id,asc' }));
   }, [dispatch]);
 
   // Define your carousel items
