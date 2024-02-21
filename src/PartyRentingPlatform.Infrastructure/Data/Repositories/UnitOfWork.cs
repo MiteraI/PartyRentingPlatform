@@ -64,7 +64,17 @@ public class UnitOfWork : IUnitOfWork
 
             if (!navigationPropertyName.Equals(rootTypeEntity) && !(entitiesToBeUpdated != null && entitiesToBeUpdated.Contains(navigationPropertyName)))
             {
-                e.Entry.State = EntityState.Unchanged;
+                // Check if the primary key property is set
+                var primaryKeyProperty = e.Entry.Properties.FirstOrDefault(p => p.Metadata.IsPrimaryKey());
+                if (primaryKeyProperty != null && primaryKeyProperty.CurrentValue != null)
+                {
+                    e.Entry.State = EntityState.Unchanged;
+                }
+                else
+                {
+                    // If the primary key is not set, assume it's a new entity
+                    e.Entry.State = EntityState.Added;
+                }
             }
             else if (e.Entry.IsKeySet)
             {

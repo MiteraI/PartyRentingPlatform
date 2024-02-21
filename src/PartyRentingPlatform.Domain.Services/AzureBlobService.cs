@@ -3,10 +3,12 @@
 
 using Azure.Storage;
 using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using PartyRentingPlatform.Domain.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +35,37 @@ namespace PartyRentingPlatform.Domain.Services
 
             //Azure Container Clients
             _roomImageContainerClient = blobServiceClient.GetBlobContainerClient("room-images");
+        }
+
+        public async Task<string> UploadRoomImage(IFormFile image)
+        {
+            // Create blob client from file name from IFormFile image with guid
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+            var blobClient = _roomImageContainerClient.GetBlobClient(fileName);
+
+            using (var stream = image.OpenReadStream())
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await stream.CopyToAsync(memoryStream);
+                    var imageBytes = memoryStream.ToArray();
+                    await blobClient.UploadAsync(new MemoryStream(imageBytes));
+                }
+            }
+            return blobClient.Uri.AbsoluteUri;
+        }
+
+        public async Task<IList<string>> UploadRoomImages(IList<IFormFile> image)
+        {
+            var imageUrls = new List<string>();
+            if (image != null && image.Count > 0)
+            {
+                foreach (var img in image)
+                {
+                    imageUrls.Add(await UploadRoomImage(img));
+                }
+            }
+            return imageUrls;
         }
     }
 }

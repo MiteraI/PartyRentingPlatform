@@ -8,7 +8,7 @@ namespace PartyRentingPlatform.Domain.Entities
     [Table("booking_details")]
     public class BookingDetails : BaseEntity<long?>
     {
-        public int? ServiceQuantity { get; set; }
+        public int ServiceQuantity { get; set; }
         public long? ServiceId { get; set; }
         public Service Service { get; set; }
         public long? BookingId { get; set; }

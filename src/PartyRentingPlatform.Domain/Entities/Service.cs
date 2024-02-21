@@ -11,7 +11,7 @@ namespace PartyRentingPlatform.Domain.Entities
     {
         [Required]
         public string? ServiceName { get; set; }
-        public long? Price { get; set; }
+        public long Price { get; set; }
         public string? Description { get; set; }
         [JsonIgnore]
         public IList<Room> Rooms { get; set; } = new List<Room>();
