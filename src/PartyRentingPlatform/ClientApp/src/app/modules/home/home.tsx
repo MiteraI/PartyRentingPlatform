@@ -95,6 +95,14 @@ const Home = () => {
     // Add more carousel items as needed
   ];
 
+
+  // style for banner 
+  const imagesStyle: React.CSSProperties = {
+    width: "100%",
+    height: "70vh",
+    objectFit: "cover"
+  }
+
   // Carousel state variables
   const [activeIndex, setActiveIndex] = useState(0);
   const [animating, setAnimating] = useState(false);
@@ -121,15 +129,11 @@ const Home = () => {
     slidesToScroll: 1,
   };
 
-  const handleDelete = (id) => {
-    dispatch(deleteEntity(id));
-  };
-
   return (
 
-    <div className="home-page">
+    <div>
       <Row>
-        <Col md="6">
+        {/* <Col md="6">
           <h1 className="display-4">Khám phá các bữa tiệc nào!!!</h1>
           <p className="lead">Hãy tìm điểm dừng chân tiếp theo cho bữa tiệc hoành tráng của bạn.</p>
           {account?.login ? (
@@ -145,8 +149,8 @@ const Home = () => {
               </Alert>
             </div>
           )}
-        </Col>
-        <Col md="6">
+        </Col> */}
+        <Col md="12">
           {/* Carousel component */}
           <Carousel activeIndex={activeIndex} next={next} previous={previous}>
             <CarouselIndicators
@@ -156,7 +160,7 @@ const Home = () => {
             />
             {carouselItems.map((item, index) => (
               <CarouselItem key={index}>
-                <img src={item.src} alt={item.altText} className="img-fluid rounded" />
+                <img src={item.src} alt={item.altText} style={imagesStyle} />
                 <div className="carousel-caption d-none d-md-block">
                   <h3>{item.caption}</h3>
                 </div>
@@ -167,8 +171,11 @@ const Home = () => {
           </Carousel>
         </Col>
       </Row>
+
+
       <Row className="mt-4">
-        <Col md="12">
+        {/* Add more destinations as needed */}
+        {/* <Col md="12">
           <p className="mb-4">Bạn muốn buổi tiệc được tổ chức ở:</p>
           <ul className="destination-list">
             <li>
@@ -180,50 +187,50 @@ const Home = () => {
             <li>
               <Link to="/destinations/tokyo">Đà Nẵng</Link>
             </li>
-            {/* Add more destinations as needed */}
           </ul>
-        </Col>
+        </Col> */}
       </Row>
-      <div className="table-responsive">
-        {roomList && roomList.length > 0 ? (
-          <Grid container spacing={3} mb={4}>
-            {roomList.map((item) => (
-              <Grid item key={item.id} xs={12} sm={6} md={3}>
-                <Paper className="apartment-card" component={Link} to={`/room/${item.id}`} style={{ textDecoration: 'none' }} elevation={3}>
-                  {/* Slick Carousel for images */}
-                  <div className='slider-container'>
-                    <Slider {...slickSettings}>
-                      {sampleRoomImgs.sort(() => Math.random() - 0.5).map((carouselItem, index) => (
-                        <CardMedia className='img-room img' key={index} image={carouselItem.src}>
-                        </CardMedia>
-                      ))}
-                    </Slider>
-                  </div>
-
-                  {/* Apartment details */}
-                  <div>
-                    <Typography variant="h6" component="div" className='room-name'>
-                      <strong>{item.roomName}</strong>
-                    </Typography>
-                    <div className="rating">
-                      {generateStarIcons(item.rating)}
+      <Col xs="6" md="12" xl="12">
+        <div className="table-responsive">
+          {roomList && roomList.length > 0 ? (
+            <Grid container spacing={3} mb={4}>
+              {roomList.map((item) => (
+                <Grid item key={item.id} xs={12} sm={6} md={3}>
+                  <Paper className="apartment-card" component={Link} to={`/room/${item.id}`} style={{ textDecoration: 'none' }} elevation={3}>
+                    {/* Slick Carousel for images */}
+                    <div className='slider-container'>
+                      <Slider {...slickSettings}>
+                        {sampleRoomImgs.sort(() => Math.random() - 0.5).map((carouselItem, index) => (
+                          <CardMedia className='img-room img' key={index} image={carouselItem.src}>
+                          </CardMedia>
+                        ))}
+                      </Slider>
                     </div>
-                    <Typography variant="body2" color="text.secondary" className="description">
-                      {item.description}
-                    </Typography>
-                    <div className="address">
-                      <RoomIcon sx={{ color: 'pink', verticalAlign: 'middle', marginRight: '4px' }} /> {/* Icon for address */}
-                      <Typography variant="body2" color="text.secondary" style={{ display: 'inline-block' }}>
-                        {item.address}
+
+                    {/* Apartment details */}
+                    <div>
+                      <Typography variant="h6" component="div" className='room-name'>
+                        <strong>{item.roomName}</strong>
+                      </Typography>
+                      <div className="rating">
+                        {generateStarIcons(item.rating)}
+                      </div>
+                      <Typography variant="body2" color="text.secondary" className="description">
+                        {item.description}
+                      </Typography>
+                      <div className="address">
+                        <RoomIcon sx={{ color: 'pink', verticalAlign: 'middle', marginRight: '4px' }} /> {/* Icon for address */}
+                        <Typography variant="body2" color="text.secondary" style={{ display: 'inline-block' }}>
+                          {item.address}
+                        </Typography>
+                      </div>
+                      {/* Giá tiền */}
+                      <Typography style={{ marginTop: '2px' }} variant="body2" color="text.primary">
+                        <strong>{item.price} VND</strong> / ngày
                       </Typography>
                     </div>
-                    {/* Giá tiền */}
-                    <Typography style={{ marginTop: '2px' }} variant="body2" color="text.primary">
-                      <strong>{item.price} VND</strong> / ngày
-                    </Typography>
-                  </div>
-                  {/* Card actions */}
-                  {/* <CardActions>
+                    {/* Card actions */}
+                    {/* <CardActions>
                     <Button color="primary" component={Link} to={`/room/${item.id}`}>
                       View Details
                     </Button>
@@ -234,14 +241,15 @@ const Home = () => {
                       Delete
                     </Button>
                   </CardActions> */}
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        ) : (
-          !loading && <div className="alert alert-warning">No Rooms found</div>
-        )}
-      </div>
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            !loading && <div className="alert alert-warning">No Rooms found</div>
+          )}
+        </div>
+      </Col>
     </div>
   );
 };

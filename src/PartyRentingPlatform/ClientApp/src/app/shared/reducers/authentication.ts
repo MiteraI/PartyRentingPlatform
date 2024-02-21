@@ -116,13 +116,14 @@ export const AuthenticationSlice = createSlice({
         showModalLogin: true,
         loginError: true,
       }))
-      .addCase(authenticate.fulfilled, state => ({
-        ...state,
-        loading: false,
-        loginError: false,
-        showModalLogin: false,
-        loginSuccess: true,
-      }))
+      .addCase(authenticate.fulfilled, state => (
+        {
+          ...state,
+          loading: false,
+          loginError: false,
+          showModalLogin: false,
+          loginSuccess: true,
+        }))
       .addCase(getAccount.rejected, (state, action) => ({
         ...state,
         loading: false,
@@ -133,8 +134,8 @@ export const AuthenticationSlice = createSlice({
       }))
       .addCase(getAccount.fulfilled, (state, action) => {
         const isAuthenticated = action.payload && action.payload.data && action.payload.data.activated;
-        console.log("dungkhong", isAuthenticated);
-        console.log(action.payload.data);
+
+        console.log(action.payload);
 
         return {
           ...state,

@@ -22,7 +22,6 @@ export const ApplicationProfileSlice = createSlice({
   extraReducers(builder) {
     builder.addCase(getProfile.fulfilled, (state, action) => {
       const { data } = action.payload;
-      console.log("testing", data);
 
       state.ribbonEnv = data['display-ribbon-on-profiles'];
       state.inProduction = data.activeProfiles.includes('prod');

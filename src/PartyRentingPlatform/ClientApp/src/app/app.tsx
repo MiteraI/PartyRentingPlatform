@@ -23,10 +23,7 @@ const baseHref = document.querySelector('base').getAttribute('href').replace(/\/
 export const App = () => {
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    dispatch(getSession());
-    dispatch(getProfile());
-  }, []);
+
 
   const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
   const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
@@ -38,9 +35,6 @@ export const App = () => {
   const paddingLeft = '25px';
   const paddingRight = '25px';
 
-
-  console.log("nmmm",isAuthenticated,isAdmin);
-  
   return (
     <BrowserRouter basename={baseHref}>
       <div className="app-container" >
@@ -55,7 +49,7 @@ export const App = () => {
           />
         </ErrorBoundary>
         {/* <div className="container-fluid view-container" id="app-view-container"> */}
-        <div style={{ paddingLeft, paddingRight }}>
+        <div style={{ paddingTop, paddingLeft, paddingRight }}>
           <ErrorBoundary>
             <AppRoutes />
           </ErrorBoundary>
