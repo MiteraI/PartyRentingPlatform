@@ -5,7 +5,9 @@ import { useAppSelector, useAppDispatch } from 'app/config/store';
 import { Grid, Paper, Typography, CardContent, CardActions, Button, CardMedia } from '@mui/material';
 import Slider from 'react-slick';
 import { getEntities, deleteEntity } from 'app/entities/room/room.reducer';
+import { getEntities as getServiceEntities } from 'app/entities/service/service.reducer';
 import RoomIcon from '@mui/icons-material/Room';
+
 
 //Rating 
 import { Star, StarBorder } from '@mui/icons-material';
@@ -22,7 +24,7 @@ const Home = () => {
   const roomList = useAppSelector((state) => state.room.entities);
   const loading = useAppSelector((state) => state.room.loading);
   const account = useAppSelector((state) => state.authentication.account);
-
+  const serviceList = useAppSelector(state => state.service.entities);
   const [currentPage, setCurrentPage] = useState(0);
 
 

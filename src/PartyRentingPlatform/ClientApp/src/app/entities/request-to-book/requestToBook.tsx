@@ -97,8 +97,10 @@ const RequestToBook = () => {
       const entity = {
         ...bookingEntity,
         ...values,
-        room: rooms.find(it => it.id.toString() === id),
-        user: users.find(it => it.id.toString() === account.id),
+        room: rooms.find(it => it.id.toString() === id)?.id,
+        // user: users.find(it => it.id.toString() === account.id),s
+        bookingDetails: [{"serviceId": 1, "serviceQuantity": 5}, {"serviceId": 2, "serviceQuantity": 12}],
+        
       };
 
 
@@ -134,6 +136,7 @@ const RequestToBook = () => {
         endTime: convertDateTimeFromServer(bookingEntity.endTime),
         room: bookingEntity?.room?.id,
         user: bookingEntity?.user?.id,
+
       };
 
 
