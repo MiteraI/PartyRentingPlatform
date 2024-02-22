@@ -8,7 +8,7 @@ namespace PartyRentingPlatform.Domain.Entities
     [Table("room_image")]
     public class RoomImage : BaseEntity<long?>
     {
-        public string? ImageUrl { get; set; }
+        public string ImageUrl { get; set; }
         public long? RoomId { get; set; }
         public Room Room { get; set; }
 

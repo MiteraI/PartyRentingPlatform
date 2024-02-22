@@ -19,7 +19,7 @@ namespace PartyRentingPlatform.Domain.Entities
         public long? Price { get; set; }
         [Required]
         public int? RoomCapacity { get; set; }
-        public int? Rating { get; set; }
+        public double? Rating { get; set; }
         public RoomStatus Status { get; set; }
         public IList<RoomImage> ImageURLs { get; set; } = new List<RoomImage>();
         [Required]
