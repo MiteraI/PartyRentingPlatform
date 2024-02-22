@@ -6,17 +6,27 @@ import { MenuItem as BaseMenuItem, menuItemClasses } from '@mui/base/MenuItem';
 import { styled } from '@mui/system';
 import PersonIcon from '@mui/icons-material/Person';
 import { useDispatch } from 'react-redux';
-import { useAppDispatch } from 'app/config/store';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { logout } from 'app/shared/reducers/authentication';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { AUTHORITIES, ROLES } from 'app/config/constants';
+import { useNavigate } from 'react-router';
+import { Storage } from 'react-jhipster';
 export default function AuthenticateIcon() {
 
-
   const dispatch = useAppDispatch();
-
+  const navigate = useNavigate()
+  const roles = Storage.local.get("roles");
+  const isHostParyRole = roles?.includes(AUTHORITIES.HOST);
   const handelLogOut = () => {
     dispatch(logout());
     window.location.href = "/"
   }
+
+  const handleNavigateToDashboard = () => {
+    navigate("hostparty/request-customer");
+  }
+
 
   return (
     <Dropdown>
@@ -24,10 +34,13 @@ export default function AuthenticateIcon() {
         <PersonIcon color='warning' />
       </MenuButton>
       <Menu style={{ position: "relative", zIndex: 10 }} slots={{ listbox: Listbox }}>
-        <MenuItem >Profile</MenuItem>
-        <MenuItem >
-          Language settings
+        <MenuItem>Profile</MenuItem>
+        <MenuItem>
+          Password
         </MenuItem>
+
+        {/* if host party == dashboard of host party */}
+        {isHostParyRole && <MenuItem onClick={handleNavigateToDashboard}>Dashboard</MenuItem>}
         <MenuItem onClick={handelLogOut}>Log out</MenuItem>
       </Menu>
     </Dropdown>

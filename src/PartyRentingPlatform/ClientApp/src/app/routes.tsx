@@ -26,6 +26,12 @@ const Admin = Loadable({
   loader: () => import(/* webpackChunkName: "administration" */ 'app/modules/administration'),
   loading: () => loading,
 });
+
+
+const HostParty = Loadable({
+  loader: () => import( /* webpackChunkName: "hostparty" */'app/modules/hostparty'),
+  loading: () => loading
+})
 const AppRoutes = () => {
   return (
     <div className="view-routes">
@@ -48,6 +54,16 @@ const AppRoutes = () => {
             <Route path="request" element={<PasswordResetInit />} />
             <Route path="finish" element={<PasswordResetFinish />} />
           </Route>
+        </Route>
+        <Route
+          path='hostparty'
+          element={
+            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST, AUTHORITIES.USER]}>
+              <HostParty />
+            </PrivateRoute>
+          }
+        >
+
         </Route>
         <Route
           path="admin/*"

@@ -4,6 +4,13 @@ export const AUTHORITIES = {
   HOST: 'ROLE_HOST'
 };
 
+
+export interface ROLES {
+  ADMIN: 'ROLE_ADMIN',
+  USER: 'ROLE_USER',
+  HOST: 'ROLE_HOST'
+}
+
 export const messages = {
   DATA_ERROR_ALERT: 'Internal Error',
 };

@@ -69,6 +69,8 @@ export const clearAuthToken = () => {
   if (Storage.session.get(AUTH_TOKEN_KEY)) {
     Storage.session.remove(AUTH_TOKEN_KEY);
   }
+
+  Storage.local.remove("user");
 };
 
 export const logout: () => AppThunk = () => dispatch => {
@@ -134,8 +136,10 @@ export const AuthenticationSlice = createSlice({
       }))
       .addCase(getAccount.fulfilled, (state, action) => {
         const isAuthenticated = action.payload && action.payload.data && action.payload.data.activated;
-
-        console.log(action.payload);
+        const { login, authorities } = action.payload.data
+        
+        Storage.local.set("user", login);
+        Storage.local.set("roles", authorities);
 
         return {
           ...state,

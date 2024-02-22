@@ -16,6 +16,9 @@ export const PrivateRoute = ({ children, hasAnyAuthorities = [], ...rest }: IOwn
   const isAuthorized = hasAnyAuthority(account.authorities, hasAnyAuthorities);
   const pageLocation = useLocation();
 
+  console.log(isAuthorized);
+
+
   if (!children) {
     throw new Error(`A component needs to be specified for private route for path ${(rest as any).path}`);
   }

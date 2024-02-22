@@ -37,7 +37,7 @@ const Home = () => {
 
   // Fetch room entities on component mount
   useEffect(() => {
-    dispatch(getEntities({ page: currentPage, size: 4, sort: 'id,asc' }));
+    dispatch(getEntities({ page: currentPage, size: 100, sort: 'id,asc' }));
   }, [dispatch]);
 
   // Define your carousel items
@@ -173,9 +173,9 @@ const Home = () => {
       </Row>
 
 
-      <Row className="mt-4">
-        {/* Add more destinations as needed */}
-        {/* <Col md="12">
+      {/* <Row className="mt-4"> */}
+      {/* Add more destinations as needed */}
+      {/* <Col md="12">
           <p className="mb-4">Bạn muốn buổi tiệc được tổ chức ở:</p>
           <ul className="destination-list">
             <li>
@@ -189,48 +189,50 @@ const Home = () => {
             </li>
           </ul>
         </Col> */}
-      </Row>
-      <Col xs="6" md="12" xl="12">
-        <div className="table-responsive">
-          {roomList && roomList.length > 0 ? (
-            <Grid container spacing={3} mb={4}>
-              {roomList.map((item) => (
-                <Grid item key={item.id} xs={12} sm={6} md={3}>
-                  <Paper className="apartment-card" component={Link} to={`/room/${item.id}`} style={{ textDecoration: 'none' }} elevation={3}>
-                    {/* Slick Carousel for images */}
-                    <div className='slider-container'>
-                      <Slider {...slickSettings}>
-                        {sampleRoomImgs.sort(() => Math.random() - 0.5).map((carouselItem, index) => (
-                          <CardMedia className='img-room img' key={index} image={carouselItem.src}>
-                          </CardMedia>
-                        ))}
-                      </Slider>
-                    </div>
+      {/* </Row> */}
 
-                    {/* Apartment details */}
-                    <div>
-                      <Typography variant="h6" component="div" className='room-name'>
-                        <strong>{item.roomName}</strong>
-                      </Typography>
-                      <div className="rating">
-                        {generateStarIcons(item.rating)}
+      <Row className='mt-4'>
+        <Col>
+          <div>
+            {roomList && roomList.length > 0 ? (
+              <Grid container spacing={3} mb={4} wrap='wrap'>
+                {roomList.map((item) => (
+                  <Grid item key={item.id} xs={12} sm={6} md={4} xl={3}>
+                    <Paper className="apartment-card" component={Link} to={`/room/${item.id}`} style={{ textDecoration: 'none' }} elevation={3}>
+                      {/* Slick Carousel for images */}
+                      <div className='slider-container'>
+                        <Slider {...slickSettings}>
+                          {sampleRoomImgs.sort(() => Math.random() - 0.5).map((carouselItem, index) => (
+                            <CardMedia className='img-room img' key={index} image={carouselItem.src}>
+                            </CardMedia>
+                          ))}
+                        </Slider>
                       </div>
-                      <Typography variant="body2" color="text.secondary" className="description">
-                        {item.description}
-                      </Typography>
-                      <div className="address">
-                        <RoomIcon sx={{ color: 'pink', verticalAlign: 'middle', marginRight: '4px' }} /> {/* Icon for address */}
-                        <Typography variant="body2" color="text.secondary" style={{ display: 'inline-block' }}>
-                          {item.address}
+
+                      {/* Apartment details */}
+                      <div>
+                        <Typography variant="h6" component="div" className='room-name'>
+                          <strong>{item.roomName}</strong>
+                        </Typography>
+                        <div className="rating">
+                          {generateStarIcons(item.rating)}
+                        </div>
+                        <Typography variant="body2" color="text.secondary" className="description">
+                          {item.description}
+                        </Typography>
+                        <div className="address">
+                          <RoomIcon sx={{ color: 'pink', verticalAlign: 'middle', marginRight: '4px' }} /> {/* Icon for address */}
+                          <Typography variant="body2" color="text.secondary" style={{ display: 'inline-block' }}>
+                            {item.address}
+                          </Typography>
+                        </div>
+                        {/* Giá tiền */}
+                        <Typography style={{ marginTop: '2px' }} variant="body2" color="text.primary">
+                          <strong>{item.price} VND</strong> / ngày
                         </Typography>
                       </div>
-                      {/* Giá tiền */}
-                      <Typography style={{ marginTop: '2px' }} variant="body2" color="text.primary">
-                        <strong>{item.price} VND</strong> / ngày
-                      </Typography>
-                    </div>
-                    {/* Card actions */}
-                    {/* <CardActions>
+                      {/* Card actions */}
+                      {/* <CardActions>
                     <Button color="primary" component={Link} to={`/room/${item.id}`}>
                       View Details
                     </Button>
@@ -241,15 +243,16 @@ const Home = () => {
                       Delete
                     </Button>
                   </CardActions> */}
-                  </Paper>
-                </Grid>
-              ))}
-            </Grid>
-          ) : (
-            !loading && <div className="alert alert-warning">No Rooms found</div>
-          )}
-        </div>
-      </Col>
+                    </Paper>
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              !loading && <div className="alert alert-warning">No Rooms found</div>
+            )}
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 };

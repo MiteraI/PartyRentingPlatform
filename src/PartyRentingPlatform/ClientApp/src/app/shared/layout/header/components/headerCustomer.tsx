@@ -15,6 +15,7 @@ import { NavLink } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PersonIcon from '@mui/icons-material/Person';
 import AuthenticateIcon from "./AuthenticateIcon";
+import { Storage } from "react-jhipster";
 
 interface HeaderCustomerProps {
     isAuthenticated: boolean
@@ -83,7 +84,7 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
                         </IconButton>
 
 
-                        {isAuthenticated ?
+                        {Storage.local.get("user") ?
                             <AuthenticateIcon />
                             :
                             <IconButton
