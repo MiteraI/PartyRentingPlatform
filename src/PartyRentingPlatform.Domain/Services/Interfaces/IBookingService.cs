@@ -15,8 +15,10 @@ namespace PartyRentingPlatform.Domain.Services.Interfaces
 
         Task Delete(long? id);
 
-        Task<IPage<Booking>> FindAllByUserId(string userId, IPageable pageable);
+        Task<IPage<Booking>> FindAllForCustomer(string userId, IPageable pageable);
 
         Task<Booking> FindOneForCustomer(long? id);
+
+        Task<IPage<Booking>> FindAllForHost(string userId, IPageable pageable);
     }
 }

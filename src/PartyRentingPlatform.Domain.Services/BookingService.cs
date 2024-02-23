@@ -50,7 +50,8 @@ public class BookingService : IBookingService
         await _bookingRepository.SaveChangesAsync();
     }
 
-    public virtual async Task<IPage<Booking>> FindAllByUserId(string userId, IPageable pageable)
+    // Find all of one customer's bookings
+    public virtual async Task<IPage<Booking>> FindAllForCustomer(string userId, IPageable pageable)
     {
         var page = await _bookingRepository.QueryHelper()
             .Include(booking => booking.Room)
@@ -76,4 +77,16 @@ public class BookingService : IBookingService
 
         return result;
     }
+
+    // Find all bookings that belong to a host from combining all of the host's rooms's bookings
+    public virtual async Task<IPage<Booking>> FindAllForHost(string userId, IPageable pageable)
+    {
+        var page = await _bookingRepository.QueryHelper()
+            .Include(booking => booking.Room)
+            .Include(booking => booking.User)
+            .Filter(booking => booking.Room.UserId == userId)
+            .GetPageAsync(pageable);
+        return page;
+    }
+
 }
