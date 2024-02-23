@@ -111,6 +111,32 @@ namespace PartyRentingPlatform.Controllers
         // -----------------------------------------------------------------------------------------------
         // Customer related/ Custom code
         [Authorize(Roles = RolesConstants.USER)]
+        [HttpGet("customer")]
+        public async Task<ActionResult<IEnumerable<BookingDto>>> GetAllCustomerBookings(IPageable pageable)
+        {
+            _log.LogDebug("REST request to get a page of Customer Bookings");
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            var result = await _bookingService.FindAllByUserId(userIdClaim.Value, pageable);
+            var page = new Page<BookingDto>(result.Content.Select(entity => _mapper.Map<BookingDto>(entity)).ToList(), pageable, result.TotalElements);
+            return Ok(((IPage<BookingDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
+        }
+
+        // Get details of a booking of customer
+        [Authorize(Roles = RolesConstants.USER)]
+        [HttpGet("customer/{id}")]
+        public async Task<IActionResult> GetCustomerBooking(long? id)
+        {
+            _log.LogDebug($"REST request to get Customer Booking : {id}");
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            var result = await _bookingService.FindOneForCustomer(id);
+            if (result == null) return BadRequest("Booking not found");
+            if (result.UserId != userIdClaim.Value) return BadRequest("Booking does not belong to user");
+            //Has booking details with service inside
+            BookingCustomerDto bookingDto = _mapper.Map<BookingCustomerDto>(result);
+            return ActionResultUtil.WrapOrNotFound(bookingDto);
+        }
+
+        [Authorize(Roles = RolesConstants.USER)]
         [HttpPost("customer")]
         public async Task<ActionResult<BookingDto>> CreateCustomerBooking([FromBody] BookingCustomerDto bookingDto)
         {
@@ -141,12 +167,15 @@ namespace PartyRentingPlatform.Controllers
 
             //Get room from room id to do TotalPrice = RoomPrice * booking time in hours + ServicePrice
             Room bookedRoom = await _roomService.FindOne(booking.RoomId);
+            if (bookedRoom == null) return BadRequest("Room not found");
+            if (bookedRoom.Status != RoomStatus.VALID) return BadRequest("Room is not available");
 
             //Calculate service price
             long servicePrice = 0;
             foreach (var bookingDetail in booking.BookingDetails)
             {
                 Service service = await _serviceService.FindOne(bookingDetail.ServiceId);
+                if (service == null) return BadRequest("Service not found");
                 servicePrice += service.Price * bookingDetail.ServiceQuantity;
             }
 
@@ -161,12 +190,15 @@ namespace PartyRentingPlatform.Controllers
 
         [Authorize(Roles = RolesConstants.USER)]
         [HttpPut("{id}/cancel")]
-        public async Task<IActionResult> CancelBooking(long? id)
+        public async Task<IActionResult> CancelBooking([FromRoute] long? id)
         {
             _log.LogDebug($"REST request to cancel Booking : {id}");
             var booking = await _bookingService.FindOne(id);
 
             if (booking == null) return BadRequest("Booking not found");
+
+            //Check if there is CustomerName
+            if (string.IsNullOrEmpty(booking.CustomerName)) return BadRequest("Booking does not have customer name");
 
             //Check if booking belong to user
             var userIdClaim = User.FindFirst(ClaimTypes.Name);
@@ -181,7 +213,7 @@ namespace PartyRentingPlatform.Controllers
 
         [Authorize(Roles = RolesConstants.USER)]
         [HttpPut("{id}/confirm")]
-        public async Task<IActionResult> ConfirmBookingPayment(long? id)
+        public async Task<IActionResult> ConfirmBookingPayment([FromRoute] long? id)
         {
             _log.LogDebug($"REST request to confirm Booking : {id}");
             var booking = await _bookingService.FindOne(id);
@@ -204,7 +236,7 @@ namespace PartyRentingPlatform.Controllers
 
         [Authorize(Roles = RolesConstants.USER)]
         [HttpPut("{id}/rate")]
-        public async Task<IActionResult> RateBooking(long? id, [FromBody] BookingRatingDto bookingRatingDto)
+        public async Task<IActionResult> RateBooking([FromRoute] long? id, [FromBody] BookingRatingDto bookingRatingDto)
         {
             _log.LogDebug($"REST request to rate Booking : {id}");
             var booking = await _bookingService.FindOne(id);
@@ -228,7 +260,7 @@ namespace PartyRentingPlatform.Controllers
         // Host related/ Custom code
         [Authorize(Roles = RolesConstants.HOST)]
         [HttpPut("{id}/accept")]
-        public async Task<IActionResult> AcceptBooking(long? id)
+        public async Task<IActionResult> AcceptBooking([FromRoute] long? id)
         {
             _log.LogDebug($"REST request to accept Booking : {id}");
             var booking = await _bookingService.FindOne(id);
@@ -242,6 +274,27 @@ namespace PartyRentingPlatform.Controllers
 
             if (booking.Status != BookingStatus.APPROVING) return BadRequest("Booking cannot be accepted");
             booking.Status = BookingStatus.ACCEPTED;
+            await _bookingService.Save(booking);
+            return Ok(booking)
+                .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
+        }
+
+        [Authorize(Roles = RolesConstants.HOST)]
+        [HttpPut("{id}/reject")]
+        public async Task<IActionResult> RejectBooking([FromRoute] long? id)
+        {
+            _log.LogDebug($"REST request to reject Booking : {id}");
+            var booking = await _bookingService.FindOne(id);
+
+            if (booking == null) return BadRequest("Booking not found");
+
+            // Check if booking has room belong to user
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            Room room = await _roomService.FindOne(booking.RoomId);
+            if (room.UserId != userIdClaim.Value) return BadRequest("Room does not belong to user");
+
+            if (booking.Status != BookingStatus.APPROVING) return BadRequest("Booking cannot be rejected");
+            booking.Status = BookingStatus.REJECTED;
             await _bookingService.Save(booking);
             return Ok(booking)
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));

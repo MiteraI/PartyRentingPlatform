@@ -21,8 +21,8 @@ namespace PartyRentingPlatform.Dto.Room
         public int RoomCapacity { get; set; }
         public double? Rating { get; set; }
         public string? UserId { get; set; }
-        public RoomStatus? roomStatus { get; set; }
-        public List<IFormFile>? formFiles { get; set; }
+        public RoomStatus? Status { get; set; }
+        public List<IFormFile>? FormFiles { get; set; }
         public List<RoomImageDto> ImageURLs { get; set; } = new List<RoomImageDto>();
         public List<RoomServiceHostDto> Services { get; set; } = new List<RoomServiceHostDto>();
         public List<RoomPromoDto> Promotions { get; set; } = new List<RoomPromoDto>();
