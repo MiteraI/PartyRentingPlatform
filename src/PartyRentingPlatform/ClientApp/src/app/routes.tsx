@@ -14,6 +14,9 @@ import PrivateRoute from 'app/shared/auth/private-route';
 import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
 import PageNotFound from 'app/shared/error/page-not-found';
 import { AUTHORITIES } from 'app/config/constants';
+import Room from './modules/room/room';
+import TabsForHost from './entities/room/components/TabsForHost';
+
 
 const loading = <div>loading ...</div>;
 
@@ -29,7 +32,7 @@ const Admin = Loadable({
 
 
 const HostParty = Loadable({
-  loader: () => import( /* webpackChunkName: "hostparty" */'app/modules/hostparty'),
+  loader: () => import( /* webpackChunkName: "hostparty" */ 'app/modules/hostparty'),
   loading: () => loading
 })
 const AppRoutes = () => {
@@ -39,6 +42,8 @@ const AppRoutes = () => {
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="logout" element={<Logout />} />
+
+        // account route
         <Route path="account">
           <Route
             path="*"
@@ -55,16 +60,18 @@ const AppRoutes = () => {
             <Route path="finish" element={<PasswordResetFinish />} />
           </Route>
         </Route>
+
+            // host party route
         <Route
-          path='hostparty'
+          path='hostparty/*'
           element={
-            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST, AUTHORITIES.USER]}>
+            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST]}>
               <HostParty />
             </PrivateRoute>
           }
-        >
+        />
 
-        </Route>
+        //admin route
         <Route
           path="admin/*"
           element={
@@ -73,6 +80,8 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
+
+
         <Route
           path="*"
           element={
@@ -81,6 +90,7 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
+
         <Route path="*" element={<PageNotFound />} />
       </ErrorBoundaryRoutes>
     </div>

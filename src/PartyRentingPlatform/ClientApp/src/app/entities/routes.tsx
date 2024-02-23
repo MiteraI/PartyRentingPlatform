@@ -3,7 +3,6 @@ import { Route } from 'react-router-dom';
 
 import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
 
-import Room from './room';
 import RoomImage from './room-image';
 import Service from './service';
 import Promotion from './promotion';
@@ -12,6 +11,7 @@ import BookingDetails from './booking-details';
 import Report from './report';
 import Notification from './notification';
 import RequestToBook from './request-to-book/requestToBook';import BookingTracking from './booking-tracking/booking-tracking';
+import Room from './room/room';
 ; // Import component
 
 /* jhipster-needle-add-route-import - JHipster will add routes here */

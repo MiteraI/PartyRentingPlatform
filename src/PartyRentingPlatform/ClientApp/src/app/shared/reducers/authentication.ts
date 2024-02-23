@@ -51,11 +51,15 @@ export const login: (username: string, password: string, rememberMe?: boolean) =
       const result = await dispatch(authenticate({ username, password, rememberMe }));
       const response = result.payload as AxiosResponse;
       const bearerToken = response?.headers?.authorization;
+      console.log("response", response);
+
       if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
+        console.log("hahahahahaah");
         const jwt = bearerToken.slice(7, bearerToken.length);
         if (rememberMe) {
           Storage.local.set(AUTH_TOKEN_KEY, jwt);
         } else {
+
           Storage.session.set(AUTH_TOKEN_KEY, jwt);
         }
       }
@@ -71,6 +75,8 @@ export const clearAuthToken = () => {
   }
 
   Storage.local.remove("user");
+  Storage.local.remove("roles");
+  Storage.local.remove("sessionHasBeanFetched");
 };
 
 export const logout: () => AppThunk = () => dispatch => {
@@ -137,15 +143,15 @@ export const AuthenticationSlice = createSlice({
       .addCase(getAccount.fulfilled, (state, action) => {
         const isAuthenticated = action.payload && action.payload.data && action.payload.data.activated;
         const { login, authorities } = action.payload.data
-        
+
         Storage.local.set("user", login);
         Storage.local.set("roles", authorities);
+        Storage.local.set("sessionHasBeanFetched", true);
 
         return {
           ...state,
           isAuthenticated,
           loading: false,
-          sessionHasBeenFetched: true,
           account: action.payload.data,
         };
       })

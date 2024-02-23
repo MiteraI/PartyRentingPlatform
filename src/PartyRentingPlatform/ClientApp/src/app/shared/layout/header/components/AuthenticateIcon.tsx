@@ -24,7 +24,7 @@ export default function AuthenticateIcon() {
   }
 
   const handleNavigateToDashboard = () => {
-    navigate("hostparty/request-customer");
+    navigate("hostparty/");
   }
 
 

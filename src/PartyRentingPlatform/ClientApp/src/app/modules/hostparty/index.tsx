@@ -1,13 +1,15 @@
+import TabsForHost from "app/entities/room/components/TabsForHost"
 import ErrorBoundary from "app/shared/error/error-boundary"
 import ErrorBoundaryRoutes from "app/shared/error/error-boundary-routes"
 import React from 'react'
-import { Route } from "react-router"
+import { Route } from "react-router-dom"
 
 const HostPartyRoutes = () => (
     <div>
         <ErrorBoundaryRoutes>
-            <Route path="request-customer" element={<></>} />
-            <Route path="room" element={<></>} />
+            <Route index element={<TabsForHost />} />
+            {/* <Route path="request-customer" element={<TabsForHost />} />
+            <Route path="room" element={<TabsForHost />} /> */}
         </ErrorBoundaryRoutes>
     </div>
 )
