@@ -62,7 +62,7 @@ namespace PartyRentingPlatform.Controllers
 
         [Authorize(Roles = RolesConstants.ADMIN)]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRoom(long? id, [FromBody] RoomDto roomDto)
+        public async Task<IActionResult> UpdateRoom(long? id, [FromBody] RoomHostDto roomDto)
         {
             _log.LogDebug($"REST request to update Room : {roomDto}");
             if (roomDto.Id == 0) throw new BadRequestAlertException("Invalid Id", EntityName, "idnull");
@@ -73,6 +73,7 @@ namespace PartyRentingPlatform.Controllers
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, room.Id.ToString()));
         }
 
+        [Authorize(Roles = RolesConstants.ADMIN)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RoomDto>>> GetAllRooms(IPageable pageable)
         {
@@ -82,6 +83,7 @@ namespace PartyRentingPlatform.Controllers
             return Ok(((IPage<RoomDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
         }
 
+        [Authorize(Roles = RolesConstants.ADMIN)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRoom([FromRoute] long? id)
         {
@@ -101,7 +103,47 @@ namespace PartyRentingPlatform.Controllers
         }
 
         // -------------------------------------------------
+        // Customer methods
+
+        // Get all valid rooms with image URLs because customers should only see valid rooms
+        [HttpGet("customer")]
+        public async Task<ActionResult<IEnumerable<RoomHostDto>>> GetAllValidRoomsWithImageUrls(IPageable pageable)
+        {
+            _log.LogDebug("REST request to get a page of Rooms with image URLs");
+            var result = await _roomService.FindAllValidWithImageUrls(pageable);
+            var page = new Page<RoomHostDto>(result.Content.Select(entity => _mapper.Map<RoomHostDto>(entity)).ToList(), pageable, result.TotalElements);
+            return Ok(((IPage<RoomHostDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
+        }
+
+        // Both host and customer can see the details of a room
+        [HttpGet("details/{id}")]
+        public async Task<IActionResult> GetRoomWithFullDetails([FromRoute] long? id)
+        {
+            _log.LogDebug($"REST request to get Room with full details : {id}");
+            var result = await _roomService.FindOneWithFullDetails(id);
+            RoomHostDto roomHostDto = _mapper.Map<RoomHostDto>(result);
+
+            // If the user is not the host/ not authenticated and the room is not valid, they are not allowed to see the room
+            if (User.Identity.IsAuthenticated == false) return BadRequest("You are not allowed to see this room");
+            if (roomHostDto.UserId != User.FindFirst(ClaimTypes.Name).Value && roomHostDto.Status != RoomStatus.VALID)
+                return BadRequest("You are not allowed to see this room");
+
+            return ActionResultUtil.WrapOrNotFound(roomHostDto);
+        }
+
+        // -------------------------------------------------
         // Host methods
+        [Authorize(Roles = RolesConstants.HOST)]
+        [HttpGet("host")]
+        public async Task<ActionResult<IEnumerable<RoomHostDto>>> GetAllRoomsByHostId(IPageable pageable)
+        {
+            _log.LogDebug("REST request to get a page of Rooms by host id");
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            var result = await _roomService.FindAllByHostId(userIdClaim.Value, pageable);
+            var page = new Page<RoomHostDto>(result.Content.Select(entity => _mapper.Map<RoomHostDto>(entity)).ToList(), pageable, result.TotalElements);
+            return Ok(((IPage<RoomHostDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
+        }
+
         [Authorize(Roles = RolesConstants.HOST)]
         [HttpPost("host")]
         public async Task<ActionResult<RoomHostDto>> CreateRoomHost([FromForm] RoomHostDto roomHostDto)
@@ -116,8 +158,10 @@ namespace PartyRentingPlatform.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.Name);
             room.UserId = userIdClaim.Value;
 
+            room.Status = RoomStatus.VALID;
+
             // Use AzureBlobService to upload images and assign the URLs to the room
-            var imageURLs = await _azureBlobService.UploadRoomImages(roomHostDto.formFiles);
+            var imageURLs = await _azureBlobService.UploadRoomImages(roomHostDto.FormFiles);
             room.ImageURLs = imageURLs.Select(url => new RoomImage { ImageUrl = url }).ToList();
 
             // It will automatically generate new services and promotions
