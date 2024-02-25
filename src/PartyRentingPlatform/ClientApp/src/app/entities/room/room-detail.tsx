@@ -83,8 +83,17 @@ export const RoomDetail = () => {
   const navigate = useNavigate();
 
   const handleBookClick = () => {
-    navigate(`/request-to-book/${roomEntity.id}`);
+    const selectedServicesArray = Object.keys(quantityMap).map(serviceId => ({
+      id: serviceId,
+      quantity: quantityMap[serviceId],
+    }));
+  
+    const queryString = `startDate=${startDate}&endDate=${endDate}&selectedService=${JSON.stringify(selectedServicesArray)}`;
+  
+    navigate(`/request-to-book/${roomEntity.id}?${queryString}`);
   };
+  
+
 
   const openModal = (service) => {
     setSelectedService(service);
@@ -102,6 +111,8 @@ export const RoomDetail = () => {
       [serviceId]: (prevMap[serviceId] || 0) + 1,
     }));
   };
+
+  console.log(startDate, endDate, selectedService);
 
   // Function to decrement quantity for a specific service
   const handleDecrementQuantity = (serviceId: string) => {
