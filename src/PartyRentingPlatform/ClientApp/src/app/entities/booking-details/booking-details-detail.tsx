@@ -18,6 +18,8 @@ export const BookingDetailsDetail = () => {
   }, []);
 
   const bookingDetailsEntity = useAppSelector(state => state.bookingDetails.entity);
+
+  console.log(bookingDetailsEntity);
   return (
     <Row>
       <Col md="8">

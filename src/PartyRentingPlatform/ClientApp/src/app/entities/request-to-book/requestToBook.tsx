@@ -12,8 +12,8 @@ import { getEntities as getRooms } from 'app/entities/room/room.reducer';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { IBooking } from 'app/shared/model/booking.model';
 import { BookingStatus } from 'app/shared/model/enumerations/booking-status.model';
-import { getEntity, updateEntity, createEntity, reset } from '../booking/booking.reducer';
-import { Avatar, CardMedia, Divider, Grid, Typography } from '@mui/material';
+import { getEntity, updateEntity, createEntityByCustomer, reset } from '../booking/booking.reducer';
+import { Avatar, CardMedia, Container, Divider, Grid, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { AxiosResponse } from 'axios';
 import './requestToBook.scss';
@@ -97,18 +97,18 @@ const RequestToBook = () => {
       const entity = {
         ...bookingEntity,
         ...values,
-        room: rooms.find(it => it.id.toString() === id)?.id,
+        roomId: rooms.find(it => it.id.toString() === id)?.id,
         // user: users.find(it => it.id.toString() === account.id),s
-        bookingDetails: [{"serviceId": 1, "serviceQuantity": 5}, {"serviceId": 2, "serviceQuantity": 12}],
-        
+        bookingDetails: [{ "serviceId": 1, "serviceQuantity": 5 }, { "serviceId": 2, "serviceQuantity": 12 }],
+
       };
 
 
 
-      // Dispatch the createEntity action
-      const createEntityAction = await dispatch(createEntity(entity));
-      // type CreateEntityAction = PayloadAction<AxiosResponse<IBooking>, string, { arg: string | number; requestId: string; requestStatus: "fulfilled" }, never>;
-      const newBookingId = (createEntityAction.payload as AxiosResponse<IBooking>)?.data?.id || null;
+      // Dispatch the createEntityByCustomer action
+      const createEntityByCustomerAction = await dispatch(createEntityByCustomer(entity));
+      // type createEntityByCustomerAction = PayloadAction<AxiosResponse<IBooking>, string, { arg: string | number; requestId: string; requestStatus: "fulfilled" }, never>;
+      const newBookingId = (createEntityByCustomerAction.payload as AxiosResponse<IBooking>)?.data?.id || null;
       console.log(newBookingId);
       // Set the createdBookingId state
       setCreatedBookingId(newBookingId);
@@ -184,7 +184,7 @@ const RequestToBook = () => {
                   <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
                     {!isNew ? <ValidatedField name="id" required readOnly id="booking-id" label="ID" validate={{ required: true }} /> : null}
                     <ValidatedField label="Customer Name" id="booking-customerName" name="customerName" data-cy="customerName" type="text" />
-                    <ValidatedField
+                    {/* <ValidatedField
                       label="Book Time"
                       id="booking-bookTime"
                       name="bookTime"
@@ -194,7 +194,7 @@ const RequestToBook = () => {
                       validate={{
                         required: { value: true, message: 'This field is required.' },
                       }}
-                    />
+                    /> */}
                     <ValidatedField
                       label="Start Time"
                       id="booking-startTime"
@@ -253,71 +253,73 @@ const RequestToBook = () => {
           </Grid>
 
           <Grid item xs={12} md={5}>
-            <div className="booking-info" style={{ boxShadow: 'rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px', padding: '24px', borderRadius: '10px' }}>
+            <Container style={{ position: 'sticky', top: '150px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px', padding: '24px', borderRadius: '10px' }}>
+              <div className="booking-info" >
+                <div className="room-detail-content">
+                  <Row style={{ paddingBottom: '20px' }}>
+                    <Col md="4" style={{ paddingLeft: '15px' }}>
+                      <CardMedia className='img-room' image={parallaxImages[0]} />
+                    </Col>
 
-              <div className="room-detail-content">
-                <Row style={{ paddingBottom: '20px' }}>
-                  <Col md="4" style={{ paddingLeft: '15px' }}>
-                    <CardMedia className='img-room' image={parallaxImages[0]} />
-                  </Col>
+                    <Col md="6">
+                      <div className="booking-info">
+                        <Typography style={{ height: '60px' }} variant="subtitle1"><strong>{roomEntity.roomName}</strong></Typography>
+                        <Typography variant="subtitle2">{roomEntity.address}</Typography>
+                        <div style={{ display: 'flex', alignItems: 'left' }}>
+                          <StarIcon style={{ height: '20px', color: 'gold' }} />
+                          <Typography variant="subtitle2" style={{ marginLeft: '2px' }}><strong>{roomEntity.rating || 0}</strong></Typography>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                </div>
+
+
+                <Divider style={{ marginBottom: '20px', backgroundColor: '#000', opacity: 0.18 }} />
+
+
+                <Row>
+                  <h4>Price details</h4>
 
                   <Col md="6">
-                    <div className="booking-info">
-                      <Typography style={{ height: '60px' }} variant="subtitle1"><strong>{roomEntity.roomName}</strong></Typography>
-                      <Typography variant="subtitle2">{roomEntity.address}</Typography>
-                      <div style={{ display: 'flex', alignItems: 'left' }}>
-                        <StarIcon style={{ height: '20px', color: 'gold' }} />
-                        <Typography variant="subtitle2" style={{ marginLeft: '2px' }}><strong>{roomEntity.rating || 0}</strong></Typography>
-                      </div>
+                    <div className="room-detail-header">
+                      <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x 2 ngày"}</Typography>
+                    </div>
+                    <div className="room-detail-header">
+                      <Typography variant="subtitle2">Phí dịch vụ</Typography>
+                    </div>
+                  </Col>
+
+                  <Col md="4" style={{ marginLeft: 'auto' }}>
+                    <div className="room-detail-header">
+                      <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * 2}</Typography>
+                    </div>
+                    <div className="room-detail-header">
+                      <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + 100.000}</Typography>
                     </div>
                   </Col>
                 </Row>
+
+                <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
+                <Row>
+
+                  <Col md="6">
+                    <div className="room-detail-header">
+                      <Typography variant="subtitle1"><strong>Total (VNĐ)</strong></Typography>
+                    </div>
+                  </Col>
+
+                  <Col md="4" style={{ marginLeft: 'auto' }}>
+                    <div className="room-detail-header">
+                      <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + roomEntity.price * 2}</strong></Typography>
+                    </div>
+                  </Col>
+                </Row>
+
               </div>
-
-
-              <Divider style={{ marginBottom: '20px', backgroundColor: '#000', opacity: 0.18 }} />
-
-
-              <Row>
-                <h4>Price details</h4>
-
-                <Col md="6">
-                  <div className="room-detail-header">
-                    <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x 2 ngày"}</Typography>
-                  </div>
-                  <div className="room-detail-header">
-                    <Typography variant="subtitle2">Phí dịch vụ</Typography>
-                  </div>
-                </Col>
-
-                <Col md="4" style={{ marginLeft: 'auto' }}>
-                  <div className="room-detail-header">
-                    <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * 2}</Typography>
-                  </div>
-                  <div className="room-detail-header">
-                    <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + 100.000}</Typography>
-                  </div>
-                </Col>
-              </Row>
-
-              <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
-              <Row>
-
-                <Col md="6">
-                  <div className="room-detail-header">
-                    <Typography variant="subtitle1"><strong>Total (VNĐ)</strong></Typography>
-                  </div>
-                </Col>
-
-                <Col md="4" style={{ marginLeft: 'auto' }}>
-                  <div className="room-detail-header">
-                    <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + roomEntity.price * 2}</strong></Typography>
-                  </div>
-                </Col>
-              </Row>
-
-            </div>
+            </Container>
           </Grid>
+
         </Grid>
 
       </StyledRoomDetail>

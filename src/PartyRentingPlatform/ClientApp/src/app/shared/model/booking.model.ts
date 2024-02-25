@@ -15,6 +15,7 @@ export interface IBooking {
   rating?: number | null;
   comment?: string | null;
   room?: IRoom | null;
+  roomId?: number | null;
   bookingDetails?: IBookingDetails[] | null;
   user?: IUser;
 }

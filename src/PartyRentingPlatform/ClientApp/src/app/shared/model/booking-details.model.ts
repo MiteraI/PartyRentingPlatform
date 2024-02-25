@@ -5,6 +5,7 @@ export interface IBookingDetails {
   id?: number;
   serviceQuantity?: number | null;
   service?: IService;
+  serviceId?: number | null;
   booking?: IBooking | null;
 }
 
