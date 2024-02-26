@@ -34,6 +34,15 @@ export const getEntity = createAsyncThunk(
   { serializeError: serializeAxiosError },
 );
 
+export const getEntityForCustomer = createAsyncThunk(
+  'room/fetch_entity',
+  async (id: string | number) => {
+    const requestUrl = `${API_ROOM.customer.GETROOMDETAILSAPI}/${id}`;
+    return axios.get<IRoom>(requestUrl);
+  },
+  { serializeError: serializeAxiosError },
+);
+
 export const createEntity = createAsyncThunk(
   'room/create_entity',
   async (entity: IRoom, thunkAPI) => {

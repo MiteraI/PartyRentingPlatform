@@ -1,6 +1,7 @@
 const API_ROOM = {
     customer: {
-        GETROOMSAPI: "api/rooms/customer"
+        GETROOMSAPI: "api/rooms/customer",
+        GETROOMDETAILSAPI: "api/rooms/customer/details",
     },
     admin: {},
     host: {
