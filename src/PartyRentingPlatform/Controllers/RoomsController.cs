@@ -115,17 +115,17 @@ namespace PartyRentingPlatform.Controllers
             return Ok(((IPage<RoomHostDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
         }
 
-        // Both host and customer can see the details of a room
-        [HttpGet("details/{id}")]
-        public async Task<IActionResult> GetRoomWithFullDetails([FromRoute] long? id)
+        // Customer can see the details of a room
+        [HttpGet("customer/details/{id}")]
+        public async Task<IActionResult> GetRoomWithFullDetailsCustomer([FromRoute] long? id)
         {
             _log.LogDebug($"REST request to get Room with full details : {id}");
             var result = await _roomService.FindOneWithFullDetails(id);
             RoomHostDto roomHostDto = _mapper.Map<RoomHostDto>(result);
 
             // If the user is not the host/ not authenticated and the room is not valid, they are not allowed to see the room
-            //if (User.Identity.IsAuthenticated == false) return BadRequest("You are not allowed to see this room");
-            if (roomHostDto.UserId == User.FindFirst(ClaimTypes.Name).Value && roomHostDto.Status != RoomStatus.VALID)
+            if (roomHostDto.Status != RoomStatus.VALID)
+
                 return BadRequest("You are not allowed to see this room");
 
             return ActionResultUtil.WrapOrNotFound(roomHostDto);
@@ -142,6 +142,22 @@ namespace PartyRentingPlatform.Controllers
             var result = await _roomService.FindAllByHostId(userIdClaim.Value, pageable);
             var page = new Page<RoomHostDto>(result.Content.Select(entity => _mapper.Map<RoomHostDto>(entity)).ToList(), pageable, result.TotalElements);
             return Ok(((IPage<RoomHostDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
+        }
+
+        // Host can see the details of a room
+        [Authorize(Roles = RolesConstants.HOST)]
+        [HttpGet("host/details/{id}")]
+        public async Task<IActionResult> GetRoomWithFullDetailsHost([FromRoute] long? id)
+        {
+            _log.LogDebug($"REST request to get Room with full details : {id}");
+            var result = await _roomService.FindOneWithFullDetails(id);
+            RoomHostDto roomHostDto = _mapper.Map<RoomHostDto>(result);
+
+            // If the user is not the host, they are not allowed to see the room
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            if (roomHostDto.UserId != userIdClaim.Value) return BadRequest("You are not allowed to see this room");
+
+            return ActionResultUtil.WrapOrNotFound(roomHostDto);
         }
 
         [Authorize(Roles = RolesConstants.HOST)]
@@ -168,6 +184,41 @@ namespace PartyRentingPlatform.Controllers
             await _roomService.Save(room);
             return CreatedAtAction(nameof(GetRoom), new { id = room.Id }, room)
                 .WithHeaders(HeaderUtil.CreateEntityCreationAlert(EntityName, room.Id.ToString()));
+        }
+
+        // Update a room for host
+        [Authorize(Roles = RolesConstants.HOST)]
+        [HttpPut("host/{id}")]
+        public async Task<IActionResult> UpdateRoomHost(long? id, [FromForm] RoomHostDto roomHostDto)
+        {
+            _log.LogDebug($"REST request to update Room for host : {roomHostDto}");
+            if (roomHostDto.Id == 0) throw new BadRequestAlertException("Invalid Id", EntityName, "idnull");
+            if (id != roomHostDto.Id) throw new BadRequestAlertException("Invalid Id", EntityName, "idinvalid");
+
+            Room room = _mapper.Map<Room>(roomHostDto);
+
+            // Check if the user is the host of the room
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            if (room.UserId != userIdClaim.Value) return BadRequest("You are not allowed to update this room");
+
+            // Not going to upload image becus image needs form-data
+
+            await _roomService.Save(room);
+            return Ok(room)
+                .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, room.Id.ToString()));
+        }
+
+        [Authorize(Roles = RolesConstants.HOST)]
+        [HttpDelete("host/{id}")]
+        public async Task<IActionResult> DeleteRoomHost([FromRoute] long? id)
+        {
+            _log.LogDebug($"REST request to delete Room for host : {id}");
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            var result = await _roomService.FindOne(id);
+            if (result.UserId != userIdClaim.Value) return BadRequest("You are not allowed to delete this room");
+
+            await _roomService.Delete(id);
+            return NoContent().WithHeaders(HeaderUtil.CreateEntityDeletionAlert(EntityName, id.ToString()));
         }
     }
 }

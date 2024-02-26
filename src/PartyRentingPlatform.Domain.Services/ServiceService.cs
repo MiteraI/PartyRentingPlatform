@@ -43,4 +43,13 @@ public class ServiceService : IServiceService
         await _serviceRepository.DeleteByIdAsync(id);
         await _serviceRepository.SaveChangesAsync();
     }
+
+    // Find all service for host
+    public virtual async Task<IPage<Service>> FindAllForHost(string? userId, IPageable pageable)
+    {
+        var page = await _serviceRepository.QueryHelper()
+            .Filter(s => s.UserId == userId)
+            .GetPageAsync(pageable);
+        return page;
+    }
 }

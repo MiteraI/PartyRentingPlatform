@@ -151,9 +151,7 @@ namespace PartyRentingPlatform.Controllers
 
             //Check if StartTime is 3 days in advance
             if (booking.StartTime < DateTime.Now.AddDays(3)) return BadRequest("Start time must be at least 3 days in advance");
-
-            // TODO: Check if room is available
-
+            
             // TODO: Check if balance is enough
 
             //Getting userId from token and adding it to booking, must use ClaimTypes.Name
