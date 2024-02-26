@@ -3,6 +3,7 @@ import { Storage } from 'react-jhipster';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { AppThunk } from 'app/config/store';
 import { serializeAxiosError } from './reducer.utils';
+import { getProfile } from './application-profile';
 
 const AUTH_TOKEN_KEY = 'jhi-authenticationToken';
 
@@ -47,20 +48,24 @@ export const authenticate = createAsyncThunk(
 
 export const login: (username: string, password: string, rememberMe?: boolean) => AppThunk =
   (username, password, rememberMe = false) =>
-  async dispatch => {
-    const result = await dispatch(authenticate({ username, password, rememberMe }));
-    const response = result.payload as AxiosResponse;
-    const bearerToken = response?.headers?.authorization;
-    if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
-      const jwt = bearerToken.slice(7, bearerToken.length);
-      if (rememberMe) {
-        Storage.local.set(AUTH_TOKEN_KEY, jwt);
-      } else {
-        Storage.session.set(AUTH_TOKEN_KEY, jwt);
+    async dispatch => {
+      const result = await dispatch(authenticate({ username, password, rememberMe }));
+      const response = result.payload as AxiosResponse;
+      const bearerToken = response?.headers?.authorization;
+
+      if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
+        const jwt = bearerToken.slice(7, bearerToken.length);
+        if (rememberMe) {
+          Storage.local.set(AUTH_TOKEN_KEY, jwt);
+        } else {
+
+          Storage.session.set(AUTH_TOKEN_KEY, jwt);
+        }
       }
-    }
-    dispatch(getSession());
-  };
+      dispatch(getSession());
+      dispatch(getProfile());
+
+    };
 
 export const clearAuthToken = () => {
   if (Storage.local.get(AUTH_TOKEN_KEY)) {
@@ -69,6 +74,10 @@ export const clearAuthToken = () => {
   if (Storage.session.get(AUTH_TOKEN_KEY)) {
     Storage.session.remove(AUTH_TOKEN_KEY);
   }
+
+  Storage.local.remove("user");
+  Storage.local.remove("roles");
+  Storage.local.remove("sessionHasBeanFetched");
 };
 
 export const logout: () => AppThunk = () => dispatch => {
@@ -116,13 +125,14 @@ export const AuthenticationSlice = createSlice({
         showModalLogin: true,
         loginError: true,
       }))
-      .addCase(authenticate.fulfilled, state => ({
-        ...state,
-        loading: false,
-        loginError: false,
-        showModalLogin: false,
-        loginSuccess: true,
-      }))
+      .addCase(authenticate.fulfilled, state => (
+        {
+          ...state,
+          loading: false,
+          loginError: false,
+          showModalLogin: false,
+          loginSuccess: true,
+        }))
       .addCase(getAccount.rejected, (state, action) => ({
         ...state,
         loading: false,
@@ -133,6 +143,12 @@ export const AuthenticationSlice = createSlice({
       }))
       .addCase(getAccount.fulfilled, (state, action) => {
         const isAuthenticated = action.payload && action.payload.data && action.payload.data.activated;
+        const { login, authorities } = action.payload.data
+
+        Storage.local.set("user", login);
+        Storage.local.set("roles", authorities);
+        Storage.local.set("sessionHasBeanFetched", true);
+
         return {
           ...state,
           isAuthenticated,

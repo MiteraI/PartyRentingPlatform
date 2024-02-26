@@ -6,6 +6,7 @@ axios.defaults.timeout = TIMEOUT;
 axios.defaults.baseURL = SERVER_API_URL;
 
 const setupAxiosInterceptors = onUnauthenticated => {
+
   const onRequestSuccess = config => {
     const token = Storage.local.get('jhi-authenticationToken') || Storage.session.get('jhi-authenticationToken');
     if (token) {
@@ -14,8 +15,11 @@ const setupAxiosInterceptors = onUnauthenticated => {
     return config;
   };
   const onResponseSuccess = response => response;
+  console.log("onResponseSuccess", onResponseSuccess);
+
   const onResponseError = err => {
     const status = err.status || (err.response ? err.response.status : 0);
+
     if (status === 403 || status === 401) {
       onUnauthenticated();
     }

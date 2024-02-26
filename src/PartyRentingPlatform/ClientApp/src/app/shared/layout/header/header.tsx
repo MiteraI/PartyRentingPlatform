@@ -1,12 +1,11 @@
 import './header.scss';
 
-import React, { useState } from 'react';
-
-import { Navbar, Nav, NavbarToggler, Collapse } from 'reactstrap';
+import React, { CSSProperties, FC, useState } from 'react';
 import LoadingBar from 'react-redux-loading-bar';
-
-import { Home, Brand } from './header-components';
-import { AdminMenu, EntitiesMenu, AccountMenu } from '../menus';
+import { useNavigate } from "react-router-dom"
+import HeaderAdmin from './components/headerAdmin';
+import HeaderCustomer from './components/headerCustomer';
+import { Storage } from 'react-jhipster';
 
 export interface IHeaderProps {
   isAuthenticated: boolean;
@@ -17,35 +16,18 @@ export interface IHeaderProps {
 }
 
 const Header = (props: IHeaderProps) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const renderDevRibbon = () =>
-    props.isInProduction === false ? (
-      <div className="ribbon dev">
-        <a href=""></a>
-      </div>
-    ) : null;
-
-  const toggleMenu = () => setMenuOpen(!menuOpen);
-
   /* jhipster-needle-add-element-to-menu - JHipster will add new menu items here */
 
   return (
     <div id="app-header">
-      {renderDevRibbon()}
+
       <LoadingBar className="loading-bar" />
-      <Navbar data-cy="navbar" dark expand="md" fixed="top" className="jh-navbar">
-        <NavbarToggler aria-label="Menu" onClick={toggleMenu} />
-        <Brand />
-        <Collapse isOpen={menuOpen} navbar>
-          <Nav id="header-tabs" className="ms-auto" navbar>
-            <Home />
-            {props.isAuthenticated && <EntitiesMenu />}
-            {props.isAuthenticated && props.isAdmin && <AdminMenu showOpenAPI={props.isOpenAPIEnabled} />}
-            <AccountMenu isAuthenticated={props.isAuthenticated} />
-          </Nav>
-        </Collapse>
-      </Navbar>
+
+      {Storage.local.get("user") === "admin" ?
+        <HeaderAdmin {...props} />
+        :
+        <HeaderCustomer isAuthenticated={props.isAuthenticated} />
+      }
     </div>
   );
 };

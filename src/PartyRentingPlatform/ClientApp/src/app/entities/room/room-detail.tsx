@@ -1,5 +1,5 @@
 // RoomDetail.tsx
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { faShareAlt, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntity } from './room.reducer';
+import { getEntities as getServiceEntities } from 'app/entities/service/service.reducer';
 
 const StyledRoomDetail = styled('div')(({ theme }) => ({
   padding: '30px', // Default padding for larger screens
@@ -22,12 +23,19 @@ const StyledRoomDetail = styled('div')(({ theme }) => ({
 export const RoomDetail = () => {
   const dispatch = useAppDispatch();
   const { id } = useParams<'id'>();
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     dispatch(getEntity(id));
   }, [dispatch, id]);
 
+  useEffect(() => {
+    dispatch(getServiceEntities({ page: currentPage, size: 10, sort: 'id,asc' }));
+  }, [dispatch]);
+
   const roomEntity = useAppSelector((state) => state.room.entity);
+  const serviceList = useAppSelector(state => state.service.entities);
+  console.log(serviceList);
 
   const parallaxImages = [
     'https://a0.muscache.com/im/pictures/miso/Hosting-667691518993177053/original/57db1f13-4807-4198-b3a2-2ec5429512e6.jpeg?im_w=960',
@@ -110,6 +118,8 @@ export const RoomDetail = () => {
             <h4>{roomEntity.roomName}</h4>
             <Typography mb={3} variant="subtitle1">{roomEntity.address}</Typography>
           </div>
+          <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.1 }} />
+
 
           <Grid container spacing={3} mb={3}>
             <Grid item xs={12} md={8}>
@@ -127,7 +137,7 @@ export const RoomDetail = () => {
             </Grid>
           </Grid>
 
-          <Divider style={{ marginBottom: '24px' }}></Divider>
+          <Divider style={{ marginBottom: '24px', backgroundColor: '#000', opacity: 0.1 }} />
 
 
           <Row mt={1}>
@@ -155,20 +165,19 @@ export const RoomDetail = () => {
         </Grid>
       </Grid>
 
-      {/* <Divider>Bỏ khúc dưới ra</Divider>
+      <Divider>Bỏ khúc dưới ra</Divider>
 
 
       <Row>
-        <Col md="8">
-          <Button tag={Link} to="/room" replace color="info" data-cy="entityDetailsBackButton">
-            <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
-          </Button>
-          &nbsp;
-          <Button tag={Link} to={`/room/${roomEntity.id}/edit`} replace color="primary">
-            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-          </Button>
-        </Col>
-      </Row> */}
+        {/* Chèn dữ liệu từ serviceList vào đây */}
+        {serviceList.map((service, index) => (
+          <Col key={index} md="4">
+            <div className="room-detail-header">
+              <Typography variant="subtitle1">{service.serviceName}</Typography>
+            </div>
+          </Col>
+        ))}
+      </Row>
     </StyledRoomDetail>
   );
 };

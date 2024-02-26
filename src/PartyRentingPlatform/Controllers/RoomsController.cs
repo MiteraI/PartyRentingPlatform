@@ -125,6 +125,7 @@ namespace PartyRentingPlatform.Controllers
 
             // If the user is not the host/ not authenticated and the room is not valid, they are not allowed to see the room
             if (roomHostDto.Status != RoomStatus.VALID)
+
                 return BadRequest("You are not allowed to see this room");
 
             return ActionResultUtil.WrapOrNotFound(roomHostDto);
