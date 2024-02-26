@@ -5,6 +5,9 @@ import { isNumber, ValidatedField, ValidatedForm } from 'react-jhipster';
 import StarIcon from '@mui/icons-material/Star';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { useLocation } from 'react-router-dom';
+
+
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
@@ -21,7 +24,13 @@ import './requestToBook.scss';
 const RequestToBook = () => {
   const dispatch = useAppDispatch();
   const { id } = useParams<'id'>();
-  const [createdBookingId, setCreatedBookingId] = useState<number | null>(null); // State to hold the created booking ID
+  const [createdBookingId, setCreatedBookingId] = useState<number | null>(null); // State to hold the created booking
+  const [startDateFromUrl, setStartDateFromUrl] = useState<string | null>(null);
+  const [endDateFromUrl, setEndDateFromUrl] = useState<string | null>(null);
+  const [selectedServiceFromUrl, setSelectedServiceFromUrl] = useState<Array<{ id: string, quantity: string }> | null>(null);
+  const [quantityMap, setQuantityMap] = useState<{ [key: string]: number }>({});
+
+
 
   const StyledRoomDetail = styled('div')(({ theme }) => ({
     padding: '45px', // Default padding for larger screens
@@ -29,6 +38,9 @@ const RequestToBook = () => {
       padding: '15px', // Adjust padding for smaller screens
     },
   }));
+
+  const location = useLocation();
+
 
   const navigate = useNavigate();
 
@@ -38,6 +50,49 @@ const RequestToBook = () => {
       navigate(`/booking-tracking/${createdBookingId}`);
     }
   }, [createdBookingId, navigate]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+
+    const startDateParam = params.get('startDate');
+    const endDateParam = params.get('endDate');
+    const selectedServiceParam = params.get('selectedService');
+
+    setStartDateFromUrl(startDateParam);
+    setEndDateFromUrl(endDateParam);
+
+    console.log('Start Date from URL:', startDateParam);
+    console.log('End Date from URL:', endDateParam);
+
+    try {
+      // Parse selectedServiceParam into an array
+      const parsedSelectedService = JSON.parse(selectedServiceParam || '[]');
+      setSelectedServiceFromUrl(parsedSelectedService);
+      setQuantityMap
+      console.log('Selected Service from URL:', parsedSelectedService);
+    } catch (error) {
+      console.error('Error parsing Selected Service:', error);
+    }
+  }, [location.search]);
+
+
+  const handleIncrementQuantity = (serviceId: string) => {
+    setQuantityMap((prevMap) => ({
+      ...prevMap,
+      [serviceId]: (prevMap[serviceId] || 0) + 1,
+    }));
+  };
+
+  // console.log(startDate, endDate, selectedService);
+
+  // Function to decrement quantity for a specific service
+  const handleDecrementQuantity = (serviceId: string) => {
+    setQuantityMap((prevMap) => ({
+      ...prevMap,
+      [serviceId]: Math.max((prevMap[serviceId] || 0) - 1, 0),
+    }));
+  };
+
 
   const roomEntity = useAppSelector(state => state.room.entity);
 
@@ -123,8 +178,8 @@ const RequestToBook = () => {
     isNew
       ? {
         bookTime: displayDefaultDateTime(),
-        startTime: displayDefaultDateTime(),
-        endTime: displayDefaultDateTime(),
+        startTime: convertDateTimeFromServer(startDateFromUrl),
+        endTime: convertDateTimeFromServer(endDateFromUrl),
         status: 'APPROVING',
         price: roomEntity.price,
       }
@@ -168,6 +223,11 @@ const RequestToBook = () => {
               <Typography mb={3} variant="subtitle1">{roomEntity.address}</Typography>
             </div>
 
+            <Typography variant="h5">Start Date from URL: {startDateFromUrl}</Typography>
+            <Typography variant="h5">End Date from URL: {endDateFromUrl}</Typography>
+            {/* <Typography variant="h5">End Date from URL: {selectedServiceFromUrl.toString()}</Typography> */}
+
+
 
             <Divider style={{ marginBottom: '24px' }}></Divider>
 
@@ -175,6 +235,45 @@ const RequestToBook = () => {
             <Row mt={1}>
               <p>{roomEntity.description}</p>
             </Row>
+
+
+            {selectedServiceFromUrl?.map((service, index) => (
+              <Grid
+                key={index}
+                item
+                xs={12}
+                container
+                spacing={1}
+                alignItems="center"
+                style={{ cursor: 'pointer' }}
+                // onClick={() => openModal(service)}
+              >
+                <Grid item xs={10}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    {service.id}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    style={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      color: '#b4b4b4'
+                    }}
+                  >
+                    {service.id}
+                  </Typography>
+                </Grid>
+                <Grid item xs={2} container justifyContent="flex-end">
+                  {/* Quantity controls in room-detail */}
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <button onClick={() => handleDecrementQuantity(service.id)}>-</button>
+                    <span style={{ margin: '0 10px' }}>{quantityMap[service.id] || 0}</span>
+                    <button onClick={() => handleIncrementQuantity(service.id)}>+</button>
+                  </div>
+                </Grid>
+              </Grid>
+            ))}
 
             <Row className="justify-content-center">
               <Col md="8">

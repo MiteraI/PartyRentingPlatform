@@ -58,18 +58,38 @@ export const RoomDetail = () => {
   const [focusedInput, setFocusedInput] = React.useState(null);
   const [selectedService, setSelectedService] = useState(null); // Track selected service
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  // Thêm state để lưu trữ tổng giá trị phí dịch vụ
+  const [serviceFee, setServiceFee] = useState<number>(0);
 
   useEffect(() => {
     dispatch(getEntity(id));
   }, [dispatch, id]);
 
+
+
   useEffect(() => {
     dispatch(getServiceEntities({ page: currentPage, size: 10, sort: 'id,asc' }));
   }, [dispatch]);
 
+
+
   const roomEntity = useAppSelector((state) => state.room.entity);
   const serviceList = useAppSelector(state => state.service.entities);
   console.log(serviceList);
+
+  useEffect(() => {
+    // Tính tổng giá trị phí dịch vụ
+    const totalServiceFee = Object.keys(quantityMap).reduce((total, serviceId) => {
+      const service = serviceList.find(service => service.id === serviceId);
+      if (service) {
+        return total + (service.price * quantityMap[serviceId]);
+      }
+      return total;
+    }, 0);
+
+    // Cập nhật state serviceFee
+    setServiceFee(totalServiceFee);
+  }, [quantityMap, serviceList]);
 
   const parallaxImages = [
     'https://a0.muscache.com/im/pictures/miso/Hosting-667691518993177053/original/57db1f13-4807-4198-b3a2-2ec5429512e6.jpeg?im_w=960',
@@ -87,12 +107,12 @@ export const RoomDetail = () => {
       id: serviceId,
       quantity: quantityMap[serviceId],
     }));
-  
+
     const queryString = `startDate=${startDate}&endDate=${endDate}&selectedService=${JSON.stringify(selectedServicesArray)}`;
-  
+
     navigate(`/request-to-book/${roomEntity.id}?${queryString}`);
   };
-  
+
 
 
   const openModal = (service) => {
@@ -224,7 +244,7 @@ export const RoomDetail = () => {
                 style={{ cursor: 'pointer' }}
                 onClick={() => openModal(service)}
               >
-                    <Grid item xs={10}>
+                <Grid item xs={10}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     {service.serviceName}
                   </Typography>
@@ -252,7 +272,7 @@ export const RoomDetail = () => {
             ))}
           </Row>
 
- 
+
 
 
           <Divider style={{ marginTop: '24px', marginBottom: '24px', backgroundColor: '#000', opacity: 0.1 }} />
@@ -310,6 +330,15 @@ export const RoomDetail = () => {
                   </div>
                 </Col>
 
+                <Col md="6">
+                  <div className="room-detail-header">
+                    <Typography variant="subtitle2">{"VNĐ " + serviceFee}</Typography>
+                  </div>
+                  <div className="room-detail-header">
+                    <Typography variant="subtitle2">Phí dịch vụ</Typography>
+                  </div>
+                </Col>
+
                 <Col md="4" style={{ marginLeft: 'auto', marginTop: '15px' }}>
                   <div className="room-detail-header">
                     <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * 2}</Typography>
@@ -346,8 +375,8 @@ export const RoomDetail = () => {
       </Grid>
 
 
-   {/* Modal for displaying service details */}
-   <Modal
+      {/* Modal for displaying service details */}
+      <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         style={modalStyles}
