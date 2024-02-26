@@ -74,6 +74,7 @@ const BookingTracking = () => {
 
     const isApproving = bookingEntity.status === 'APPROVING';
     const isSuccess = bookingEntity.status === 'SUCCESS';
+    console.log(bookingEntity);
 
     const handleCancel = () => {
         // Add logic to handle cancellation here
