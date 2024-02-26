@@ -1,10 +1,7 @@
 import './header.scss';
 
 import React, { CSSProperties, FC, useState } from 'react';
-
 import LoadingBar from 'react-redux-loading-bar';
-
-
 import { useNavigate } from "react-router-dom"
 import HeaderAdmin from './components/headerAdmin';
 import HeaderCustomer from './components/headerCustomer';

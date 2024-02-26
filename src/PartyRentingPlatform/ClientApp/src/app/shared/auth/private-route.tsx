@@ -12,7 +12,7 @@ interface IOwnProps extends PathRouteProps {
 
 export const PrivateRoute = ({ children, hasAnyAuthorities = [], ...rest }: IOwnProps) => {
   const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated) as boolean || Storage.local.get("user");
-  const sessionHasBeenFetched = Storage.local.get("sessionHasBeanFetched");
+  const sessionHasBeenFetched = Storage.local.get("sessionHasBeanFetched") ?? true;
   // const account = useAppSelector(state => state.authentication.account);
   const isAuthorized = hasAnyAuthority(Storage.local.get("roles") as [], hasAnyAuthorities);
   const pageLocation = useLocation();
