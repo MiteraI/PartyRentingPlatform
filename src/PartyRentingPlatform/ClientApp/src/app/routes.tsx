@@ -16,6 +16,7 @@ import PageNotFound from 'app/shared/error/page-not-found';
 import { AUTHORITIES } from 'app/config/constants';
 import Room from './modules/room/room';
 import TabsForHost from './entities/room/components/TabsForHost';
+import CustomerRoutes from './modules/customer';
 
 
 const loading = <div>loading ...</div>;
@@ -40,9 +41,9 @@ const AppRoutes = () => {
     <div className="view-routes">
       <ErrorBoundaryRoutes>
         <Route index element={
-          <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST, AUTHORITIES.USER]}>
+          
             <Home />
-          </PrivateRoute>
+          
         } />
         <Route path="login" element={<Login />} />
         <Route path="logout" element={<Logout />} />
@@ -93,13 +94,12 @@ const AppRoutes = () => {
         />
 
 
-        {/* <Route
+        <Route
           path="*"
           element={
-            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST, AUTHORITIES.ADMIN, AUTHORITIES.USER]}>
-            </PrivateRoute>
+            <CustomerRoutes />
           }
-        /> */}
+        />
 
         <Route path="*" element={<PageNotFound />} />
       </ErrorBoundaryRoutes>

@@ -200,7 +200,7 @@ const Home = () => {
               <Grid container spacing={3} mb={4} wrap='wrap'>
                 {roomList.map((item) => (
                   <Grid item key={item.id} xs={12} sm={6} md={4} xl={3}>
-                    <Paper className="apartment-card" component={Link} to={`/room/${item.id}`} style={{ textDecoration: 'none' }} elevation={3}>
+                    <Paper className="apartment-card" component={Link} to={`/room/detail/${item.id}`} style={{ textDecoration: 'none' }} elevation={3}>
                       {/* Slick Carousel for images */}
                       <div className='slider-container'>
                         <Slider {...slickSettings}>
