@@ -7,10 +7,11 @@ import LoginModal from './login-modal';
 import { getProfile } from 'app/shared/reducers/application-profile';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import { AUTHORITIES } from 'app/config/constants';
+import { Storage } from 'react-jhipster';
 
 export const Login = () => {
   const dispatch = useAppDispatch();
-  const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
+  const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated) as boolean || Storage.local.get("user");
   const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
   const loginError = useAppSelector(state => state.authentication.loginError);
   const showModalLogin = useAppSelector(state => state.authentication.showModalLogin);
@@ -20,9 +21,6 @@ export const Login = () => {
 
   useEffect(() => {
     setShowModal(true);
-    dispatch(getSession());
-    dispatch(getProfile());
-
   }, []);
 
   const handleLogin = (username, password, rememberMe = false) => dispatch(login(username, password, rememberMe));

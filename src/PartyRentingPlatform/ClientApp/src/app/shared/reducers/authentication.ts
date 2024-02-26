@@ -3,6 +3,7 @@ import { Storage } from 'react-jhipster';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { AppThunk } from 'app/config/store';
 import { serializeAxiosError } from './reducer.utils';
+import { getProfile } from './application-profile';
 
 const AUTH_TOKEN_KEY = 'jhi-authenticationToken';
 
@@ -51,10 +52,8 @@ export const login: (username: string, password: string, rememberMe?: boolean) =
       const result = await dispatch(authenticate({ username, password, rememberMe }));
       const response = result.payload as AxiosResponse;
       const bearerToken = response?.headers?.authorization;
-      console.log("response", response);
 
       if (bearerToken && bearerToken.slice(0, 7) === 'Bearer ') {
-        console.log("hahahahahaah");
         const jwt = bearerToken.slice(7, bearerToken.length);
         if (rememberMe) {
           Storage.local.set(AUTH_TOKEN_KEY, jwt);
@@ -64,6 +63,8 @@ export const login: (username: string, password: string, rememberMe?: boolean) =
         }
       }
       dispatch(getSession());
+      dispatch(getProfile());
+
     };
 
 export const clearAuthToken = () => {
@@ -152,6 +153,7 @@ export const AuthenticationSlice = createSlice({
           ...state,
           isAuthenticated,
           loading: false,
+          sessionHasBeenFetched: true,
           account: action.payload.data,
         };
       })

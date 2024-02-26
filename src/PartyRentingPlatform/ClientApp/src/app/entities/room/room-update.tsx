@@ -91,12 +91,12 @@ export const RoomUpdate = () => {
     isNew
       ? {}
       : {
-          status: 'BLOCKED',
-          ...roomEntity,
-          user: roomEntity?.user?.id,
-          promotions: roomEntity?.promotions?.map(e => e.id.toString()),
-          services: roomEntity?.services?.map(e => e.id.toString()),
-        };
+        status: 'BLOCKED',
+        ...roomEntity,
+        user: roomEntity?.user?.id,
+        promotions: roomEntity?.promotions?.map(e => e.id.toString()),
+        services: roomEntity?.services?.map(e => e.id.toString()),
+      };
 
   return (
     <div>
@@ -182,10 +182,10 @@ export const RoomUpdate = () => {
                 <option value="" key="0" />
                 {users
                   ? users.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
-                      </option>
-                    ))
+                    <option value={otherEntity.id} key={otherEntity.id}>
+                      {otherEntity.id}
+                    </option>
+                  ))
                   : null}
               </ValidatedField>
               <FormText>This field is required.</FormText>
@@ -193,20 +193,20 @@ export const RoomUpdate = () => {
                 <option value="" key="0" />
                 {promotions
                   ? promotions.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
-                      </option>
-                    ))
+                    <option value={otherEntity.id} key={otherEntity.id}>
+                      {otherEntity.id}
+                    </option>
+                  ))
                   : null}
               </ValidatedField>
               <ValidatedField label="Services" id="room-services" data-cy="services" type="select" multiple name="services">
                 <option value="" key="0" />
                 {services
                   ? services.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
-                      </option>
-                    ))
+                    <option value={otherEntity.id} key={otherEntity.id}>
+                      {otherEntity.id}
+                    </option>
+                  ))
                   : null}
               </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/room" replace color="info">

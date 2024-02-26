@@ -18,13 +18,15 @@ export default function AuthenticateIcon() {
   const navigate = useNavigate()
   const roles = Storage.local.get("roles");
   const isHostParyRole = roles?.includes(AUTHORITIES.HOST);
+
+  
   const handelLogOut = () => {
     dispatch(logout());
     window.location.href = "/"
   }
 
   const handleNavigateToDashboard = () => {
-    navigate("hostparty/");
+    navigate("hostparty/room");
   }
 
 

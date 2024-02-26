@@ -4,7 +4,7 @@ import { Row, Col, Alert, Carousel, CarouselItem, CarouselControl, CarouselIndic
 import { useAppSelector, useAppDispatch } from 'app/config/store';
 import { Grid, Paper, Typography, CardContent, CardActions, Button, CardMedia } from '@mui/material';
 import Slider from 'react-slick';
-import { getEntities, deleteEntity } from 'app/entities/room/room.reducer';
+import { getEntities, deleteEntity, getEntityOfCustomers } from 'app/entities/room/room.reducer';
 import { getEntities as getServiceEntities } from 'app/entities/service/service.reducer';
 import RoomIcon from '@mui/icons-material/Room';
 
@@ -39,7 +39,7 @@ const Home = () => {
 
   // Fetch room entities on component mount
   useEffect(() => {
-    dispatch(getEntities({ page: currentPage, size: 100, sort: 'id,asc' }));
+    dispatch(getEntityOfCustomers({ page: currentPage, size: 100, sort: 'id,asc' }));
   }, [dispatch]);
 
   // Define your carousel items

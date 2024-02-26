@@ -61,17 +61,23 @@ const AppRoutes = () => {
           </Route>
         </Route>
 
-            // host party route
+        // host party route
         <Route
-          path='hostparty/*'
-          element={
-            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST]}>
-              <HostParty />
-            </PrivateRoute>
-          }
-        />
+          path='hostparty'
+        >
+          <Route
+            index
+            path="*"
+            element={
+              <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST, AUTHORITIES.USER]}>
+                <HostParty />
+              </PrivateRoute>
+            }
+          />
 
-        //admin route
+        </Route>
+
+        // admin route
         <Route
           path="admin/*"
           element={
@@ -85,7 +91,7 @@ const AppRoutes = () => {
         <Route
           path="*"
           element={
-            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
+            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST, AUTHORITIES.ADMIN, AUTHORITIES.USER]}>
               <EntitiesRoutes />
             </PrivateRoute>
           }

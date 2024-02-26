@@ -124,8 +124,8 @@ namespace PartyRentingPlatform.Controllers
             RoomHostDto roomHostDto = _mapper.Map<RoomHostDto>(result);
 
             // If the user is not the host/ not authenticated and the room is not valid, they are not allowed to see the room
-            if (User.Identity.IsAuthenticated == false) return BadRequest("You are not allowed to see this room");
-            if (roomHostDto.UserId != User.FindFirst(ClaimTypes.Name).Value && roomHostDto.Status != RoomStatus.VALID)
+            //if (User.Identity.IsAuthenticated == false) return BadRequest("You are not allowed to see this room");
+            if (roomHostDto.UserId == User.FindFirst(ClaimTypes.Name).Value && roomHostDto.Status != RoomStatus.VALID)
                 return BadRequest("You are not allowed to see this room");
 
             return ActionResultUtil.WrapOrNotFound(roomHostDto);
