@@ -28,13 +28,17 @@ namespace PartyRentingPlatform.Configuration.AutoMapper
                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
                .ForMember(dest => dest.RoomCapacity, opt => opt.MapFrom(src => src.RoomCapacity))
                .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating))
-               .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.roomStatus))
+               .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
                .ForMember(dest => dest.ImageURLs, opt => opt.MapFrom(src => src.ImageURLs))
                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                .ReverseMap();
 
+            // RoomImage mappings
+            CreateMap<RoomImage, RoomImageDto>().ReverseMap();
+
             // Service mappings
             CreateMap<Service, ServiceDto>().ReverseMap();
+            CreateMap<Service, RoomServiceHostDto>().ReverseMap();
 
             // Promotion mappings
             CreateMap<Promotion, PromotionDto>().ReverseMap();
