@@ -39,7 +39,11 @@ const AppRoutes = () => {
   return (
     <div className="view-routes">
       <ErrorBoundaryRoutes>
-        <Route index element={<Home />} />
+        <Route index element={
+          <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST, AUTHORITIES.USER]}>
+            <Home />
+          </PrivateRoute>
+        } />
         <Route path="login" element={<Login />} />
         <Route path="logout" element={<Logout />} />
 
@@ -82,20 +86,20 @@ const AppRoutes = () => {
           path="admin/*"
           element={
             <PrivateRoute hasAnyAuthorities={[AUTHORITIES.ADMIN]}>
+              {/* <EntitiesRoutes /> */}
               <Admin />
             </PrivateRoute>
           }
         />
 
 
-        <Route
+        {/* <Route
           path="*"
           element={
             <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST, AUTHORITIES.ADMIN, AUTHORITIES.USER]}>
-              <EntitiesRoutes />
             </PrivateRoute>
           }
-        />
+        /> */}
 
         <Route path="*" element={<PageNotFound />} />
       </ErrorBoundaryRoutes>

@@ -10,8 +10,8 @@ import Booking from './booking';
 import BookingDetails from './booking-details';
 import Report from './report';
 import Notification from './notification';
-import RequestToBook from './request-to-book/requestToBook'; import BookingTracking from './booking-tracking/booking-tracking';
-import Room from './room/room';
+import RequestToBook from './request-to-book/requestToBook';
+import BookingTracking from './booking-tracking/booking-tracking';
 import RoomRoutes from './room';
 ; // Import component
 
