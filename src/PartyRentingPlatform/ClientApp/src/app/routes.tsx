@@ -14,6 +14,9 @@ import PrivateRoute from 'app/shared/auth/private-route';
 import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
 import PageNotFound from 'app/shared/error/page-not-found';
 import { AUTHORITIES } from 'app/config/constants';
+import Room from './modules/room/room';
+import TabsForHost from './entities/room/components/TabsForHost';
+
 
 const loading = <div>loading ...</div>;
 
@@ -26,6 +29,12 @@ const Admin = Loadable({
   loader: () => import(/* webpackChunkName: "administration" */ 'app/modules/administration'),
   loading: () => loading,
 });
+
+
+const HostParty = Loadable({
+  loader: () => import( /* webpackChunkName: "hostparty" */ 'app/modules/hostparty'),
+  loading: () => loading
+})
 const AppRoutes = () => {
   return (
     <div className="view-routes">
@@ -33,6 +42,8 @@ const AppRoutes = () => {
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="logout" element={<Logout />} />
+
+        // account route
         <Route path="account">
           <Route
             path="*"
@@ -49,6 +60,24 @@ const AppRoutes = () => {
             <Route path="finish" element={<PasswordResetFinish />} />
           </Route>
         </Route>
+
+        // host party route
+        <Route
+          path='hostparty'
+        >
+          <Route
+            index
+            path="*"
+            element={
+              <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST, AUTHORITIES.USER]}>
+                <HostParty />
+              </PrivateRoute>
+            }
+          />
+
+        </Route>
+
+        // admin route
         <Route
           path="admin/*"
           element={
@@ -57,14 +86,17 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
+
+
         <Route
           path="*"
           element={
-            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
+            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST, AUTHORITIES.ADMIN, AUTHORITIES.USER]}>
               <EntitiesRoutes />
             </PrivateRoute>
           }
         />
+
         <Route path="*" element={<PageNotFound />} />
       </ErrorBoundaryRoutes>
     </div>

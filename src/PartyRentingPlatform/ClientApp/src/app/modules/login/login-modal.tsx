@@ -12,9 +12,12 @@ export interface ILoginModalProps {
 }
 
 const LoginModal = (props: ILoginModalProps) => {
+
+
   const login = ({ username, password, rememberMe }) => {
     props.handleLogin(username, password, rememberMe);
   };
+  const { loginError, handleClose } = props;
 
   const {
     handleSubmit,
@@ -22,9 +25,11 @@ const LoginModal = (props: ILoginModalProps) => {
     formState: { errors, touchedFields },
   } = useForm({ mode: 'onTouched' });
 
-  const { loginError, handleClose } = props;
 
   const handleLoginSubmit = e => {
+    // handleSubmit(login)(e);
+    // ở đây khi mà hàm handleSubmit được gọi từ useForm nó sẽ tự động lấy các giá trị các trường dữ liệu trong form từ e và
+    // chúng ta có thể lấy nó ra theo cách destructoring trong hàm login   
     handleSubmit(login)(e);
   };
 

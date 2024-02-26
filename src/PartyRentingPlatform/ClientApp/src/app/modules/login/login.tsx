@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { login } from 'app/shared/reducers/authentication';
+import { getSession, login } from 'app/shared/reducers/authentication';
 import LoginModal from './login-modal';
+import { getProfile } from 'app/shared/reducers/application-profile';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
+import { AUTHORITIES } from 'app/config/constants';
+import { Storage } from 'react-jhipster';
 
 export const Login = () => {
   const dispatch = useAppDispatch();
-  const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
+  const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated) as boolean || Storage.local.get("user");
+  const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
   const loginError = useAppSelector(state => state.authentication.loginError);
   const showModalLogin = useAppSelector(state => state.authentication.showModalLogin);
   const [showModal, setShowModal] = useState(showModalLogin);
@@ -26,9 +31,14 @@ export const Login = () => {
   };
 
   const { from } = pageLocation.state || { from: { pathname: '/', search: pageLocation.search } };
-  if (isAuthenticated) {
-    return <Navigate to={from} replace />;
+
+  if (isAuthenticated && isAdmin) {
+    return <Navigate to={'/admin/docs'} replace />;
+  } else if (isAuthenticated) {
+    return <Navigate to={from} replace />
   }
+
+
   return <LoginModal showModal={showModal} handleLogin={handleLogin} handleClose={handleClose} loginError={loginError} />;
 };
 

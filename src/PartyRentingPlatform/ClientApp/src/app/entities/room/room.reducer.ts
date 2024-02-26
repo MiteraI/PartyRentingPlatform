@@ -3,6 +3,7 @@ import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { IRoom, defaultValue } from 'app/shared/model/room.model';
+import API_ROOM from './api-room';
 
 const initialState: EntityState<IRoom> = {
   loading: false,
@@ -15,6 +16,7 @@ const initialState: EntityState<IRoom> = {
 };
 
 const apiUrl = 'api/rooms';
+
 
 // Actions
 
@@ -73,6 +75,38 @@ export const deleteEntity = createAsyncThunk(
   { serializeError: serializeAxiosError },
 );
 
+
+export const getEntityOfCustomers = createAsyncThunk(
+  'room/fetch_entity_list_customer',
+  async ({ page, size, sort }: IQueryParams) => {
+    const requestUrl = `${API_ROOM.customer.GETROOMSAPI}?${sort ? `page=${page}&size=${size}&sort=${sort}&` : ''}cacheBuster=${new Date().getTime()}`;
+    return axios.get<IRoom[]>(requestUrl);
+  }
+)
+
+export const getEntityOfHost = createAsyncThunk(
+  'room/fetch_entity_list_hostparty', async ({ page, size, sort }: IQueryParams) => {
+    const requestUrl = `${API_ROOM.host.GETROOMSAPI}?${sort ? `page=${page}&size=${size}&sort=${sort}&` : ''}cacheBuster=${new Date().getTime()}`;
+    return axios.get<IRoom[]>(requestUrl);
+  }
+)
+
+
+export const createEntityOfHost = createAsyncThunk('room/create_entity_host', async (room: IRoom, thunkAPI) => {
+  const result = await axios.postForm(API_ROOM.host.CREATEROOMAPI, cleanEntity(room), {
+    headers: {
+      "Content-Type": 'multipart/form-data'
+    }
+
+  });
+  thunkAPI.dispatch(getEntityOfHost({}))
+  return result
+}, {
+  serializeError: serializeAxiosError
+}
+
+)
+
 // slice
 
 export const RoomSlice = createEntitySlice({
@@ -89,9 +123,8 @@ export const RoomSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getEntities), (state, action) => {
+      .addMatcher(isFulfilled(getEntityOfCustomers, getEntities), (state, action) => {
         const { data, headers } = action.payload;
-
         return {
           ...state,
           loading: false,
@@ -99,13 +132,24 @@ export const RoomSlice = createEntitySlice({
           totalItems: parseInt(headers['x-total-count'], 10),
         };
       })
+
+      .addMatcher(isFulfilled(getEntityOfHost), (state, action) => {
+        const { data, headers } = action.payload;
+        return {
+          ...state,
+          loading: false,
+          entitiesOfHost: data,
+          totalItems: parseInt(headers['x-total-count'], 10),
+        };
+
+      })
       .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity), (state, action) => {
         state.updating = false;
         state.loading = false;
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity), state => {
+      .addMatcher(isPending(getEntityOfHost, getEntityOfCustomers, getEntities, getEntity), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

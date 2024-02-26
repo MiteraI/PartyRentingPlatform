@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
-import { ValidatedField, ValidatedForm, isEmail } from 'react-jhipster';
+import { ValidatedField, ValidatedForm, isEmail, log } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
@@ -13,6 +13,8 @@ export const UserManagementUpdate = () => {
   const navigate = useNavigate();
 
   const { login } = useParams<'login'>();
+  console.log(login);
+
   const isNew = login === undefined;
 
   useEffect(() => {

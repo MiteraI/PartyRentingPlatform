@@ -3,6 +3,7 @@ import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { IBooking, defaultValue } from 'app/shared/model/booking.model';
+import API_BOOKING from './api-booking';
 
 const initialState: EntityState<IBooking> = {
   loading: false,
@@ -84,6 +85,12 @@ export const deleteEntity = createAsyncThunk(
   { serializeError: serializeAxiosError },
 );
 
+export const getRequestOfCustomer = createAsyncThunk("booking/fetch_request_of_customer",
+  async ({ page, size, sort }: IQueryParams) => {
+    const requestUrl = `${API_BOOKING.host.GETBOOKINGS}?${sort ? `page=${page}&size=${size}&sort=${sort}&` : ''}cacheBuster=${new Date().getTime()}`;
+    return axios.get<IBooking[]>(requestUrl)
+  }
+)
 // slice
 
 export const BookingSlice = createEntitySlice({
@@ -100,7 +107,7 @@ export const BookingSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getEntities), (state, action) => {
+      .addMatcher(isFulfilled(getRequestOfCustomer,getEntities), (state, action) => {
         const { data, headers } = action.payload;
 
         return {
