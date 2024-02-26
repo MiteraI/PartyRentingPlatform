@@ -133,7 +133,7 @@ const Home = () => {
 
   return (
 
-    <div>
+    <div className='home-page'>
       <Row>
         {/* <Col md="6">
           <h1 className="display-4">Khám phá các bữa tiệc nào!!!</h1>
