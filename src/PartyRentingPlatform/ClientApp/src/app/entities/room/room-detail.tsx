@@ -18,14 +18,10 @@ import { getEntities as getServiceEntities } from 'app/entities/service/service.
 
 import './room-detail.scss';
 
-import {
-  DateRangePicker,
-  isInclusivelyBeforeDay
-} from "react-dates";
+
 import moment from "moment";
 
-import "react-dates/initialize";
-import "react-dates/lib/css/_datepicker.css";
+
 // import "@vf-alchemy/vattenfall-design-system/scss/main.scss";
 
 
@@ -290,22 +286,7 @@ export const RoomDetail = () => {
             <div className="booking-info" style={{ boxShadow: 'rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px', padding: '24px', borderRadius: '10px' }}>
               <Typography mb={2} variant="h6"><strong>${roomEntity.price}</strong> slot</Typography>
               <Container style={{ marginBottom: '15px', padding: '0', width: '100%', textAlign: 'center' }}>
-                <DateRangePicker
-                  startDate={startDate}
-                  startDateId="startDate"
-                  endDate={endDate}
-                  endDateId="endDate"
-                  onDatesChange={({ startDate, endDate }) => {
-                    setStartDate(startDate);
-                    setEndDate(endDate);
-                  }}
-                  focusedInput={focusedInput}
-                  onFocusChange={setFocusedInput}
-                  isOutsideRange={day => !isInclusivelyBeforeDay(day, moment())}
-                  initialVisibleMonth={() => moment().subtract(1, "month")}
-                  // numberOfMonths={1}
-                  orientation={"vertical"}
-                />
+                
               </Container>
               <Button
                 color="primary"
