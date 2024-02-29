@@ -11,7 +11,7 @@ import { useLocation } from 'react-router-dom';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { getEntities as getRooms } from 'app/entities/room/room.reducer';
+import { getEntityOfCustomers, getEntities as getRooms } from 'app/entities/room/room.reducer';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { IBooking } from 'app/shared/model/booking.model';
 import { BookingStatus } from 'app/shared/model/enumerations/booking-status.model';
@@ -125,7 +125,7 @@ const RoomBookingForCustomer = () => {
         dispatch(getEntity(id));
       }
   
-      dispatch(getRooms({}));
+      dispatch(getEntityOfCustomers({}));
       dispatch(getUsers({}));
     }, []);
   
