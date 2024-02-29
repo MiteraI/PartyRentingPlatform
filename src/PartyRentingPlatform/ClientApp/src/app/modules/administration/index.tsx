@@ -12,7 +12,6 @@ import Booking from 'app/entities/booking/booking';
 import BookingDetails from 'app/entities/booking-details/booking-details';
 import Report from 'app/entities/report/report';
 import Notification from 'app/entities/notification/notification';
-import RequestToBook from 'app/entities/request-to-book/requestToBook';
 import BookingTracking from 'app/entities/booking-tracking/booking-tracking';
 import PromotionRoutes from 'app/entities/promotion';
 import ServiceRoutes from 'app/entities/service';
@@ -20,6 +19,7 @@ import BookingRoutes from 'app/entities/booking';
 import BookingDetailsRoutes from 'app/entities/booking-details';
 import ReportRoutes from 'app/entities/report';
 import NotificationRoutes from 'app/entities/notification';
+import RequestToBook from 'app/entities/request-to-book/requestToBook';
 
 const AdministrationRoutes = () => (
   <div>

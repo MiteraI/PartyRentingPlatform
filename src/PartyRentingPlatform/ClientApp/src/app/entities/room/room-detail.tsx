@@ -106,7 +106,7 @@ export const RoomDetail = () => {
 
     const queryString = `startDate=${startDate}&endDate=${endDate}&selectedService=${JSON.stringify(selectedServicesArray)}`;
 
-    navigate(`/request-to-book/${roomEntity.id}?${queryString}`);
+    navigate(`request-to-book/${roomEntity.id}?${queryString}`);
   };
 
 
