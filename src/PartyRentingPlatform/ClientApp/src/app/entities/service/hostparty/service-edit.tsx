@@ -25,7 +25,6 @@ const EditServiceOfHost = () => {
 
 
     useEffect(() => {
-        dispatch(reset())
         dispatch(getServiceOfHost(id))
     }, [])
 

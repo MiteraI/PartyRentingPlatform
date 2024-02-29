@@ -117,63 +117,6 @@ const HostPartyRoutes = () => {
                     </ErrorBoundaryRoutes>
                 </TabPanel>
 
-
-
-                {/* <ErrorBoundaryRoutes>
-                    <Route path='room' >
-                        <Route index element={<RoomOfHost valuePanel={value} data={roomListOfHost} />} />
-                        <Route path='edit'>
-                            <Route path=':id'>
-                                <Route index element={
-                                    <Box sx={boxStyle}>
-                                        <EditRoomOfHost />
-                                    </Box>
-                                }
-                                />
-                            </Route>
-                        </Route>
-                    </Route>
-                    <Route path="request-customer" element={<RequestOfCustomer valuePanel={value} />} />
-                    <Route path='services'  >
-
-                        <Route index element={<ServicesOfHost valuePanel={value} />} />
-                        <Route path='edit'>
-                            <Route path=':id'>
-                                <Route index element={
-                                    <EditRoomOfHost />
-                                }
-                                />
-                            </Route>
-                        </Route>
-                    </Route>
-                    <Route path='room' >
-                        <Route index element={<RoomOfHost valuePanel={value} data={roomListOfHost} />} />
-                        <Route path='edit'>
-                            <Route path=':id'>
-                                <Route index element={
-                                    <Box sx={boxStyle}>
-                                        <EditRoomOfHost />
-                                    </Box>
-                                }
-                                />
-                            </Route>
-                        </Route>
-                    </Route>
-                    <Route path="request-customer" element={<RequestOfCustomer valuePanel={value} />} />
-                    <Route path='services'  >
-
-                        <Route index element={<ServicesOfHost valuePanel={value} />} />
-                        <Route path='edit'>
-                            <Route path=':id'>
-                                <Route index element={
-                                    <EditRoomOfHost />
-                                }
-                                />
-                            </Route>
-                        </Route>
-                    </Route>
-
-                </ErrorBoundaryRoutes> */}
             </Box>
         </Box>
 

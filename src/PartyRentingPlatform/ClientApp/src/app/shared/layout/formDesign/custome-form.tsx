@@ -37,18 +37,12 @@ interface ISelect {
 
 const CustomeForm: React.FC<IFormDesign> = (props) => {
     const { item, submit } = props
-    const [valueOption, setValueOption] = useState("");
     const { Option } = Select
-    const dispatch = useAppDispatch()
     const formStyle: React.CSSProperties = {
         margin: "0px 20px",
         border: "0.5px solid black",
         boxShadow: "#b5b5b5 5px 7px 20px 4px",
     }
-
-    useEffect(() => {
-        dispatch(reset());
-    })
 
     const FormItemRender: React.FC = () => (
         <Row xl={12} style={{ padding: "50px 20px" }}>
@@ -64,9 +58,11 @@ const CustomeForm: React.FC<IFormDesign> = (props) => {
                             {
                                 formItem.element === "select" ?
                                     <Select
+                                        mode="multiple"
                                         onChange={(value) => formItem.onChangeFormItem(value)}
+                                        
                                     >
-                                        {formItem.selectData.map((object) => <Option value={object.id}>{object.id}</Option>)}
+                                        {formItem.selectData.map((object) => <Option value={object.id}>{object.serviceName}</Option>)}
                                     </Select>
 
                                     :
