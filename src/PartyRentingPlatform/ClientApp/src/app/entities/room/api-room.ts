@@ -5,7 +5,10 @@ const API_ROOM = {
     admin: {},
     host: {
         GETROOMSAPI :"api/rooms/host",
+        GETDETAILSROOMAPI:"api/rooms/host/details",
+        UPDATEROOMAPI:"api/rooms/host",
         CREATEROOMAPI :"api/rooms/host",
+        DELETEROOMAPI :"api/rooms/host"
     }
 }
 

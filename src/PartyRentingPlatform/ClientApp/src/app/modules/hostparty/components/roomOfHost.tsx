@@ -1,9 +1,16 @@
-import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material"
+import { Avatar, Box, Button, IconButton, List, ListItem, ListItemAvatar, ListItemText, Pagination } from "@mui/material"
 import { IRoom } from "app/shared/model/room.model"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import DeleteIcon from '@mui/icons-material/Delete';
 import FolderIcon from '@mui/icons-material/Folder';
 import { TabPanel } from "./tabpanel";
+import { useAppDispatch } from "app/config/store";
+import { deleteEntityOfHost } from "app/entities/room/room.reducer";
+import EditIcon from "@mui/icons-material/Edit"
+import { Navigate, useNavigate } from "react-router";
+import { reset } from "app/entities/room/room.reducer"
+import ListTabPanelRoomHost from "./list_tab_panel/listTabPanelRoomHost";
+import BookingCreate from "app/entities/booking/hostparty/booking-create";
 
 
 interface IRoomOfHost {
@@ -13,44 +20,39 @@ interface IRoomOfHost {
 
 
 const RoomOfHost: React.FC<IRoomOfHost> = (props) => {
+    const [open, setOpen] = useState<boolean>(false);
 
     const { data, valuePanel } = props
+    const dispatch = useAppDispatch()
+    const navigate = useNavigate()
+
+
+    const handleBookingCreate = () => {
+        setOpen(!open)
+    }
+
+    const handleDeleteRoomOfHostById = (id: string | number) => {
+        dispatch(deleteEntityOfHost(id));
+    }
+
+    const handleMoveToEditRoomPage = (id: string | number) => {
+        navigate(`edit/${id}`);
+    }
+
     return (
-        <TabPanel value={valuePanel} index={0}>
-            <List dense>
-                {data?.length > 0 ?
-                    data.map((room) => (
-                        <ListItem
-                            key={room.id}
-                            secondaryAction={
-                                <>
-                                    <IconButton edge="end" aria-label="delete">
-                                        <DeleteIcon />
-                                    </IconButton>
-
-                                    <IconButton sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </>
-                            }
-                        >
-
-                            <ListItemAvatar>
-                                <Avatar>
-                                    <FolderIcon />
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={room.roomName}
-                                secondary={room.description}
-                            />
-
-
-                        </ListItem>)) : <div></div>}
-
-            </List>
-
-        </TabPanel>
+        <>
+            <BookingCreate isOpen={open} handleIsOpen={handleBookingCreate} />
+            <TabPanel value={valuePanel} index={0}>
+                <Box sx={{ bgcolor: 'background.paper' }}>'
+                    <div style={{ width: "100%", textAlign: "end" }}>
+                        <Button variant='contained' onClick={handleBookingCreate}>
+                            Create new room
+                        </Button>
+                    </div>
+                </Box>
+                <ListTabPanelRoomHost data={data} editfunction={handleMoveToEditRoomPage} deletefunction={handleDeleteRoomOfHostById} />
+            </TabPanel>
+        </>
     )
 }
 

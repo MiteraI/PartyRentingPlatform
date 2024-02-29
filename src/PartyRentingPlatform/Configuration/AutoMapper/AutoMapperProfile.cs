@@ -5,6 +5,7 @@ using PartyRentingPlatform.Domain.Entities;
 using PartyRentingPlatform.Dto;
 using PartyRentingPlatform.Dto.Booking;
 using PartyRentingPlatform.Dto.Room;
+using PartyRentingPlatform.Dto.Service;
 
 
 namespace PartyRentingPlatform.Configuration.AutoMapper
@@ -39,9 +40,11 @@ namespace PartyRentingPlatform.Configuration.AutoMapper
             // Service mappings
             CreateMap<Service, ServiceDto>().ReverseMap();
             CreateMap<Service, RoomServiceHostDto>().ReverseMap();
+            CreateMap<Service, ServiceHostDto>().ReverseMap();
 
             // Promotion mappings
             CreateMap<Promotion, PromotionDto>().ReverseMap();
+            CreateMap<Promotion, RoomPromoDto>().ReverseMap();
 
             // Booking mappings
             CreateMap<Booking, BookingDto>().ReverseMap();

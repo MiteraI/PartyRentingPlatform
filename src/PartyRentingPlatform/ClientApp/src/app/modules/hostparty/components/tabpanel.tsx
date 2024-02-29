@@ -1,4 +1,4 @@
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Pagination } from "@mui/material";
 import React from "react"
 
 interface TabPanelProps {
@@ -9,6 +9,12 @@ interface TabPanelProps {
 
 export const TabPanel = (props: TabPanelProps) => {
     const { children, value, index, ...other } = props;
+    const gridStyle: React.CSSProperties = {
+        height: "300px",
+        maxHeight: "300px",
+        overflowY: "hidden"
+    }
+
 
     return (
         <div
@@ -24,6 +30,7 @@ export const TabPanel = (props: TabPanelProps) => {
                     <Grid container >
                         <Grid item sx={{ flexGrow: 1 }}>
                             {children}
+                            <Pagination style={{ display: "flex", justifyContent: "right" }} count={10} variant="outlined" shape="rounded" />
                         </Grid>
                     </Grid>
                 </Box>

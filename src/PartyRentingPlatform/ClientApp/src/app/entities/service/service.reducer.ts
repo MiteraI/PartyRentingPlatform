@@ -3,6 +3,7 @@ import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { IService, defaultValue } from 'app/shared/model/service.model';
+import API_SERVICE from './api-service';
 
 const initialState: EntityState<IService> = {
   loading: false,
@@ -73,6 +74,13 @@ export const deleteEntity = createAsyncThunk(
   { serializeError: serializeAxiosError },
 );
 
+
+//host
+
+export const getServicesOfHost = createAsyncThunk("service/fetch_entities_of_host", async ({ page, size, sort }: IQueryParams) => {
+  const requestUrl = `${API_SERVICE.host.GETSERVIESAPI}?${sort ? `page=${page}&size=${size}&sort=${sort}&` : ''}cacheBuster=${new Date().getTime()}`;
+  return axios.get<IService[]>(requestUrl)
+})
 // slice
 
 export const ServiceSlice = createEntitySlice({
@@ -89,7 +97,7 @@ export const ServiceSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getEntities), (state, action) => {
+      .addMatcher(isFulfilled(getServicesOfHost, getEntities), (state, action) => {
         const { data, headers } = action.payload;
 
         return {

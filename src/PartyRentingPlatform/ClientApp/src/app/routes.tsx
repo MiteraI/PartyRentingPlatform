@@ -17,6 +17,7 @@ import { AUTHORITIES } from 'app/config/constants';
 import Room from './modules/room/room';
 import TabsForHost from './entities/room/components/TabsForHost';
 import CustomerRoutes from './modules/customer';
+import EditRoomOfHost from './modules/hostparty/room-edit';
 
 
 const loading = <div>loading ...</div>;
@@ -41,9 +42,9 @@ const AppRoutes = () => {
     <div className="view-routes">
       <ErrorBoundaryRoutes>
         <Route index element={
-          
-            <Home />
-          
+
+          <Home />
+
         } />
         <Route path="login" element={<Login />} />
         <Route path="logout" element={<Logout />} />
@@ -74,11 +75,21 @@ const AppRoutes = () => {
             index
             path="*"
             element={
-              <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST, AUTHORITIES.USER]}>
+              <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST]}>
                 <HostParty />
               </PrivateRoute>
             }
           />
+          <Route path='room/edit'>
+            <Route path=':id'>
+              <Route index element={
+                <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST]}>
+                  <EditRoomOfHost />
+                </PrivateRoute>
+              }
+              />
+            </Route>
+          </Route>
 
         </Route>
 

@@ -91,6 +91,13 @@ export const getEntityOfHost = createAsyncThunk(
   }
 )
 
+export const getEntityDetailsOfHost = createAsyncThunk("room/fetch_detail_entity", async (id: string | number) => {
+  const requestUrl = `${API_ROOM.host.GETDETAILSROOMAPI}/${id}`
+  return axios.get<IRoom>(requestUrl);
+},
+  { serializeError: serializeAxiosError },
+)
+
 
 export const createEntityOfHost = createAsyncThunk('room/create_entity_host', async (room: IRoom, thunkAPI) => {
   const result = await axios.postForm(API_ROOM.host.CREATEROOMAPI, cleanEntity(room), {
@@ -105,6 +112,29 @@ export const createEntityOfHost = createAsyncThunk('room/create_entity_host', as
   serializeError: serializeAxiosError
 }
 
+)
+
+export const updateEntityOfHost = createAsyncThunk("room/update_entity_host", async ({ id, room }: { id: string | number, room: IRoom }) => {
+  const result = await axios.put(`${API_ROOM.host.UPDATEROOMAPI}/${id}`, room, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  })
+  return result
+},
+  { serializeError: serializeAxiosError }
+)
+
+
+export const deleteEntityOfHost = createAsyncThunk('room/delelte_entity_host', async (id: string | number, thunkAPI) => {
+  const requestUrl = `${API_ROOM.host.DELETEROOMAPI}/${id}`;
+  const result = await axios.delete<IRoom>(requestUrl)
+  thunkAPI.dispatch(getEntityOfHost({}))
+  return result
+},
+  {
+    serializeError: serializeAxiosError
+  }
 )
 
 // slice
@@ -135,6 +165,7 @@ export const RoomSlice = createEntitySlice({
 
       .addMatcher(isFulfilled(getEntityOfHost), (state, action) => {
         const { data, headers } = action.payload;
+
         return {
           ...state,
           loading: false,
@@ -142,8 +173,18 @@ export const RoomSlice = createEntitySlice({
           totalItems: parseInt(headers['x-total-count'], 10),
         };
 
+
       })
-      .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity), (state, action) => {
+
+      .addMatcher(isFulfilled(getEntityDetailsOfHost), (state, action) => {
+        const { data, headers } = action.payload;
+        return {
+          ...state,
+          loading: false,
+          entityDetailsOfHost: data
+        }
+      })
+      .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity, updateEntityOfHost), (state, action) => {
         state.updating = false;
         state.loading = false;
         state.updateSuccess = true;
