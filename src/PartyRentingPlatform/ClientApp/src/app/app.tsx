@@ -23,10 +23,7 @@ const baseHref = document.querySelector('base').getAttribute('href').replace(/\/
 export const App = () => {
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    dispatch(getSession());
-    dispatch(getProfile());
-  }, []);
+
 
   const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
   const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
@@ -40,7 +37,7 @@ export const App = () => {
 
   return (
     <BrowserRouter basename={baseHref}>
-      <div className="app-container" style={{ paddingTop }}>
+      <div className="app-container" >
         <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
         <ErrorBoundary>
           <Header
@@ -52,7 +49,7 @@ export const App = () => {
           />
         </ErrorBoundary>
         {/* <div className="container-fluid view-container" id="app-view-container"> */}
-        <div style={{ paddingLeft, paddingRight }}>
+        <div style={{ paddingTop, paddingLeft, paddingRight }}>
           <ErrorBoundary>
             <AppRoutes />
           </ErrorBoundary>

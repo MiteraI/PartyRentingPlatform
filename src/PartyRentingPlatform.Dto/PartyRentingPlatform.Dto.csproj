@@ -7,10 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection"  />
-        <PackageReference Include="Newtonsoft.Json"  />
-        <PackageReference Include="System.ComponentModel.Annotations"  />
-        <PackageReference Include="System.Text.Json"  />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
+        <PackageReference Include="Microsoft.AspNetCore.Http" />
+        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="System.ComponentModel.Annotations" />
+        <PackageReference Include="System.Text.Json" />
     </ItemGroup>
 
     <ItemGroup>

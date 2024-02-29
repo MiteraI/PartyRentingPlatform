@@ -176,7 +176,7 @@ namespace PartyRentingPlatform.Infrastructure.Migrations
                     b.Property<long?>("ServiceId")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("ServiceQuantity")
+                    b.Property<int>("ServiceQuantity")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -324,8 +324,8 @@ namespace PartyRentingPlatform.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("Rating")
-                        .HasColumnType("integer");
+                    b.Property<double?>("Rating")
+                        .HasColumnType("double precision");
 
                     b.Property<int?>("RoomCapacity")
                         .IsRequired()
@@ -381,14 +381,19 @@ namespace PartyRentingPlatform.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<long?>("Price")
+                    b.Property<long>("Price")
                         .HasColumnType("bigint");
 
                     b.Property<string>("ServiceName")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("service");
                 });
@@ -716,6 +721,15 @@ namespace PartyRentingPlatform.Infrastructure.Migrations
                         .HasForeignKey("RoomId");
 
                     b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("PartyRentingPlatform.Domain.Entities.Service", b =>
+                {
+                    b.HasOne("PartyRentingPlatform.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PartyRentingPlatform.Domain.Entities.Transaction", b =>

@@ -16,7 +16,5 @@ namespace PartyRentingPlatform.Dto
         [Required]
         public int Discount { get; set; }
         public long? Minimum { get; set; }
-
-        // jhipster-needle-dto-add-field - JHipster will add fields here, do not remove
     }
 }

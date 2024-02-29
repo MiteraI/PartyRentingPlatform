@@ -3,6 +3,9 @@ using AutoMapper;
 using System.Linq;
 using PartyRentingPlatform.Domain.Entities;
 using PartyRentingPlatform.Dto;
+using PartyRentingPlatform.Dto.Booking;
+using PartyRentingPlatform.Dto.Room;
+using PartyRentingPlatform.Dto.Service;
 
 
 namespace PartyRentingPlatform.Configuration.AutoMapper
@@ -17,11 +20,40 @@ namespace PartyRentingPlatform.Configuration.AutoMapper
             .ReverseMap()
                 .ForPath(user => user.UserRoles, opt => opt.MapFrom(userDto => userDto.Roles.Select(role => new UserRole { Role = new Role { Name = role }, UserId = userDto.Id }).ToHashSet()));
 
+            CreateMap<User, UserAppDto>().ReverseMap();
+
+            // Room mappings
             CreateMap<Room, RoomDto>().ReverseMap();
+            CreateMap<RoomHostDto, Room>().ReverseMap();
+
+            // RoomImage mappings
+            CreateMap<RoomImage, RoomImageDto>().ReverseMap();
+
+            // Service mappings
             CreateMap<Service, ServiceDto>().ReverseMap();
+            CreateMap<Service, RoomServiceHostDto>().ReverseMap();
+            CreateMap<Service, ServiceHostDto>().ReverseMap();
+
+            // Promotion mappings
             CreateMap<Promotion, PromotionDto>().ReverseMap();
+            CreateMap<Promotion, RoomPromoDto>().ReverseMap();
+
+            // Booking mappings
             CreateMap<Booking, BookingDto>().ReverseMap();
+            CreateMap<Booking, BookingCustomerDto>()
+                .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room))
+                .ForMember(dest => dest.BookingDetails, opt => opt.MapFrom(src => src.BookingDetails))
+                .ReverseMap();
+
+            CreateMap<BookingDetails, BookingDetailCustomerDto>()
+                .ForMember(dest => dest.ServiceQuantity, opt => opt.MapFrom(src => src.ServiceQuantity))
+                .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId))
+                .ReverseMap();
+
+            // Report mappings
             CreateMap<Report, ReportDto>().ReverseMap();
+
+            // Notification mappings
             CreateMap<Notification, NotificationDto>().ReverseMap();
         }
     }

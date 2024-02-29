@@ -14,5 +14,11 @@ namespace PartyRentingPlatform.Domain.Services.Interfaces
         Task<Room> FindOne(long? id);
 
         Task Delete(long? id);
+
+        Task<IPage<Room>> FindAllValidWithImageUrls(IPageable pageable);
+
+        Task<IPage<Room>> FindAllByHostId(string userId, IPageable pageable);
+
+        Task<Room> FindOneWithFullDetails(long? id);
     }
 }
