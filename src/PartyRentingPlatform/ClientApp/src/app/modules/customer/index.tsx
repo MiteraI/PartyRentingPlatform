@@ -14,7 +14,7 @@ const CustomerRoutes = () => (
                         <Route index element={<RoomDetailForCustomer />} />
                     </Route>
                 </Route>
-                
+
                 <Route path="request-to-book">
                     <Route path=":id">
                         <Route index element={

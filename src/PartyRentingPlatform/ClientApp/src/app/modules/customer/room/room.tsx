@@ -6,6 +6,9 @@ import { Avatar, Divider, Typography, Grid, Container } from '@mui/material';
 import { styled } from '@mui/system';
 import Modal from 'react-modal';
 import type { Styles as ReactModalStyles } from 'react-modal';
+import { DatePicker, TimePicker } from 'antd';
+// import 'antd/dist/antd.css';
+
 
 
 import { Parallax } from 'react-parallax';
@@ -51,6 +54,30 @@ const RoomDetailForCustomer = () => {
     // Xử lý date picker
     const [startDate, setStartDate] = React.useState(null);
     const [endDate, setEndDate] = React.useState(null);
+
+    const [startTime, setStartTime] = useState(null); // Declare startTime state
+    const [endTime, setEndTime] = useState(null); // Declare endTime state
+
+    const handleBookClick = () => {
+        // Check if startTime and endTime are not null before formatting
+        // if (startTime && endTime) {
+            const formattedStartTime = moment(startDate).format('YYYY-MM-DD') + ' ' + startTime.format('HH:mm:ss');
+            const formattedEndTime = moment(startDate).format('YYYY-MM-DD') + ' ' + endTime.format('HH:mm:ss');
+            console.log(startTime.format('HH:mm:ss'));
+            const selectedServicesArray = Object.keys(quantityMap).map(serviceId => ({
+                id: serviceId,
+                quantity: quantityMap[serviceId],
+            }));
+
+            const queryString = `startDate=${formattedStartTime}&endDate=${formattedEndTime}&selectedService=${JSON.stringify(selectedServicesArray)}`;
+
+            navigate(`/room/request-to-book/${roomEntity.id}?${queryString}`);
+        // } else {
+        //     // Handle the case when startTime or endTime is null
+        //     console.error("Start time and end time must be selected.");
+        // }
+    };
+
     const [focusedInput, setFocusedInput] = React.useState(null);
     const [selectedService, setSelectedService] = useState(null); // Track selected service
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -115,18 +142,6 @@ const RoomDetailForCustomer = () => {
     ];
 
     const navigate = useNavigate();
-
-    const handleBookClick = () => {
-        const selectedServicesArray = Object.keys(quantityMap).map(serviceId => ({
-            id: serviceId,
-            quantity: quantityMap[serviceId],
-        }));
-
-        const queryString = `startDate=${startDate}&endDate=${endDate}&selectedService=${JSON.stringify(selectedServicesArray)}`;
-
-        navigate(`/request-to-book/${roomEntity.id}?${queryString}`);
-    };
-
 
 
     const openModal = (service) => {
@@ -218,7 +233,7 @@ const RoomDetailForCustomer = () => {
             <Grid container spacing={2} mt={1}>
                 <Grid item xs={12} md={8} pr={8}>
                     <div className="room-detail-header">
-                        <h4>{roomEntity.roomName}</h4>
+                        <h4>{roomEntity.roomName + ' Thị Nhi'}</h4>
                         <Typography mb={3} variant="subtitle1">{roomEntity.address}</Typography>
                     </div>
                     <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.1 }} />
@@ -305,6 +320,25 @@ const RoomDetailForCustomer = () => {
                             <Container style={{ marginBottom: '15px', padding: '0', width: '100%', textAlign: 'center' }}>
 
                             </Container>
+
+                            <DatePicker
+                                style={{ marginBottom: '16px', width: '100%' }}
+                                onChange={(date) => setStartDate(date)}
+                                value={startDate}
+                                placeholder="Select Date"
+                            />
+
+                            {/* Add time pickers for start and end time */}
+                            <TimePicker
+                                style={{ marginBottom: '16px', width: '100%' }}
+                                onChange={(time) => setStartTime(time)}
+                                placeholder="Select Start Time"
+                            />
+                            <TimePicker
+                                style={{ marginBottom: '16px', width: '100%' }}
+                                onChange={(time) => setEndTime(time)}
+                                placeholder="Select End Time"
+                            />
                             <Button
                                 color="primary"
                                 size="large"
