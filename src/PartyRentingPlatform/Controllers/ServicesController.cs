@@ -107,6 +107,18 @@ namespace PartyRentingPlatform.Controllers
             return Ok(((IPage<ServiceDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
         }
 
+        [Authorize(Roles = RolesConstants.HOST)]
+        [HttpGet("host/{id}")]
+        public async Task<IActionResult> GetServiceForHost([FromRoute] long? id)
+        {
+            _log.LogDebug($"REST request to get Service for host : {id}");
+            var userIdClaim = User.FindFirst(ClaimTypes.Name).Value;
+            var result = await _serviceService.FindOne(id);
+            if (result.UserId != userIdClaim) return BadRequest("You are not authorized to view this service");
+            ServiceHostDto service = _mapper.Map<ServiceHostDto>(result);
+            return ActionResultUtil.WrapOrNotFound(service);
+        }
+
         // Create a service for host
         [Authorize(Roles = RolesConstants.HOST)]
         [HttpPost("host")]
@@ -115,6 +127,8 @@ namespace PartyRentingPlatform.Controllers
             _log.LogDebug($"REST request to save Service for host : {serviceDto}");
             if (serviceDto.Id != 0 && serviceDto.Id != null)
                 throw new BadRequestAlertException("A new service cannot already have an ID", EntityName, "idexists");
+
+            if (serviceDto.Price < 10000) return BadRequest("Price must be greater than 10000");
 
             var userIdClaim = User.FindFirst(ClaimTypes.Name).Value;
             serviceDto.UserId = userIdClaim;
