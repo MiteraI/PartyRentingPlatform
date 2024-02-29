@@ -20,19 +20,11 @@ namespace PartyRentingPlatform.Configuration.AutoMapper
             .ReverseMap()
                 .ForPath(user => user.UserRoles, opt => opt.MapFrom(userDto => userDto.Roles.Select(role => new UserRole { Role = new Role { Name = role }, UserId = userDto.Id }).ToHashSet()));
 
+            CreateMap<User, UserAppDto>().ReverseMap();
+
             // Room mappings
             CreateMap<Room, RoomDto>().ReverseMap();
-            CreateMap<RoomHostDto, Room>()
-               .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.RoomName))
-               .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
-               .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-               .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
-               .ForMember(dest => dest.RoomCapacity, opt => opt.MapFrom(src => src.RoomCapacity))
-               .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating))
-               .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-               .ForMember(dest => dest.ImageURLs, opt => opt.MapFrom(src => src.ImageURLs))
-               .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
-               .ReverseMap();
+            CreateMap<RoomHostDto, Room>().ReverseMap();
 
             // RoomImage mappings
             CreateMap<RoomImage, RoomImageDto>().ReverseMap();

@@ -20,6 +20,8 @@ namespace PartyRentingPlatform.Dto.Booking
         public DateTime EndTime { get; set; }
         public long RoomId { get; set; }
         public RoomDto? Room { get; set; }
+        public string UserId { get; set; }
+        public UserAppDto? User { get; set; }
         public IList<BookingDetailCustomerDto> BookingDetails { get; set; } = new List<BookingDetailCustomerDto>();
     }
 }
