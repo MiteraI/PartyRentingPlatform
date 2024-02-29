@@ -12,8 +12,14 @@ import Booking from 'app/entities/booking/booking';
 import BookingDetails from 'app/entities/booking-details/booking-details';
 import Report from 'app/entities/report/report';
 import Notification from 'app/entities/notification/notification';
-import RequestToBook from 'app/entities/request-to-book/requestToBook';
 import BookingTracking from 'app/entities/booking-tracking/booking-tracking';
+import PromotionRoutes from 'app/entities/promotion';
+import ServiceRoutes from 'app/entities/service';
+import BookingRoutes from 'app/entities/booking';
+import BookingDetailsRoutes from 'app/entities/booking-details';
+import ReportRoutes from 'app/entities/report';
+import NotificationRoutes from 'app/entities/notification';
+import RequestToBook from 'app/entities/request-to-book/requestToBook';
 
 const AdministrationRoutes = () => (
   <div>
@@ -22,12 +28,12 @@ const AdministrationRoutes = () => (
       <Route path="docs" element={<Docs />} />
       <Route path="room/*" element={<RoomRoutes />} />
       <Route path="room-image/*" element={<RoomImage />} />
-      <Route path="service/*" element={<Service />} />
-      <Route path="promotion/*" element={<Promotion />} />
-      <Route path="booking/*" element={<Booking />} />
-      <Route path="booking-details/*" element={<BookingDetails />} />
-      <Route path="report/*" element={<Report />} />
-      <Route path="notification/*" element={<Notification />} />
+      <Route path="service/*" element={<ServiceRoutes />} />
+      <Route path="promotion/*" element={<PromotionRoutes />} />
+      <Route path="booking/*" element={<BookingRoutes />} />
+      <Route path="booking-details/*" element={<BookingDetailsRoutes />} />
+      <Route path="report/*" element={<ReportRoutes />} />
+      <Route path="notification/*" element={<NotificationRoutes />} />
       <Route path="request-to-book/:id" element={<RequestToBook />} /> {/* Add this line */}
       <Route path="booking-tracking/:id" element={<BookingTracking />} /> {/* Add this line */}
     </ErrorBoundaryRoutes>

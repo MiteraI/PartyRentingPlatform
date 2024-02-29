@@ -15,7 +15,6 @@ const setupAxiosInterceptors = onUnauthenticated => {
     return config;
   };
   const onResponseSuccess = response => response;
-  console.log("onResponseSuccess", onResponseSuccess);
 
   const onResponseError = err => {
     const status = err.status || (err.response ? err.response.status : 0);

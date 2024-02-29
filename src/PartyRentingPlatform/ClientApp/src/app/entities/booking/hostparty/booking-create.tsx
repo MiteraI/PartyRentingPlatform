@@ -32,15 +32,14 @@ const BookingCreate: React.FC<IBookingCreate> = (props) => {
         //     listOfPicture.push(element)
 
         // }
-        setPicture(FileList)
+        setPicture(FileList[0])
     }
 
     const handleFinish = (values: IRoom) => {
-        const newValue = { ...values, ["formFiles[]"]: picture };
+        const newValue = { ...values, formFiles: picture };
         dispatch(createEntityOfHost(newValue))
 
     }
-    console.log(picture);
     return (
         <Dialog
             fullWidth
@@ -129,24 +128,16 @@ const BookingCreate: React.FC<IBookingCreate> = (props) => {
                     </Form.Item>
                     <Form.Item
                         label="formFiles"
+                        name="formFiles"
                         rules={[
                             { required: true, message: "Please input your username" }
                         ]}
                         initialValue={''}
                     >
 
-                        <input name="formFiles" type="file" multiple onChange={handleUpLoadPicture} />
+                        <input type="file" onChange={handleUpLoadPicture} />
                     </Form.Item>
-                    <Form.Item
-                        label="user"
-                        name="user"
-                        rules={[
-                            { required: true, message: "Please input your username" }
-                        ]}
-                    >
 
-                        <Input />
-                    </Form.Item>
                     <Form.Item
                         label="promotions"
                         name="promotions"
