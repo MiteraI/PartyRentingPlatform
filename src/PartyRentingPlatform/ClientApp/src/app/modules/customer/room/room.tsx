@@ -29,6 +29,7 @@ import moment from "moment";
 
 const StyledRoomDetail = styled('div')(({ theme }) => ({
     padding: '30px', // Default padding for larger screens
+    paddingTop: '0',
     [theme.breakpoints.down('sm')]: {
         padding: '15px', // Adjust padding for smaller screens
     },
@@ -61,17 +62,17 @@ const RoomDetailForCustomer = () => {
     const handleBookClick = () => {
         // Check if startTime and endTime are not null before formatting
         // if (startTime && endTime) {
-            const formattedStartTime = moment(startDate).format('YYYY-MM-DD') + ' ' + startTime.format('HH:mm:ss');
-            const formattedEndTime = moment(startDate).format('YYYY-MM-DD') + ' ' + endTime.format('HH:mm:ss');
-            console.log(startTime.format('HH:mm:ss'));
-            const selectedServicesArray = Object.keys(quantityMap).map(serviceId => ({
-                id: serviceId,
-                quantity: quantityMap[serviceId],
-            }));
+        const formattedStartTime = startDate.format('YYYY-MM-DD') + ' ' + startTime.format('HH:mm:ss');
+        const formattedEndTime = startDate.format('YYYY-MM-DD') + ' ' + endTime.format('HH:mm:ss');
+        console.log(startTime.format('HH:mm:ss'));
+        const selectedServicesArray = Object.keys(quantityMap).map(serviceId => ({
+            id: serviceId,
+            quantity: quantityMap[serviceId],
+        }));
 
-            const queryString = `startDate=${formattedStartTime}&endDate=${formattedEndTime}&selectedService=${JSON.stringify(selectedServicesArray)}`;
+        const queryString = `startDate=${formattedStartTime}&endDate=${formattedEndTime}&selectedService=${JSON.stringify(selectedServicesArray)}`;
 
-            navigate(`/room/request-to-book/${roomEntity.id}?${queryString}`);
+        navigate(`/room/request-to-book/${roomEntity.id}?${queryString}`);
         // } else {
         //     // Handle the case when startTime or endTime is null
         //     console.error("Start time and end time must be selected.");
@@ -83,6 +84,7 @@ const RoomDetailForCustomer = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     // Thêm state để lưu trữ tổng giá trị phí dịch vụ
     const [serviceFee, setServiceFee] = useState<number>(0);
+    const [numberOfHours, setNumberOfHours] = useState<number>(0);
 
     useEffect(() => {
         dispatch(getEntity(id));
@@ -131,6 +133,12 @@ const RoomDetailForCustomer = () => {
         // Cập nhật state serviceFee
         setServiceFee(totalServiceFee);
     }, [quantityMap, serviceList]);
+
+    useEffect(() => {
+        const hours = (endTime - startTime) / 3600000;
+        if (hours > 0) { setNumberOfHours(hours) };
+    }, [startTime, endTime, startDate]);
+
 
     const parallaxImages = [
         'https://a0.muscache.com/im/pictures/miso/Hosting-667691518993177053/original/57db1f13-4807-4198-b3a2-2ec5429512e6.jpeg?im_w=960',
@@ -233,7 +241,7 @@ const RoomDetailForCustomer = () => {
             <Grid container spacing={2} mt={1}>
                 <Grid item xs={12} md={8} pr={8}>
                     <div className="room-detail-header">
-                        <h4>{roomEntity.roomName + ' Thị Nhi'}</h4>
+                        <h4>{roomEntity.roomName}</h4>
                         <Typography mb={3} variant="subtitle1">{roomEntity.address}</Typography>
                     </div>
                     <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.1 }} />
@@ -291,13 +299,19 @@ const RoomDetailForCustomer = () => {
                                 <Grid item xs={2} container justifyContent="flex-end">
                                     {/* Quantity controls in room-detail */}
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <button onClick={() => handleDecrementQuantity(service.id)}>-</button>
-                                        <span style={{ margin: '0 10px' }}>{quantityMap[service.id] || 0}</span>
-                                        <button onClick={() => handleIncrementQuantity(service.id)}>+</button>
+                                        {quantityMap[service.id] > 0 ? (
+                                            <>
+                                                <span style={{ margin: '0 10px' }}>{quantityMap[service.id]}</span>
+                                                {/* <button onClick={() => handleDecrementQuantity(service.id)}>-</button> */}
+                                            </>
+                                        ) : (
+                                            <button style={{ color: '#dd1062' }} onClick={() => handleIncrementQuantity(service.id)}>+</button>
+                                        )}
                                     </div>
                                 </Grid>
                             </Grid>
                         ))}
+
                     </Row>
 
 
@@ -355,7 +369,7 @@ const RoomDetailForCustomer = () => {
 
                                 <Col md="6" style={{ marginTop: '15px' }}>
                                     <div className="room-detail-header">
-                                        <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x 2 ngày"}</Typography>
+                                        <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x " + numberOfHours + " giờ"}</Typography>
                                     </div>
                                     <div className="room-detail-header">
                                         <Typography variant="subtitle2">Phí dịch vụ</Typography>
