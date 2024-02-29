@@ -189,7 +189,7 @@ namespace PartyRentingPlatform.Controllers
         // Update a room for host
         [Authorize(Roles = RolesConstants.HOST)]
         [HttpPut("host/{id}")]
-        public async Task<IActionResult> UpdateRoomHost(long? id, [FromForm] RoomHostDto roomHostDto)
+        public async Task<IActionResult> UpdateRoomHost(long? id, [FromBody] RoomHostDto roomHostDto)
         {
             _log.LogDebug($"REST request to update Room for host : {roomHostDto}");
             if (roomHostDto.Id == 0) throw new BadRequestAlertException("Invalid Id", EntityName, "idnull");

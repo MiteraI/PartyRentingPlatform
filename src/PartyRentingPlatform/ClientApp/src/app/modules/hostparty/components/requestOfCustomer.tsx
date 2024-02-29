@@ -19,7 +19,7 @@ const RequestOfCustomer: React.FC<IRequestOfCustomer> = (props) => {
     const requestOfCustomer = useAppSelector((state) => state.booking.entities) as IBooking[]
 
     useEffect(() => {
-        dispatch(getRequestOfCustomer({ page: 0, size: 100, sort: "id,asc" }))
+        dispatch(getRequestOfCustomer({ page: 0, size: 5, sort: "id,asc" }))
     }, [])
 
 

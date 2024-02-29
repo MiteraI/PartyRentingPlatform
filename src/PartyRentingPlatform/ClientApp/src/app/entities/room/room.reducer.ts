@@ -125,9 +125,6 @@ export const createEntityOfHost = createAsyncThunk('room/create_entity_host', as
 
 export const updateEntityOfHost = createAsyncThunk("room/update_entity_host", async ({ id, room }: { id: string | number, room: IRoom }) => {
   const result = await axios.put(`${API_ROOM.host.UPDATEROOMAPI}/${id}`, room, {
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
   })
   return result
 },

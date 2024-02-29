@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { TabPanel } from './tabpanel'
 import { useAppDispatch, useAppSelector } from 'app/config/store'
-import { deleteServiceOfHost, getServicesOfHost } from 'app/entities/service/service.reducer'
+import { deleteServiceOfHost, getServicesOfHost, reset } from 'app/entities/service/service.reducer'
 import ListTabPanelServiceOfCustomer from './list_tab_panel/listTabPanelServiceHost'
 import { Box, Button, Grid, Pagination } from '@mui/material'
 import ServiceModal from 'app/entities/service/modal/service-create'
@@ -21,7 +21,8 @@ const ServicesOfHost: React.FC<IServicesOfHost> = (props) => {
 
 
     useEffect(() => {
-        dispatch(getServicesOfHost({}))
+        dispatch(reset())
+        dispatch(getServicesOfHost({ page: 0, size: 5, sort: "id,asc" }))
     }, [])
 
 

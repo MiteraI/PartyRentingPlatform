@@ -22,46 +22,47 @@ const EditRoomOfHost = () => {
 
 
     // form update
-    const [promotion, setPromotion] = useState<number[]>([]);
-    const [service, setService] = useState<number[]>([])
+    const [promotion, setPromotion] = useState<{ id: number }[]>([]);
+    const [service, setService] = useState<{ id: number }[]>([])
 
 
     useEffect(() => {
-        dispatch(reset());
         dispatch(getEntities({}))
         dispatch(getServicesOfHost({}))
         dispatch(getEntityDetailsOfHost(id))
     }, [])
 
     const handelSubmit = (values: IRoom) => {
-        const newValue = { ...room, ...values, formFiles: null, promotions: promotion, services: service } as IRoom;
+        const newValue = { ...room, ...values, promotions: promotion, services: service} as IRoom;
         dispatch(updateEntityOfHost({ id, room: newValue }));
     }
 
-    const handlePromotions = (newPromotion: number) => {
-        setPromotion([newPromotion])
+    const handlePromotions = (newPromotion: number[]) => {
+        const addPromotion = newPromotion.map((promotion) => { return { id: promotion } });
+        setPromotion(addPromotion)
     }
 
-    const handleServices = (newService: number) => {
-        setService([newService])
+    const handleServices = (newService: number[]) => {
+        const addService = newService.map((service) => { return { id: service } });
+        setService(addService)
     }
 
     const listFormItem: IFormItemDesign[] = [
-        { label: "Room name", name: "roomname", type: "text", initialData: room?.roomName },
+        { label: "Room name", name: "roomName", type: "text", initialData: room?.roomName },
         { label: "Address", name: "address", type: "text", initialData: room?.address },
         { label: "Description", name: "description", type: "text", initialData: room?.description },
         { label: "Price", name: "price", type: "text", initialData: room?.price },
         { label: "Room Capacity", name: "roomCapacity", type: "text", initialData: room?.roomCapacity },
-        { label: "Rating", name: "rating", type: "text", initialData: room?.rating },
+        // { label: "Rating", name: "rating", type: "text", initialData: room?.rating },
         { label: "Status", name: "status", type: "text", initialData: room?.status },
-        { label: "Promotions", name: "promotions", type: "text", element: "select", selectData: promotions, onChangeFormItem: handlePromotions },
+        { label: "Promotions", name: "promotions", type: "text", element: "select", selectData: [], onChangeFormItem: handlePromotions },
         { label: "Services", name: "services", type: "text", element: "select", selectData: services, onChangeFormItem: handleServices },
     ]
 
     return (
-        
-            <CustomeForm item={listFormItem} submit={handelSubmit} />
-       
+
+        <CustomeForm item={listFormItem} submit={handelSubmit} />
+
 
         // room?.roomName ?
         //     <Row md={12}>
