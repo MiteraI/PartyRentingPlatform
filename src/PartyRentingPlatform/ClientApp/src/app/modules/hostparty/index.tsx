@@ -15,13 +15,14 @@ import RoomDetail from 'app/entities/room/room-detail';
 import BookingCreate from 'app/entities/booking/hostparty/booking-create';
 import EditRoomOfHost from './room-edit';
 import ServicesOfHost from './components/servicesOfHost';
+import { Row } from 'reactstrap';
+import { TabPanel } from './components/tabpanel';
+import EditServiceOfHost from 'app/entities/service/hostparty/service-edit';
 
 
 const HostPartyRoutes = () => {
 
     const [value, setValue] = React.useState(0);
-    const dispatch = useAppDispatch();
-    const roomListOfHost = useAppSelector(state => state.room.entitiesOfHost) as IRoom[];
     const navigate = useNavigate()
 
     function a11yProps(index: number) {
@@ -34,16 +35,6 @@ const HostPartyRoutes = () => {
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
-
-
-
-
-    useEffect(() => {
-
-        // use to delete the entity of room detail of host
-        dispatch(reset());
-        dispatch(getEntityOfHost({ page: 0, size: 100, sort: 'id,asc' }));
-    }, [])
 
     const handleChangeRoom = () => {
         navigate("room")
@@ -58,12 +49,17 @@ const HostPartyRoutes = () => {
         navigate("services");
     }
 
-   
+
+    // const boxStyle: React.CSSProperties = {
+    //     display: "flex",
+    //     flexGrow: 1
+    // }
+
     return (
         <Box sx={{ border: "1px solid black", padding: "20px" }}>
 
             <Box
-                sx={{ padding: "10px 50px", flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: "auto" }}
+                sx={{ padding: "20px 30px", flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: "auto" }}
             >
 
                 <Tabs
@@ -76,18 +72,108 @@ const HostPartyRoutes = () => {
                     <Tab onClick={handleChangeRoom} label="Room" {...a11yProps(0)} />
                     <Tab onClick={handleChangeRequestOfCustomer} label="Request of customer" {...a11yProps(1)} />
                     <Tab onClick={handleChangeServicesOfHost} label="Services" {...a11yProps(1)} />
+
+
+
+
+
                 </Tabs>
 
+                <TabPanel value={value} index={0} >
+                    <ErrorBoundaryRoutes>
+                        <Route path='room' >
+                            <Route index element={<RoomOfHost valuePanel={value} />} />
+                            <Route path='edit'>
+                                <Route path=':id'>
+                                    <Route index element={
+                                        <EditRoomOfHost />
+                                    }
+                                    />
+                                </Route>
+                            </Route>
+                        </Route>
+                    </ErrorBoundaryRoutes>
+                </TabPanel>
 
-                <ErrorBoundaryRoutes>
+                <TabPanel value={value} index={1}>
+                    <ErrorBoundaryRoutes>
+                        <Route path="request-customer" element={<RequestOfCustomer valuePanel={value} />} />
+                    </ErrorBoundaryRoutes>
+                </TabPanel>
+
+                <TabPanel value={value} index={2}>
+                    <ErrorBoundaryRoutes>
+                        <Route path='services'>
+                            <Route index element={<ServicesOfHost valuePanel={value} />} />
+                            <Route path='edit'>
+                                <Route path=':id'>
+                                    <Route index element={
+                                        <EditServiceOfHost />
+                                    }
+                                    />
+                                </Route>
+                            </Route>
+                        </Route>
+                    </ErrorBoundaryRoutes>
+                </TabPanel>
+
+
+
+                {/* <ErrorBoundaryRoutes>
                     <Route path='room' >
                         <Route index element={<RoomOfHost valuePanel={value} data={roomListOfHost} />} />
+                        <Route path='edit'>
+                            <Route path=':id'>
+                                <Route index element={
+                                    <Box sx={boxStyle}>
+                                        <EditRoomOfHost />
+                                    </Box>
+                                }
+                                />
+                            </Route>
+                        </Route>
                     </Route>
                     <Route path="request-customer" element={<RequestOfCustomer valuePanel={value} />} />
-                    <Route path='services' element={<ServicesOfHost valuePanel={value} />} />
-                </ErrorBoundaryRoutes>
+                    <Route path='services'  >
 
+                        <Route index element={<ServicesOfHost valuePanel={value} />} />
+                        <Route path='edit'>
+                            <Route path=':id'>
+                                <Route index element={
+                                    <EditRoomOfHost />
+                                }
+                                />
+                            </Route>
+                        </Route>
+                    </Route>
+                    <Route path='room' >
+                        <Route index element={<RoomOfHost valuePanel={value} data={roomListOfHost} />} />
+                        <Route path='edit'>
+                            <Route path=':id'>
+                                <Route index element={
+                                    <Box sx={boxStyle}>
+                                        <EditRoomOfHost />
+                                    </Box>
+                                }
+                                />
+                            </Route>
+                        </Route>
+                    </Route>
+                    <Route path="request-customer" element={<RequestOfCustomer valuePanel={value} />} />
+                    <Route path='services'  >
 
+                        <Route index element={<ServicesOfHost valuePanel={value} />} />
+                        <Route path='edit'>
+                            <Route path=':id'>
+                                <Route index element={
+                                    <EditRoomOfHost />
+                                }
+                                />
+                            </Route>
+                        </Route>
+                    </Route>
+
+                </ErrorBoundaryRoutes> */}
             </Box>
         </Box>
 

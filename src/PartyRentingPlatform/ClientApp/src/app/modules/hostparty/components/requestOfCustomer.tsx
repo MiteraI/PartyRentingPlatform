@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { TabPanel } from "./tabpanel"
-import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material"
+import { Avatar, Grid, IconButton, List, ListItem, ListItemAvatar, ListItemText, Pagination } from "@mui/material"
 
 import { useAppDispatch, useAppSelector } from "app/config/store";
 import { getRequestOfCustomer } from "app/entities/booking/booking.reducer";
@@ -24,9 +24,14 @@ const RequestOfCustomer: React.FC<IRequestOfCustomer> = (props) => {
 
 
     return (
-        <TabPanel value={valuePanel} index={1}>
+        <>
             <ListTabPanelRequestOfCustomer data={requestOfCustomer} />
-        </TabPanel>
+            <Grid sx={{ marginTop: "10px", flexGrow: 1 }}>
+                <Pagination style={{ display: "flex", justifyContent: "right" }} count={10} variant="outlined" shape="rounded" />
+            </Grid>
+        </>
+        // <TabPanel value={valuePanel} index={1}>
+        // </TabPanel>
 
     )
 }

@@ -3,6 +3,7 @@ import React, { ChangeEventHandler, useEffect, useState } from "react"
 import { Button, Form, Input, Select } from "antd"
 import { Col, Row } from "reactstrap"
 import { useAppDispatch } from "app/config/store"
+import { reset } from "app/entities/room/room.reducer"
 
 
 type InputType = "text" | "number" | "file" | "date" | "email" | "datetime-local"
@@ -38,18 +39,22 @@ const CustomeForm: React.FC<IFormDesign> = (props) => {
     const { item, submit } = props
     const [valueOption, setValueOption] = useState("");
     const { Option } = Select
-
+    const dispatch = useAppDispatch()
     const formStyle: React.CSSProperties = {
-        margin: 20,
+        margin: "0px 20px",
         border: "0.5px solid black",
-        boxShadow: "#b5b5b5 5px 7px 20px 4px"
+        boxShadow: "#b5b5b5 5px 7px 20px 4px",
     }
 
+    useEffect(() => {
+        dispatch(reset());
+    })
+
     const FormItemRender: React.FC = () => (
-        <Row md={12} style={{ padding: "50px 20px" }}>
+        <Row xl={12} style={{ padding: "50px 20px" }}>
             {item.map((formItem) => {
                 return (
-                    <Col md={6}>
+                    <Col xl={6}>
                         <Form.Item
                             label={formItem.label}
                             name={formItem.name}

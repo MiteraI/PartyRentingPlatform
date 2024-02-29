@@ -27,6 +27,7 @@ const EditRoomOfHost = () => {
 
 
     useEffect(() => {
+        dispatch(reset());
         dispatch(getEntities({}))
         dispatch(getServicesOfHost({}))
         dispatch(getEntityDetailsOfHost(id))
@@ -45,8 +46,6 @@ const EditRoomOfHost = () => {
         setService([newService])
     }
 
-
-
     const listFormItem: IFormItemDesign[] = [
         { label: "Room name", name: "roomname", type: "text", initialData: room?.roomName },
         { label: "Address", name: "address", type: "text", initialData: room?.address },
@@ -60,9 +59,10 @@ const EditRoomOfHost = () => {
     ]
 
     return (
-        <div>
+        
             <CustomeForm item={listFormItem} submit={handelSubmit} />
-        </div>
+       
+
         // room?.roomName ?
         //     <Row md={12}>
         //         <Form

@@ -9,29 +9,31 @@ interface TabPanelProps {
 
 export const TabPanel = (props: TabPanelProps) => {
     const { children, value, index, ...other } = props;
+
     const gridStyle: React.CSSProperties = {
-        height: "300px",
-        maxHeight: "300px",
-        overflowY: "hidden"
+        height: "auto",
+        maxHeight: "514px",
+        overflowY: "hidden",
+        flexGrow: 1
     }
-
-
     return (
         <div
             role="tabpanel"
             hidden={value !== index}
             id={`vertical-tabpanel-${index}`}
             aria-labelledby={`vertical-tab-${index}`}
-            style={{ flexGrow: 1 }}
+            style={{ flexGrow: 1, width: "100%" }}
             {...other}
         >
             {value === index && (
                 <Box>
-                    <Grid container >
-                        <Grid item sx={{ flexGrow: 1 }}>
+                    <Grid>
+                        <Grid sx={gridStyle}>
+
                             {children}
-                            <Pagination style={{ display: "flex", justifyContent: "right" }} count={10} variant="outlined" shape="rounded" />
+
                         </Grid>
+                        
                     </Grid>
                 </Box>
             )}

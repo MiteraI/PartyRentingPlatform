@@ -80,17 +80,6 @@ const AppRoutes = () => {
               </PrivateRoute>
             }
           />
-          <Route path='room/edit'>
-            <Route path=':id'>
-              <Route index element={
-                <PrivateRoute hasAnyAuthorities={[AUTHORITIES.HOST]}>
-                  <EditRoomOfHost />
-                </PrivateRoute>
-              }
-              />
-            </Route>
-          </Route>
-
         </Route>
 
         // admin route

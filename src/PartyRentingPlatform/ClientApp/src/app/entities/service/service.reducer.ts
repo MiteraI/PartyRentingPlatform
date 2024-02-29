@@ -81,6 +81,47 @@ export const getServicesOfHost = createAsyncThunk("service/fetch_entities_of_hos
   const requestUrl = `${API_SERVICE.host.GETSERVIESAPI}?${sort ? `page=${page}&size=${size}&sort=${sort}&` : ''}cacheBuster=${new Date().getTime()}`;
   return axios.get<IService[]>(requestUrl)
 })
+
+
+export const getServiceOfHost = createAsyncThunk("service/fetch_entity_of_host", async (id: string | number) => {
+  const requestUrl = `${API_SERVICE.host.GETSERVICEAPI}/${id}`;
+  const result = await axios.get(requestUrl);
+  return result
+
+},
+  { serializeError: serializeAxiosError }
+)
+
+
+export const createServiceOfHost = createAsyncThunk("service/create_entity_of_host", async (service: IService, thunkAPI) => {
+  const result = await axios.post(`${API_SERVICE.host.CREATESERVICEAPI}`, cleanEntity(service));
+  thunkAPI.dispatch(getServicesOfHost({}))
+  return result
+},
+  {
+    serializeError: serializeAxiosError
+  }
+)
+
+
+export const deleteServiceOfHost = createAsyncThunk("service/delete_entity_of_host", async (id: string | number, thunkAPI) => {
+  const requestUrl = `${API_SERVICE.host.DELETESERVICEAPI}/${id}`;
+  const result = await axios.delete<IService>(requestUrl);
+  thunkAPI.dispatch(getServicesOfHost({}))
+  return result
+},
+  { serializeError: serializeAxiosError }
+)
+
+
+export const updateServiceOfHost = createAsyncThunk("service/update_entity_of_host", async ({ id, service }: { id: string | number, service: IService }) => {
+  const result = await axios.put(`${API_SERVICE.host.UPDATESERVICEAPI}/${id}`, cleanEntity(service));
+  return result
+}
+  , {
+    serializeError: serializeAxiosError
+  }
+)
 // slice
 
 export const ServiceSlice = createEntitySlice({
@@ -88,14 +129,15 @@ export const ServiceSlice = createEntitySlice({
   initialState,
   extraReducers(builder) {
     builder
-      .addCase(getEntity.fulfilled, (state, action) => {
-        state.loading = false;
-        state.entity = action.payload.data;
-      })
       .addCase(deleteEntity.fulfilled, state => {
         state.updating = false;
         state.updateSuccess = true;
         state.entity = {};
+      })
+
+      .addMatcher(isFulfilled(getEntity, getServiceOfHost), (state, action) => {
+        state.loading = false;
+        state.entity = action.payload.data
       })
       .addMatcher(isFulfilled(getServicesOfHost, getEntities), (state, action) => {
         const { data, headers } = action.payload;
@@ -113,7 +155,7 @@ export const ServiceSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity), state => {
+      .addMatcher(isPending(getServicesOfHost, getServiceOfHost, getEntities, getEntity), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

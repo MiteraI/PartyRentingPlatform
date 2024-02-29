@@ -24,11 +24,11 @@ const ListTabPanelServiceOfCustomer: React.FC<IListTabPanelServicesOfCustomer> =
                         key={service.id}
                         secondaryAction={
                             <>
-                                <IconButton edge="end" aria-label="delete">
+                                <IconButton onClick={() => editfunction(service.id)} edge="end" aria-label="delete">
                                     <EditIcon />
                                 </IconButton>
 
-                                <IconButton sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
+                                <IconButton onClick={() => deletefunction(service.id)} sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
                                     <DeleteIcon />
                                 </IconButton>
                             </>

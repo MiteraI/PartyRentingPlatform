@@ -203,7 +203,7 @@ const RoomBookingForCustomer = () => {
           <Grid container spacing={3} mb={2}>
             <Grid container alignItems="center" spacing={2}>
               <Grid item>
-                <Button tag={Link} to={`/room/${id}`} replace color="info" style={{ border: 'none', background: 'none' }}>
+                <Button tag={Link} to={`/room/detail/${id}`} replace color="info" style={{ border: 'none', background: 'none' }}>
                   <FontAwesomeIcon icon="arrow-left" />
                 </Button>
   
