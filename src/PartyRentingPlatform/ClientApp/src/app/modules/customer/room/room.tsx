@@ -343,16 +343,26 @@ const RoomDetailForCustomer = () => {
                             />
 
                             {/* Add time pickers for start and end time */}
-                            <TimePicker
-                                style={{ marginBottom: '16px', width: '100%' }}
-                                onChange={(time) => setStartTime(time)}
-                                placeholder="Select Start Time"
-                            />
-                            <TimePicker
-                                style={{ marginBottom: '16px', width: '100%' }}
-                                onChange={(time) => setEndTime(time)}
-                                placeholder="Select End Time"
-                            />
+                            {startDate != null && (
+                                <Row>
+                                    <Col md="6" >
+                                        <TimePicker
+                                            style={{ marginBottom: '16px', width: '100%' }}
+                                            onChange={(time) => setStartTime(time)}
+                                            placeholder="Select Start Time"
+                                        />
+
+                                    </Col>
+                                    <Col md="6" >
+
+                                        <TimePicker
+                                            style={{ marginBottom: '16px', width: '100%' }}
+                                            onChange={(time) => setEndTime(time)}
+                                            placeholder="Select End Time"
+                                        />
+                                    </Col>
+                                </Row>)}
+
                             <Button
                                 color="primary"
                                 size="large"
@@ -368,30 +378,29 @@ const RoomDetailForCustomer = () => {
 
 
                                 <Col md="6" style={{ marginTop: '15px' }}>
-                                    <div className="room-detail-header">
-                                        <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x " + numberOfHours + " giờ"}</Typography>
-                                    </div>
-                                    <div className="room-detail-header">
+                                    {numberOfHours > 0 && (
+                                        <div className="room-detail-header">
+                                            <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x " + numberOfHours + " giờ"}</Typography>
+                                        </div>
+                                    )}
+
+                                    {serviceFee > 0 && (<div className="room-detail-header">
                                         <Typography variant="subtitle2">Phí dịch vụ</Typography>
-                                    </div>
+                                    </div>)}
                                 </Col>
 
-                                {/* <Col md="6">
-                                    <div className="room-detail-header">
-                                        <Typography variant="subtitle2">{"VNĐ " + serviceFee}</Typography>
-                                    </div>
-                                    <div className="room-detail-header">
-                                        <Typography variant="subtitle2">Phí dịch vụ</Typography>
-                                    </div>
-                                </Col> */}
 
                                 <Col md="4" style={{ marginLeft: 'auto', marginTop: '15px' }}>
-                                    <div className="room-detail-header">
-                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * 2}</Typography>
-                                    </div>
-                                    <div className="room-detail-header">
-                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + serviceFee}</Typography>
-                                    </div>
+                                    {numberOfHours > 0 && (
+                                        <div className="room-detail-header">
+                                            <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * numberOfHours}</Typography>
+                                        </div>
+                                    )}
+                                    {serviceFee > 0 && (
+                                        <div className="room-detail-header">
+                                            <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + serviceFee}</Typography>
+                                        </div>
+                                    )}
                                 </Col>
                             </Row>
 
@@ -406,7 +415,7 @@ const RoomDetailForCustomer = () => {
 
                                 <Col md="4" style={{ marginLeft: 'auto' }}>
                                     <div className="room-detail-header">
-                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + roomEntity.price * 2}</strong></Typography>
+                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + (roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
                                     </div>
                                 </Col>
                             </Row>
