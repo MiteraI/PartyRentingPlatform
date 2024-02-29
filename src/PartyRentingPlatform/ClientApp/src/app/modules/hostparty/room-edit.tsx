@@ -22,8 +22,8 @@ const EditRoomOfHost = () => {
 
 
     // form update
-    const [promotion, setPromotion] = useState<number[]>([]);
-    const [service, setService] = useState<number[]>([])
+    const [promotion, setPromotion] = useState<{ id: number }[]>([]);
+    const [service, setService] = useState<{ id: number }[]>([])
 
 
     useEffect(() => {
@@ -39,11 +39,13 @@ const EditRoomOfHost = () => {
     }
 
     const handlePromotions = (newPromotion: number) => {
-        setPromotion([newPromotion])
+        const addPromotion = [{ id: newPromotion }]
+        setPromotion([...promotion, ...addPromotion])
     }
 
     const handleServices = (newService: number) => {
-        setService([newService])
+        const addService = [{ id: newService }];
+        setService([...service, ...addService])
     }
 
     const listFormItem: IFormItemDesign[] = [
@@ -59,9 +61,9 @@ const EditRoomOfHost = () => {
     ]
 
     return (
-        
-            <CustomeForm item={listFormItem} submit={handelSubmit} />
-       
+
+        <CustomeForm item={listFormItem} submit={handelSubmit} />
+
 
         // room?.roomName ?
         //     <Row md={12}>

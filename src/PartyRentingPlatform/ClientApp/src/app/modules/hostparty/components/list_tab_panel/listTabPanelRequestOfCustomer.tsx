@@ -1,4 +1,4 @@
-import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material"
+import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from "@mui/material"
 import React from "react"
 import DeleteIcon from '@mui/icons-material/Delete';
 import FolderIcon from '@mui/icons-material/Folder';
@@ -19,33 +19,36 @@ const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = 
         <List dense>
             {data?.length > 0 ?
                 data.map((request) => (
-                    <ListItem
-                        key={request.id}
-                        secondaryAction={
-                            <>
-                                <IconButton edge="end" aria-label="delete">
-                                    <EditIcon />
-                                </IconButton>
+                    <ListItemButton>
+                        <ListItem
+                            key={request.id}
+                            secondaryAction={
+                                <>
+                                    <IconButton edge="end" aria-label="delete">
+                                        <EditIcon />
+                                    </IconButton>
 
-                                <IconButton sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
-                                    <DeleteIcon />
-                                </IconButton>
-                            </>
-                        }
-                    >
+                                    <IconButton sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </>
+                            }
+                        >
+                            <ListItemAvatar>
+                                <Avatar>
+                                    <FolderIcon />
+                                </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary={request.customerName}
+                                secondary={request.status}
+                            />
 
-                        <ListItemAvatar>
-                            <Avatar>
-                                <FolderIcon />
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                            primary={request.customerName}
-                            secondary={request.status}
-                        />
 
+                        </ListItem>
+                    </ListItemButton>
 
-                    </ListItem>)) : <div></div>}
+                )) : <div></div>}
 
         </List>
     )

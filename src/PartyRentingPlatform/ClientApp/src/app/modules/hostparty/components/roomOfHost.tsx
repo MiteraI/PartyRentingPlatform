@@ -43,7 +43,7 @@ const RoomOfHost: React.FC<IRoomOfHost> = (props) => {
     useEffect(() => {
 
         // use to delete the entity of room detail of host
-        dispatch(getEntityOfHost({ page: 0, size: 100, sort: 'id,asc' }));
+        dispatch(getEntityOfHost({ page: 0, size: 5, sort: 'id,asc' }));
     }, [])
 
     return (
