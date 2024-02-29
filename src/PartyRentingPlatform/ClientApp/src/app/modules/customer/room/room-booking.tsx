@@ -97,6 +97,7 @@ const RoomBookingForCustomer = () => {
   
   
     const roomEntity = useAppSelector(state => state.room.entity);
+    console.log(roomEntity);
   
     const isNew = true;
   
@@ -122,11 +123,11 @@ const RoomBookingForCustomer = () => {
       if (isNew) {
         dispatch(reset());
       } else {
-        dispatch(getEntity(id));
+        // dispatch(getEntity(id));
       }
   
-      dispatch(getRooms({}));
-      dispatch(getUsers({}));
+      // dispatch(getRooms({}));
+      // dispatch(getUsers({}));
     }, []);
   
     useEffect(() => {
@@ -203,7 +204,7 @@ const RoomBookingForCustomer = () => {
           <Grid container spacing={3} mb={2}>
             <Grid container alignItems="center" spacing={2}>
               <Grid item>
-                <Button tag={Link} to={`/room/${id}`} replace color="info" style={{ border: 'none', background: 'none' }}>
+                <Button tag={Link} to={`/room/detail/${id}`} replace color="info" style={{ border: 'none', background: 'none' }}>
                   <FontAwesomeIcon icon="arrow-left" />
                 </Button>
   
@@ -227,7 +228,6 @@ const RoomBookingForCustomer = () => {
   
               <Typography variant="h5">Start Date from URL: {startDateFromUrl}</Typography>
               <Typography variant="h5">End Date from URL: {endDateFromUrl}</Typography>
-              {/* <Typography variant="h5">End Date from URL: {selectedServiceFromUrl.toString()}</Typography> */}
   
   
   
@@ -252,7 +252,7 @@ const RoomBookingForCustomer = () => {
                 >
                   <Grid item xs={10}>
                     <Typography variant="subtitle1" fontWeight="bold">
-                      {service.id}
+                      {'meowww'}
                     </Typography>
                     <Typography
                       variant="body2"
@@ -285,17 +285,7 @@ const RoomBookingForCustomer = () => {
                     <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
                       {!isNew ? <ValidatedField name="id" required readOnly id="booking-id" label="ID" validate={{ required: true }} /> : null}
                       <ValidatedField label="Customer Name" id="booking-customerName" name="customerName" data-cy="customerName" type="text" />
-                      {/* <ValidatedField
-                        label="Book Time"
-                        id="booking-bookTime"
-                        name="bookTime"
-                        data-cy="bookTime"
-                        type="datetime-local"
-                        placeholder="YYYY-MM-DD HH:mm"
-                        validate={{
-                          required: { value: true, message: 'This field is required.' },
-                        }}
-                      /> */}
+                    
                       <ValidatedField
                         label="Start Time"
                         id="booking-startTime"
@@ -317,29 +307,7 @@ const RoomBookingForCustomer = () => {
                         validate={{
                           required: { value: true, message: 'This field is required.' },
                         }}
-                      />
-                      {/* <ValidatedField
-                        label="Total Price"
-                        id="booking-totalPrice"
-                        name="totalPrice"
-                        value={roomEntity.price}
-                        data-cy="totalPrice"
-                        type="text"
-                        validate={{
-                          required: { value: true, message: 'This field is required.' },
-                          min: { value: 0, message: 'This field should be at least 0.' },
-                          validate: v => isNumber(v) || 'This field should be a number.',
-                        }}
-                      /> */}
-  
-                      {/* <FormText>This field is required.</FormText> */}
-  
-                      &nbsp;
-                      {/* <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
-                        <FontAwesomeIcon icon="save" />
-                        &nbsp; Confirm and send request
-                      </Button> */}
-  
+                      />                
                       <Button
                         id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}
                         style={{ backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px' }}
