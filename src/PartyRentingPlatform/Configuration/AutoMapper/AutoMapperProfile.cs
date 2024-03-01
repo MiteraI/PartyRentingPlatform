@@ -40,10 +40,7 @@ namespace PartyRentingPlatform.Configuration.AutoMapper
 
             // Booking mappings
             CreateMap<Booking, BookingDto>().ReverseMap();
-            CreateMap<Booking, BookingCustomerDto>()
-                .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room))
-                .ForMember(dest => dest.BookingDetails, opt => opt.MapFrom(src => src.BookingDetails))
-                .ReverseMap();
+            CreateMap<Booking, BookingCustomerDto>().ReverseMap();
 
             CreateMap<BookingDetails, BookingDetailCustomerDto>()
                 .ForMember(dest => dest.ServiceQuantity, opt => opt.MapFrom(src => src.ServiceQuantity))

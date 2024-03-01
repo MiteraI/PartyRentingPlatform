@@ -268,6 +268,17 @@ namespace PartyRentingPlatform.Controllers
             return Ok(((IPage<BookingCustomerDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
         }
 
+        [Authorize(Roles =RolesConstants.HOST)]
+        [HttpGet("host/{status}")]
+        public async Task<ActionResult<IEnumerable<BookingCustomerDto>>> GetAllHostBookingsByStatus([FromRoute] BookingStatus status, IPageable pageable)
+        {
+            _log.LogDebug("REST request to get a page of Host Bookings by status");
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            var result = await _bookingService.FindAllForHostByStatus(userIdClaim.Value, status, pageable);
+            var page = new Page<BookingCustomerDto>(result.Content.Select(entity => _mapper.Map<BookingCustomerDto>(entity)).ToList(), pageable, result.TotalElements);
+            return Ok(((IPage<BookingCustomerDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
+        }
+
         [Authorize(Roles = RolesConstants.HOST)]
         [HttpPut("{id}/accept")]
         public async Task<IActionResult> AcceptBooking([FromRoute] long? id)

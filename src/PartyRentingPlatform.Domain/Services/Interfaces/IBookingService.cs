@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using JHipsterNet.Core.Pagination;
+using PartyRentingPlatform.Crosscutting.Enums;
 using PartyRentingPlatform.Domain.Entities;
 
 namespace PartyRentingPlatform.Domain.Services.Interfaces
@@ -20,5 +21,7 @@ namespace PartyRentingPlatform.Domain.Services.Interfaces
         Task<Booking> FindOneForCustomer(long? id);
 
         Task<IPage<Booking>> FindAllForHost(string userId, IPageable pageable);
+
+        Task<IPage<Booking>> FindAllForHostByStatus(string userId, BookingStatus bookingStatus, IPageable pageable);
     }
 }
