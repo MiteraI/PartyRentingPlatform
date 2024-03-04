@@ -5,6 +5,7 @@ import RoomDetailForCustomer from "./room/room"
 import PrivateRoute from "app/shared/auth/private-route"
 import { AUTHORITIES } from "app/config/constants"
 import RoomBookingForCustomer from "./room/room-booking"
+import BookingTracking from "./room/booking-tracking"
 const CustomerRoutes = () => (
     <div>
         <ErrorBoundaryRoutes>
@@ -20,6 +21,15 @@ const CustomerRoutes = () => (
                         <Route index element={
                             // <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
                                 <RoomBookingForCustomer />
+                            // </PrivateRoute>
+                        } />
+                    </Route>
+                </Route>
+                <Route path="booking-tracking">
+                    <Route path=":id">
+                        <Route index element={
+                            // <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
+                                <BookingTracking />
                             // </PrivateRoute>
                         } />
                     </Route>

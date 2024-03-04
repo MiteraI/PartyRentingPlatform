@@ -12,7 +12,6 @@ import Booking from 'app/entities/booking/booking';
 import BookingDetails from 'app/entities/booking-details/booking-details';
 import Report from 'app/entities/report/report';
 import Notification from 'app/entities/notification/notification';
-import BookingTracking from 'app/entities/booking-tracking/booking-tracking';
 import PromotionRoutes from 'app/entities/promotion';
 import ServiceRoutes from 'app/entities/service';
 import BookingRoutes from 'app/entities/booking';
@@ -35,7 +34,6 @@ const AdministrationRoutes = () => (
       <Route path="report/*" element={<ReportRoutes />} />
       <Route path="notification/*" element={<NotificationRoutes />} />
       <Route path="request-to-book/:id" element={<RequestToBook />} /> {/* Add this line */}
-      <Route path="booking-tracking/:id" element={<BookingTracking />} /> {/* Add this line */}
     </ErrorBoundaryRoutes>
   </div>
 );

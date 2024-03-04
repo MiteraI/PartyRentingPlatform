@@ -31,8 +31,9 @@ const RoomBookingForCustomer = () => {
   const [startDateFromUrl, setStartDateFromUrl] = useState<string | null>(null);
   const [endDateFromUrl, setEndDateFromUrl] = useState<string | null>(null);
   const [selectedServiceFromUrl, setSelectedServiceFromUrl] = useState<Array<{ id: string, quantity: string }> | null>(null);
-  const [quantityMap, setQuantityMap] = useState<{ [key: string]: number }>({});
-
+  const [quantityMap, setQuantityMap] = useState(null);
+  const [serviceFee, setServiceFee] = useState<number>(0);
+  const [numberOfHours, setNumberOfHours] = useState<number>(0);
 
 
   const StyledRoomDetail = styled('div')(({ theme }) => ({
@@ -69,33 +70,18 @@ const RoomBookingForCustomer = () => {
       // Parse selectedServiceParam into an array
       const parsedSelectedService = JSON.parse(selectedServiceParam || '[]');
       setSelectedServiceFromUrl(parsedSelectedService);
-      setQuantityMap(parsedSelectedService.map(service => service.quantity));
-      console.log('Selected Service from URL:', parsedSelectedService.map(service => service.quantity));
+      setQuantityMap(parsedSelectedService);
+      console.log('Selected Service from URL:', parsedSelectedService);
     } catch (error) {
       console.error('Error parsing Selected Service:', error);
     }
   }, [location.search]);
 
 
-  const handleIncrementQuantity = (serviceId: string) => {
-    setQuantityMap((prevMap) => ({
-      ...prevMap,
-      [serviceId]: (prevMap[serviceId] || 0) + 1,
-    }));
-  };
-
-  // console.log(startDate, endDate, selectedService);
-
-  // Function to decrement quantity for a specific service
-  const handleDecrementQuantity = (serviceId: string) => {
-    setQuantityMap((prevMap) => ({
-      ...prevMap,
-      [serviceId]: Math.max((prevMap[serviceId] || 0) - 1, 0),
-    }));
-  };
 
 
   const roomEntity = useAppSelector(state => state.room.entity);
+  const serviceList = roomEntity.services || [];
   console.log(roomEntity);
 
   const isNew = true;
@@ -131,6 +117,25 @@ const RoomBookingForCustomer = () => {
       // handleClose();
     }
   }, [updateSuccess]);
+
+  // useEffect(() => {
+
+  //   const totalServiceFee = Object.keys(quantityMap).reduce((total, serviceId) => {
+  //     const service = serviceList.find(service => service.id == serviceId);
+  //     if (service) {
+  //       return total + (service.price * quantityMap[serviceId]);
+  //     }
+  //     return total;
+  //   }, 0);
+
+  //   // Cập nhật state serviceFee
+  //   setServiceFee(totalServiceFee);
+  // }, [quantityMap, serviceList]);
+
+  // useEffect(() => {
+  //   const hours = (endTime - startTime) / 3600000;
+  //   if (hours > 0) { setNumberOfHours(hours) };
+  // }, [startTime, endTime, startDate]);
 
 
   const saveEntity = async (values) => {
@@ -269,7 +274,7 @@ const RoomBookingForCustomer = () => {
               >
                 <Grid item xs={10}>
                   <Typography variant="subtitle1" fontWeight="bold">
-                    {'meowww'}
+                    {serviceList.find(item => item.id === parseInt(service.id))?.serviceName}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -280,14 +285,15 @@ const RoomBookingForCustomer = () => {
                       color: '#b4b4b4'
                     }}
                   >
-                    {service.id}
+                    {serviceList.find(item => item.id === parseInt(service.id))?.description}
                   </Typography>
                 </Grid>
                 <Grid item xs={2} container justifyContent="flex-end">
                   {/* Quantity controls in room-detail */}
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     {/* <button onClick={() => handleDecrementQuantity(service.id)}>-</button> */}
-                    <span style={{ margin: '0 10px' }}>{quantityMap[service.id]}</span>
+                    {/* <span style={{ margin: '0 10px' }}>{quantityMap.find(item => item.id === parseInt(service.id))?.quantity}</span> */}
+                    <span style={{ margin: '0 10px' }}>{quantityMap.find(item => item.id === service.id)?.quantity}</span>
                     {/* <button onClick={() => handleIncrementQuantity(service.id)}>+</button> */}
                   </div>
                 </Grid>
@@ -312,7 +318,7 @@ const RoomBookingForCustomer = () => {
             </Row> */}
 
 
-     
+
 
             <Row className="justify-content-center">
               <Col md="8">
@@ -386,6 +392,53 @@ const RoomBookingForCustomer = () => {
 
                 <Row>
                   <h4>Price details</h4>
+
+                  <Row>
+                    <Typography variant="subtitle2" align='center'>You won't be charged yet</Typography>
+
+
+                    <Col md="6" style={{ marginTop: '15px' }}>
+                      {numberOfHours > 0 && (
+                        <div className="room-detail-header">
+                          <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x " + numberOfHours + " giờ"}</Typography>
+                        </div>
+                      )}
+
+                      {serviceFee > 0 && (<div className="room-detail-header">
+                        <Typography variant="subtitle2">Phí dịch vụ</Typography>
+                      </div>)}
+                    </Col>
+
+
+                    <Col md="4" style={{ marginLeft: 'auto', marginTop: '15px' }}>
+                      {numberOfHours > 0 && (
+                        <div className="room-detail-header">
+                          <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * numberOfHours}</Typography>
+                        </div>
+                      )}
+                      {serviceFee > 0 && (
+                        <div className="room-detail-header">
+                          <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + serviceFee}</Typography>
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+
+                  <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
+                  <Row>
+
+                    <Col md="6">
+                      <div className="room-detail-header">
+                        <Typography variant="subtitle1"><strong>Total (VNĐ)</strong></Typography>
+                      </div>
+                    </Col>
+
+                    <Col md="4" style={{ marginLeft: 'auto' }}>
+                      <div className="room-detail-header">
+                        <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + (roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
+                      </div>
+                    </Col>
+                  </Row>
 
                   <Col md="6">
                     <div className="room-detail-header">

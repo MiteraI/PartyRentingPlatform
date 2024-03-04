@@ -33,6 +33,25 @@ export const getEntity = createAsyncThunk(
   { serializeError: serializeAxiosError },
 );
 
+export const getEntityForCustomer = createAsyncThunk(
+  'booking/fetch_entity_by_customer',
+  async (id: string | number) => {
+    const requestUrl = `${apiUrl}/${id}`;
+    return axios.get<IBooking>(requestUrl);
+  },
+  { serializeError: serializeAxiosError },
+
+  // 'booking/create_entity_by_customer',
+  // async (entity: IBooking, thunkAPI) => {
+  //   console.log(entity);
+  //   const result = await axios.post<IBooking>(apiUrl + '/customer', cleanEntity(entity));
+  //   // thunkAPI.dispatch(getEntities({}));
+  //   return result;
+  // },
+  // { serializeError: serializeAxiosError },
+
+);
+
 export const createEntity = createAsyncThunk(
   'booking/create_entity',
   async (entity: IBooking, thunkAPI) => {
