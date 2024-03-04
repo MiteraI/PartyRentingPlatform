@@ -28,6 +28,7 @@ import { sample } from 'lodash';
 
 import { Tag } from 'antd';
 import { getEntitiesForCustomer } from 'app/entities/booking/booking.reducer';
+import { Link } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
@@ -191,36 +192,38 @@ export default function UserPage() {
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        {/* <TableCell padding="checkbox">
+                      <Link to={`/room/booking-tracking/${id}`} style={null}>
+                        <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                          {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
                         </TableCell> */}
 
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
+                          <TableCell component="th" scope="row" padding="none">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              <Avatar alt={name} src={avatarUrl} />
+                              <Typography variant="subtitle2" noWrap>
+                                {name}
+                              </Typography>
+                            </Stack>
+                          </TableCell>
 
-                        <TableCell align="left">{company}</TableCell>
+                          <TableCell align="left">{company}</TableCell>
 
-                        <TableCell align="left">{role}</TableCell>
+                          <TableCell align="left">{role}</TableCell>
 
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                          <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
 
-                        <TableCell align="left">
-                          <Tag color={(status === 'banned' && 'error') || 'success'}>{status}</Tag>
-                        </TableCell>
+                          <TableCell align="left">
+                            <Tag color={(status === 'banned' && 'error') || 'success'}>{status}</Tag>
+                          </TableCell>
 
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            {/* <Iconify icon={'eva:more-vertical-fill'} /> */}
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
+                          <TableCell align="right">
+                            <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                              {/* <Iconify icon={'eva:more-vertical-fill'} /> */}
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      </Link>
                     );
                   })}
                   {emptyRows > 0 && (

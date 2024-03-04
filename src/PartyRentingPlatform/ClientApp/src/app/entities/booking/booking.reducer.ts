@@ -123,6 +123,17 @@ export const getRequestDetailOfCustomer = createAsyncThunk("booking/fetch_detail
   return axios.get<IBooking>(requestUrl)
 },
   { serializeError: serializeAxiosError }
+
+  
+)
+
+
+export const cancelBookingForCustomer = createAsyncThunk("booking/cancle-booking-for-customer", async (id: string | number, thunkAPI) => {
+  const requestUrl = await axios.put<IBooking>(`${API_BOOKING.customer.CANCELBOOKING}/${id}/cancel`);
+  // thunkAPI.dispatch(filterRequestOfCustomerByStatus({ query: 1 }))
+  return requestUrl;
+},
+  { serializeError: serializeAxiosError }
 )
 
 export const updateAcceptForRequest = createAsyncThunk("booking/confirm-request", async (id: string | number, thunkAPI) => {
@@ -132,6 +143,8 @@ export const updateAcceptForRequest = createAsyncThunk("booking/confirm-request"
 },
   { serializeError: serializeAxiosError }
 )
+
+
 
 export const updateRejectForRequest = createAsyncThunk("booking/reject-request", async (id: string | number, thunkAPI) => {
   const requestUrl = await axios.put<IBooking>(`${API_BOOKING.host.REJECTBOOKING}/${id}/reject`);
@@ -175,7 +188,7 @@ export const BookingSlice = createEntitySlice({
           totalItems: parseInt(headers['x-total-count'], 10),
         };
       })
-      .addMatcher(isFulfilled(updateRejectForRequest, updateAcceptForRequest, createEntity, updateEntity, partialUpdateEntity), (state, action) => {
+      .addMatcher(isFulfilled(updateRejectForRequest, updateAcceptForRequest, createEntity, updateEntity, partialUpdateEntity, cancelBookingForCustomer), (state, action) => {
         state.updating = false;
         state.loading = false;
         state.updateSuccess = true;

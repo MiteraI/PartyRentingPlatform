@@ -20,6 +20,7 @@ import AddTaskOutlinedIcon from '@mui/icons-material/AddTaskOutlined';
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
 import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined';
 import { LocalDiningOutlined, SnowmobileOutlined, VerifiedUserOutlined } from '@mui/icons-material';
+import { cancelBookingForCustomer } from 'app/entities/booking/booking.reducer';
 // import TimelineItem from "examples/Timeline/TimelineItem";
 
 const BookingDetailContainer = styled('div')(({ theme }) => ({
@@ -99,10 +100,12 @@ const BookingTracking = () => {
     const isSuccess = bookingEntity?.status === 'SUCCESS';
     console.log(bookingEntity);
 
+
     const handleCancel = () => {
         // Add logic to handle cancellation here
         // You may dispatch an action or perform an API call
         // based on your application's architecture
+        dispatch(cancelBookingForCustomer(id));
     };
 
     const handlePayment = () => {
@@ -274,6 +277,7 @@ const BookingTracking = () => {
                         <Col md="2" style={{ display: 'flex' }}>
                             {isApproving && (<Button
                                 style={{ margin: 'auto', color: 'white', backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px', justifyContent: 'center', alignItems: 'center' }}
+                            onClick={handleCancel}
                             >
                                 <strong>Cancel</strong>
                             </Button>)}
