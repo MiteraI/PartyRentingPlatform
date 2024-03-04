@@ -18,6 +18,7 @@ const ServicesOfHost: React.FC<IServicesOfHost> = (props) => {
     const [open, setOpen] = useState<boolean>(false)
     const navigate = useNavigate()
     const [page, setPage] = useState<number>(0);
+    const totalPagination = Math.ceil(useAppSelector(state => state.service.totalItems) / 5);
 
 
 
@@ -59,7 +60,7 @@ const ServicesOfHost: React.FC<IServicesOfHost> = (props) => {
             </Box>
             <ListTabPanelServiceOfCustomer editfunction={handelEdit} deletefunction={handleDeleteService} data={services} />
             <Grid sx={{ marginTop: "10px", flexGrow: 1 }}>
-                <Pagination onChange={handlePage} style={{ display: "flex", justifyContent: "right" }} count={10} variant="outlined" shape="rounded" />
+                <Pagination onChange={handlePage} style={{ display: "flex", justifyContent: "right" }} count={totalPagination} variant="outlined" shape="rounded" />
             </Grid>
             {/* </TabPanel> */}
         </>

@@ -11,6 +11,7 @@ import { Navigate, useNavigate } from "react-router";
 import { reset } from "app/entities/room/room.reducer"
 import ListTabPanelRoomHost from "./list_tab_panel/listTabPanelRoomHost";
 import BookingCreate from "app/entities/booking/hostparty/booking-create";
+import CustomeDetai from "app/shared/layout/customeDetail/custome-detail-room";
 
 
 interface IRoomOfHost {
@@ -25,6 +26,7 @@ const RoomOfHost: React.FC<IRoomOfHost> = (props) => {
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const roomListOfHost = useAppSelector(state => state.room.entitiesOfHost) as IRoom[];
+    const totalPagination = Math.ceil(useAppSelector(state => state.room.totalItems) / 5);
     const [page, setPage] = useState<number>(0);
 
 
@@ -65,7 +67,7 @@ const RoomOfHost: React.FC<IRoomOfHost> = (props) => {
             </Box>
             <ListTabPanelRoomHost data={roomListOfHost} editfunction={handleMoveToEditRoomPage} deletefunction={handleDeleteRoomOfHostById} />
             <Grid sx={{ marginTop: "10px", flexGrow: 1 }}>
-                <Pagination onChange={handlePage} style={{ display: "flex", justifyContent: "right" }} count={10} variant="outlined" shape="rounded" />
+                <Pagination onChange={handlePage} style={{ display: "flex", justifyContent: "right" }} count={totalPagination} variant="outlined" shape="rounded" />
             </Grid>
             {/* </TabPanel> */}
         </>

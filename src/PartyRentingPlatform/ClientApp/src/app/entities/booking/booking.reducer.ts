@@ -142,6 +142,16 @@ export const filterRequestOfCustomerByStatus = createAsyncThunk("booking/filter-
 },
   { serializeError: serializeAxiosError }
 )
+
+
+export const getOneRequestDetailOfCustomer = createAsyncThunk("booking/fetch-detail-of-customer", async (id: string | number) => {
+  const requestUrl = await axios.get(`${API_BOOKING.host.GETBOOKINGDETAIL}/${id}`);
+  return requestUrl
+},
+  {
+    serializeError: serializeAxiosError
+  }
+)
 // slice
 
 export const BookingSlice = createEntitySlice({
@@ -150,6 +160,10 @@ export const BookingSlice = createEntitySlice({
   extraReducers(builder) {
     builder
       .addCase(getEntity.fulfilled, (state, action) => {
+        state.loading = false;
+        state.entity = action.payload.data;
+      })
+      .addCase(getOneRequestDetailOfCustomer.fulfilled, (state, action) => {
         state.loading = false;
         state.entity = action.payload.data;
       })

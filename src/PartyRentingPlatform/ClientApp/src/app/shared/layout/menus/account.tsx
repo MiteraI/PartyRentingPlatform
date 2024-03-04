@@ -3,6 +3,11 @@ import MenuItem from 'app/shared/layout/menus/menu-item';
 
 import { NavDropdown } from './menu-components';
 
+interface IAccountMenu {
+  isAuthenticated: boolean
+}
+
+
 const accountMenuItemsAuthenticated = () => (
   <>
     <MenuItem icon="wrench" to="/account/settings" data-cy="settings">
@@ -28,11 +33,17 @@ const accountMenuItems = () => (
   </>
 );
 
-export const AccountMenu = ({ isAuthenticated = false }) => (
-  <NavDropdown icon="user" name="Account" id="account-menu" data-cy="accountMenu">
-    {isAuthenticated && accountMenuItemsAuthenticated()}
-    {!isAuthenticated && accountMenuItems()}
-  </NavDropdown>
-);
+export const AccountMenu: React.FC<IAccountMenu> = (props) => {
+
+  const { isAuthenticated } = props
+
+  return (
+    <NavDropdown icon="user" name="Account" id="account-menu" data-cy="accountMenu">
+      {isAuthenticated && accountMenuItemsAuthenticated()}
+      {!isAuthenticated && accountMenuItems()}
+    </NavDropdown>
+
+  )
+};
 
 export default AccountMenu;

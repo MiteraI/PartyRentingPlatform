@@ -19,6 +19,7 @@ const RequestOfCustomer: React.FC<IRequestOfCustomer> = (props) => {
     const dispatch = useAppDispatch()
     const requestOfCustomer = useAppSelector((state) => state.booking.entities) as IBooking[]
     const [page, setPage] = useState<number>(0);
+    const totalPagination = Math.ceil(useAppSelector(state => state.booking.totalItems) / 5);
 
     const handleEditFunction = (id: string | number) => {
 
@@ -56,7 +57,7 @@ const RequestOfCustomer: React.FC<IRequestOfCustomer> = (props) => {
             </Box>
             <ListTabPanelRequestOfCustomer status={status} editfunction={handleEditFunction} deletefunction={handleDeleteFunction} data={requestOfCustomer} />
             <Grid sx={{ marginTop: "10px", flexGrow: 1 }}>
-                <Pagination onChange={handlePage} style={{ display: "flex", justifyContent: "right" }} count={10} variant="outlined" shape="rounded" />
+                <Pagination onChange={handlePage} style={{ display: "flex", justifyContent: "right" }} count={totalPagination} variant="outlined" shape="rounded" />
             </Grid>
         </>
         // <TabPanel value={valuePanel} index={1}>

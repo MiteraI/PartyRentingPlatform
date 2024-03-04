@@ -115,7 +115,7 @@ export const createEntityOfHost = createAsyncThunk('room/create_entity_host', as
     }
 
   });
-  thunkAPI.dispatch(getEntityOfHost({}))
+  thunkAPI.dispatch(getEntityOfHost({ page: 0, size: 5, sort: "id asc" }))
   return result
 }, {
   serializeError: serializeAxiosError

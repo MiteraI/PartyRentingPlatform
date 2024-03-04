@@ -17,7 +17,7 @@ const ListTabPanelServiceOfCustomer: React.FC<IListTabPanelServicesOfCustomer> =
     const { data, editfunction, deletefunction } = props
 
     return (
-        <List dense>
+        <List dense sx={{ height: "340.125px" }}>
             {data?.length > 0 ?
                 data.map((service) => (
                     <ListItemButton>
@@ -43,7 +43,8 @@ const ListTabPanelServiceOfCustomer: React.FC<IListTabPanelServicesOfCustomer> =
                             </ListItemAvatar>
                             <ListItemText
                                 primary={service.serviceName}
-                                secondary={service.description}
+                                secondary={`Price: ${service.price} & Description: ${service.description}`}
+
                             />
                         </ListItem>
                     </ListItemButton>
