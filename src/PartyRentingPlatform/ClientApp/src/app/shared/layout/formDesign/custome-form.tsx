@@ -18,7 +18,8 @@ export interface IFormItemDesign {
     onChangeFormItem?: (e: any) => void,
     type: InputType,
     element?: ElementType
-    selectData?: any[]
+    selectData?: any[],
+    alone?: true
 }
 
 
@@ -27,11 +28,6 @@ interface IFormDesign {
     submit: (callback) => void
 }
 
-
-interface ISelect {
-    option: any[],
-    change: (value: any) => void
-}
 
 
 
@@ -55,14 +51,15 @@ const CustomeForm: React.FC<IFormDesign> = (props) => {
                             initialValue={formItem.initialData}
                             rules={formItem.rules}
                         >
+
                             {
                                 formItem.element === "select" ?
                                     <Select
-                                        mode="multiple"
+                                        mode={formItem.alone ? undefined : "multiple"}
                                         onChange={(value) => formItem.onChangeFormItem(value)}
-                                        
+
                                     >
-                                        {formItem.selectData.map((object) => <Option value={object.id}>{object.serviceName}</Option>)}
+                                        {formItem.selectData.map((object) => <Option value={object.id}>{object.serviceName || object.name}</Option>)}
                                     </Select>
 
                                     :

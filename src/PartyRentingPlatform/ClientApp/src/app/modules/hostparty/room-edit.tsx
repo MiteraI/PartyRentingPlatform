@@ -18,22 +18,48 @@ const EditRoomOfHost = () => {
     const room = useAppSelector<IRoom>((state => state.room.entityDetailsOfHost));
     const services = useAppSelector<IService[]>(state => state.service.entities);
     const promotions = useAppSelector<IPromotion[]>(state => state.promotion.entities);
-
+    const status = useAppSelector<string>(state => state.room.entityDetailsOfHost?.status);
 
 
     // form update
     const [promotion, setPromotion] = useState<{ id: number }[]>([]);
     const [service, setService] = useState<{ id: number }[]>([])
 
+    const updateStatus = (): number => {
+        switch (status) {
+            case "BLOCKED": {
+                return 0
+            }
+            case "VALID": {
+                return 1
+            }
+            case "APPROVING": {
+                return 2
+            }
+            case "DELETED": {
+                return 3
+            }
+            case "REJECTED": {
+                return 4
+            }
+
+        }
+    }
+
+    const [status_form, setStatus_form] = useState<number>(updateStatus())
+
 
     useEffect(() => {
         dispatch(getEntities({}))
         dispatch(getServicesOfHost({}))
         dispatch(getEntityDetailsOfHost(id))
+
     }, [])
 
     const handelSubmit = (values: IRoom) => {
-        const newValue = { ...room, ...values, promotions: promotion, services: service} as IRoom;
+        const newValue = { ...room, ...values, promotions: promotion, services: service, status: status_form } as IRoom;
+        console.log(newValue);
+
         dispatch(updateEntityOfHost({ id, room: newValue }));
     }
 
@@ -47,6 +73,20 @@ const EditRoomOfHost = () => {
         setService(addService)
     }
 
+
+    const handleStatus = (status: number) => {
+        setStatus_form(status)
+    }
+
+
+    const selectStatusForm = [
+        { id: 0, name: "BLOCKED" },
+        { id: 1, name: "VALID" },
+        { id: 2, name: "APPROVING" },
+        { id: 3, name: "DELETED" },
+        { id: 4, name: "REJECTED" },
+    ]
+
     const listFormItem: IFormItemDesign[] = [
         { label: "Room name", name: "roomName", type: "text", initialData: room?.roomName },
         { label: "Address", name: "address", type: "text", initialData: room?.address },
@@ -54,166 +94,13 @@ const EditRoomOfHost = () => {
         { label: "Price", name: "price", type: "text", initialData: room?.price },
         { label: "Room Capacity", name: "roomCapacity", type: "text", initialData: room?.roomCapacity },
         // { label: "Rating", name: "rating", type: "text", initialData: room?.rating },
-        { label: "Status", name: "status", type: "text", initialData: room?.status },
+        { label: "Status", name: "status", type: "text", alone: true, element: "select", initialData: updateStatus(), selectData: selectStatusForm, onChangeFormItem: handleStatus },
         { label: "Promotions", name: "promotions", type: "text", element: "select", selectData: [], onChangeFormItem: handlePromotions },
         { label: "Services", name: "services", type: "text", element: "select", selectData: services, onChangeFormItem: handleServices },
     ]
 
     return (
-
         <CustomeForm item={listFormItem} submit={handelSubmit} />
-
-
-        // room?.roomName ?
-        //     <Row md={12}>
-        //         <Form
-        //             onFinish={handelSubmit}
-        //         >
-        //             <Row md={12}>
-        //                 <Col md={6}>
-        //                     <Form.Item
-
-        //                         initialValue={room.roomName}
-        //                         label="roomname"
-        //                         name="roomName"
-        //                         rules={[
-        //                             { required: true, message: "Please input your username" }
-        //                         ]}
-        //                     >
-
-        //                         <Input />
-        //                     </Form.Item>
-        //                 </Col>
-
-        //                 <Col md={6}>
-        //                     <Form.Item
-        //                         initialValue={room.address}
-        //                         label="address"
-        //                         name="address"
-        //                         rules={[
-        //                             { required: true, message: "Please input your username" }
-        //                         ]}
-        //                     >
-
-        //                         <Input />
-        //                     </Form.Item>
-        //                 </Col>
-        //                 <Col md={6}>
-        //                     <Form.Item
-        //                         initialValue={room.description}
-        //                         label="description"
-        //                         name="description"
-        //                         rules={[
-        //                             { required: true, message: "Please input your username" }
-        //                         ]}
-        //                     >
-
-        //                         <Input />
-        //                     </Form.Item>
-        //                 </Col>
-        //                 <Col md={6}>
-        //                     <Form.Item
-        //                         initialValue={room.price}
-        //                         label="price"
-        //                         name="price"
-        //                         rules={[
-        //                             { required: true, message: "Please input your username" }
-        //                         ]}
-        //                     >
-
-        //                         <Input />
-        //                     </Form.Item>
-        //                 </Col>
-        //                 <Col md={6}>
-        //                     <Form.Item
-        //                         initialValue={room.roomCapacity}
-        //                         label="roomCapacity"
-        //                         name="roomCapacity"
-        //                         rules={[
-        //                             { required: true, message: "Please input your username" }
-        //                         ]}
-        //                     >
-
-        //                         <Input />
-        //                     </Form.Item>
-        //                 </Col>
-        //                 <Col md={6}>
-        //                     <Form.Item
-        //                         initialValue={room.rating}
-        //                         label="rating"
-        //                         name="rating"
-        //                         rules={[
-        //                             { required: true, message: "Please input your username" },
-
-        //                         ]}
-        //                     >
-
-        //                         <Input type="number" />
-        //                     </Form.Item>
-        //                 </Col>
-        //                 <Col md={6}>
-        //                     <Form.Item
-        //                         initialValue={room.status}
-        //                         label="status"
-        //                         name="status"
-        //                         rules={[
-        //                             { required: true, message: "Please input your status" }
-        //                         ]}
-        //                     >
-
-        //                         <Input type="text" />
-        //                     </Form.Item>
-        //                 </Col>
-
-        //                 <Col md={6}>
-        //                     <Form.Item
-        //                         label="promotions"
-        //                         name="promotions"
-        //                         initialValue={[]}
-        //                     >
-        //                         <Select
-        //                             mode="multiple"
-        //                             options={[
-        //                                 { label: "1", value: 1 },
-        //                                 { label: "2", value: 2 },
-        //                                 { label: "4", value: 3 },
-        //                                 { label: "5", value: 4 },
-        //                             ]}
-        //                         />
-        //                     </Form.Item>
-        //                 </Col>
-
-        //                 <Col md={6}>
-        //                     <Form.Item
-        //                         label="services"
-        //                         name="services"
-        //                         initialValue={[]}
-        //                     >
-        //                         <Select
-        //                             mode="multiple"
-        //                             options={[
-        //                                 { label: "1", value: 1 },
-        //                                 { label: "2", value: 2 },
-        //                                 { label: "4", value: 3 },
-        //                                 { label: "5", value: 4 },
-        //                             ]}
-        //                         />
-        //                     </Form.Item>
-
-        //                 </Col>
-
-        //                 <Col md={2}>
-        //                     <Button htmlType="submit">Update</Button>
-        //                 </Col>
-
-
-        //             </Row>
-        //         </Form>
-
-        //     </Row>
-        //     : <div></div>
-
-
     )
 }
 

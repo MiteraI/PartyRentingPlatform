@@ -12,7 +12,7 @@ export interface IRoom {
   price?: number;
   roomCapacity?: number;
   rating?: number | null;
-  status?: keyof typeof RoomStatus | null;
+  status?: number |  null;
   imageURLs?: IRoomImage[] | null;
   user?: IUser;
   promotions?: IPromotion[] | null;

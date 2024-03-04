@@ -8,6 +8,7 @@ import { useAppDispatch } from "app/config/store";
 import { updateAcceptForRequest, updateRejectForRequest } from "app/entities/booking/booking.reducer";
 
 interface IListTabPanelRequestOfCustomer {
+    status: number
     data: IBooking[],
     editfunction?: (id: string | number) => void,
     deletefunction?: (id: string | number) => void
@@ -15,7 +16,7 @@ interface IListTabPanelRequestOfCustomer {
 
 
 const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = (props) => {
-    const { data, editfunction, deletefunction } = props
+    const { data, status, editfunction, deletefunction } = props
     const dispatch = useAppDispatch()
 
     const handleAccept = (id: string | number) => {
@@ -27,6 +28,25 @@ const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = 
     }
 
 
+    const ActionForApproving: React.FC<{ id: number }> = (props) => {
+
+        const { id } = props
+
+        return (
+            status === 1 ?
+                <>
+                    <Button onClick={() => handleAccept(id)} variant="contained" color="success">
+                        Accept
+                    </Button>
+                    <Button onClick={() => handleReject(id)} sx={{ marginLeft: "15px" }} variant="contained" color="error">
+                        Reject
+                    </Button>
+                </>
+
+                : <></>
+        )
+    }
+
     return (
         <List dense>
             {data?.length > 0 ?
@@ -36,12 +56,7 @@ const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = 
                             key={request.id}
                             secondaryAction={
                                 <>
-                                    <Button onClick={() => handleAccept(request.id)} variant="contained" color="success">
-                                        Accept
-                                    </Button>
-                                    <Button onClick={() => handleReject(request.id)} sx={{ marginLeft: "15px" }} variant="contained" color="error">
-                                        Reject
-                                    </Button>
+                                    <ActionForApproving id={request.id} />
                                     <IconButton sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
                                         <EditIcon />
                                     </IconButton>

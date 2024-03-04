@@ -101,18 +101,25 @@ export const getRequestDetailOfCustomer = createAsyncThunk("booking/fetch_detail
 )
 
 export const updateAcceptForRequest = createAsyncThunk("booking/confirm-request", async (id: string | number, thunkAPI) => {
-  const requestUrl = `${API_BOOKING.host.ACCEPTBOOKING}/${id}/accept`;
-  thunkAPI.dispatch(getRequestOfCustomer({}))
-  return await axios.put<IBooking>(requestUrl);
+  const requestUrl = await axios.put<IBooking>(`${API_BOOKING.host.ACCEPTBOOKING}/${id}/accept`);
+  thunkAPI.dispatch(filterRequestOfCustomerByStatus({ query: 1 }))
+  return requestUrl;
 },
   { serializeError: serializeAxiosError }
 )
 
 export const updateRejectForRequest = createAsyncThunk("booking/reject-request", async (id: string | number, thunkAPI) => {
-  const requestUrl = `${API_BOOKING.host.REJECTBOOKING}/${id}/reject`;
-  thunkAPI.dispatch(getRequestOfCustomer({}))
+  const requestUrl = await axios.put<IBooking>(`${API_BOOKING.host.REJECTBOOKING}/${id}/reject`);
+  thunkAPI.dispatch(filterRequestOfCustomerByStatus({ query: 1 }))
 
-  return await axios.put<IBooking>(requestUrl);
+  return requestUrl;
+},
+  { serializeError: serializeAxiosError }
+)
+
+export const filterRequestOfCustomerByStatus = createAsyncThunk("booking/filter-request", async ({ query, page, size, sort }: IQueryParams) => {
+  const requestUrl = await axios.get<IBooking[]>(`${API_BOOKING.host.GETBOOKINGSBYSTATUS}/${query}?${sort ? `page=${page}&size=${size}&sort=${sort}&` : ''}cacheBuster=${new Date().getTime()}`);
+  return (requestUrl)
 },
   { serializeError: serializeAxiosError }
 )
@@ -132,7 +139,7 @@ export const BookingSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getRequestOfCustomer, getEntities), (state, action) => {
+      .addMatcher(isFulfilled(filterRequestOfCustomerByStatus, getRequestOfCustomer, getEntities), (state, action) => {
         const { data, headers } = action.payload;
 
         return {
@@ -148,7 +155,7 @@ export const BookingSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity), state => {
+      .addMatcher(isPending(filterRequestOfCustomerByStatus, getEntities, getEntity), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;
