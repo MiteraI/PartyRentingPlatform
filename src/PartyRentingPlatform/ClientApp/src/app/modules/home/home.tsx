@@ -25,7 +25,7 @@ const Home = () => {
   const loading = useAppSelector((state) => state.room.loading);
   const account = useAppSelector((state) => state.authentication.account);
   const serviceList = useAppSelector(state => state.service.entities);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPageloading] = useState(0);
 
 
   // Bổ sung một số hàm trợ giúp để tạo ra biểu tượng ngôi sao
@@ -109,6 +109,8 @@ const Home = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [animating, setAnimating] = useState(false);
 
+  console.log(roomList);
+
   // Carousel handlers
   const next = () => {
     if (animating) return;
@@ -135,7 +137,7 @@ const Home = () => {
 
     <div className='home-page'>
       <Row>
-        {/* <Col md="6">
+        <Col md="6">
           <h1 className="display-4">Khám phá các bữa tiệc nào!!!</h1>
           <p className="lead">Hãy tìm điểm dừng chân tiếp theo cho bữa tiệc hoành tráng của bạn.</p>
           {account?.login ? (
@@ -151,7 +153,7 @@ const Home = () => {
               </Alert>
             </div>
           )}
-        </Col> */}
+        </Col>
         <Col md="12">
           {/* Carousel component */}
           <Carousel activeIndex={activeIndex} next={next} previous={previous}>

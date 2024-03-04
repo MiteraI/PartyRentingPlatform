@@ -24,6 +24,12 @@ export const getEntities = createAsyncThunk('booking/fetch_entity_list', async (
   return axios.get<IBooking[]>(requestUrl);
 });
 
+export const getEntitiesForCustomer = createAsyncThunk('booking/fetch_entity_list_for_customer', async ({ page, size, sort }: IQueryParams) => {
+  const requestUrl = `${apiUrl + '/customer'}?${sort ? `page=${page}&size=${size}&sort=${sort}&` : ''}cacheBuster=${new Date().getTime()}`;
+  return axios.get<IBooking[]>(requestUrl);
+});
+
+
 export const getEntity = createAsyncThunk(
   'booking/fetch_entity',
   async (id: string | number) => {
@@ -153,12 +159,13 @@ export const BookingSlice = createEntitySlice({
         state.loading = false;
         state.entity = action.payload.data;
       })
+      
       .addCase(deleteEntity.fulfilled, state => {
         state.updating = false;
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(filterRequestOfCustomerByStatus, getRequestOfCustomer, getEntities), (state, action) => {
+      .addMatcher(isFulfilled(filterRequestOfCustomerByStatus, getRequestOfCustomer, getEntities, getEntitiesForCustomer), (state, action) => {
         const { data, headers } = action.payload;
 
         return {

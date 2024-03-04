@@ -58,26 +58,55 @@ const RoomDetailForCustomer = () => {
 
     const [startTime, setStartTime] = useState(null); // Declare startTime state
     const [endTime, setEndTime] = useState(null); // Declare endTime state
+    // Thêm state để theo dõi lỗi
+    const [error, setError] = useState<string | null>(null);
 
     const handleBookClick = () => {
-        // Check if startTime and endTime are not null before formatting
-        // if (startTime && endTime) {
-        const formattedStartTime = startDate.format('YYYY-MM-DD') + ' ' + startTime.format('HH:mm:ss');
-        const formattedEndTime = startDate.format('YYYY-MM-DD') + ' ' + endTime.format('HH:mm:ss');
-        console.log(startTime.format('HH:mm:ss'));
-        const selectedServicesArray = Object.keys(quantityMap).map(serviceId => ({
-            id: serviceId,
-            quantity: quantityMap[serviceId],
-        }));
+        // Reset previous errors
+        setError(null);
 
-        const queryString = `startDate=${formattedStartTime}&endDate=${formattedEndTime}&selectedService=${JSON.stringify(selectedServicesArray)}`;
+        // Check if startTime, endTime, and startDate are not null before formatting
+        if (startTime && endTime && startDate) {
+            // Validate date: must be at least 3 days from the current date
+            const currentDate = new Date();
+            const minimumStartDate = new Date();
+            minimumStartDate.setDate(currentDate.getDate() + 3);
 
-        navigate(`/room/request-to-book/${roomEntity.id}?${queryString}`);
-        // } else {
-        //     // Handle the case when startTime or endTime is null
-        //     console.error("Start time and end time must be selected.");
-        // }
+            if (startDate < minimumStartDate) {
+                setError("Selected date must be at least 3 days from the current date.");
+                return;
+            }
+
+            // Validate startTime and endTime
+            const minimumTimeDifference = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+            const startDateTime = new Date(startDate.format('YYYY-MM-DD') + ' ' + startTime.format('HH:mm:ss')).getTime();
+            const endDateTime = new Date(startDate.format('YYYY-MM-DD') + ' ' + endTime.format('HH:mm:ss')).getTime();
+
+            if (endDateTime - startDateTime < minimumTimeDifference) {
+                setError("The time difference between startTime and endTime must be at least 2 hours.");
+                return;
+            }
+
+            // Continue with the rest of the code
+
+            const formattedStartTime = startDate.format('YYYY-MM-DD') + ' ' + startTime.format('HH:mm:ss');
+            const formattedEndTime = startDate.format('YYYY-MM-DD') + ' ' + endTime.format('HH:mm:ss');
+            const selectedServicesArray = Object.keys(quantityMap).map(serviceId => ({
+                id: serviceId,
+                quantity: quantityMap[serviceId],
+            }));
+
+            const queryString = `startDate=${formattedStartTime}&endDate=${formattedEndTime}&selectedService=${JSON.stringify(selectedServicesArray)}`;
+
+            navigate(`/room/request-to-book/${roomEntity.id}?${queryString}`);
+        } else {
+            // Handle the case when startTime, endTime, or startDate is null
+            setError("Start time, end time, and date must be selected.");
+        }
     };
+
+
+
 
     const [focusedInput, setFocusedInput] = React.useState(null);
     const [selectedService, setSelectedService] = useState(null); // Track selected service
@@ -330,7 +359,7 @@ const RoomDetailForCustomer = () => {
                 <Grid item xs={12} md={4} >
                     <Container style={{ position: 'sticky', top: '100px', padding: '0' }}>
                         <div className="booking-info" style={{ boxShadow: 'rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px', padding: '24px', borderRadius: '10px' }}>
-                            <Typography mb={2} variant="h6"><strong>${roomEntity.price}</strong> slot</Typography>
+                            <Typography mb={2} variant="h6"><strong>{roomEntity.price + " VNĐ"}</strong> / giờ</Typography>
                             <Container style={{ marginBottom: '15px', padding: '0', width: '100%', textAlign: 'center' }}>
 
                             </Container>
@@ -362,6 +391,12 @@ const RoomDetailForCustomer = () => {
                                         />
                                     </Col>
                                 </Row>)}
+
+                            {error && (
+                                <Typography textAlign={'center'} variant="body2" color="error" style={{ marginTop: '10px' }}>
+                                    {error}
+                                </Typography>
+                            )}
 
                             <Button
                                 color="primary"
