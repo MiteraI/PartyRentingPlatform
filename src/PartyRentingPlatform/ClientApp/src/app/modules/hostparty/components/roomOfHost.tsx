@@ -25,6 +25,7 @@ const RoomOfHost: React.FC<IRoomOfHost> = (props) => {
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const roomListOfHost = useAppSelector(state => state.room.entitiesOfHost) as IRoom[];
+    const [page, setPage] = useState<number>(0);
 
 
 
@@ -40,11 +41,16 @@ const RoomOfHost: React.FC<IRoomOfHost> = (props) => {
         navigate(`edit/${id}`);
     }
 
+    const handlePage = (event: React.ChangeEvent, page: number) => {
+        setPage(page - 1);
+
+    }
+
     useEffect(() => {
         dispatch(reset());
         // use to delete the entity of room detail of host
-        dispatch(getEntityOfHost({ page: 0, size: 5, sort: 'id,asc' }));
-    }, [])
+        dispatch(getEntityOfHost({ page: page, size: 5, sort: 'id,asc' }));
+    }, [page])
 
     return (
         <>
@@ -59,7 +65,7 @@ const RoomOfHost: React.FC<IRoomOfHost> = (props) => {
             </Box>
             <ListTabPanelRoomHost data={roomListOfHost} editfunction={handleMoveToEditRoomPage} deletefunction={handleDeleteRoomOfHostById} />
             <Grid sx={{ marginTop: "10px", flexGrow: 1 }}>
-                <Pagination style={{ display: "flex", justifyContent: "right" }} count={10} variant="outlined" shape="rounded" />
+                <Pagination onChange={handlePage} style={{ display: "flex", justifyContent: "right" }} count={10} variant="outlined" shape="rounded" />
             </Grid>
             {/* </TabPanel> */}
         </>

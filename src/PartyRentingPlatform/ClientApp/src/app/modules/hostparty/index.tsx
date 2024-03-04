@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { getEntityOfHost, reset } from 'app/entities/room/room.reducer';
+
 import { Button, Grid, } from '@mui/material';
 import { IRoom } from 'app/shared/model/room.model';
 import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
@@ -18,6 +17,7 @@ import ServicesOfHost from './components/servicesOfHost';
 import { Row } from 'reactstrap';
 import { TabPanel } from './components/tabpanel';
 import EditServiceOfHost from 'app/entities/service/hostparty/service-edit';
+import EditRequestOfCustomer from '../../entities/request-to-book/hostparty/edit-request-of-customer';
 
 
 const HostPartyRoutes = () => {
@@ -97,7 +97,12 @@ const HostPartyRoutes = () => {
 
                 <TabPanel value={value} index={1}>
                     <ErrorBoundaryRoutes>
-                        <Route path="request-customer" element={<RequestOfCustomer valuePanel={value} />} />
+                        <Route path="request-customer">
+                            <Route index element={<RequestOfCustomer valuePanel={value} />} />
+                            <Route path=':id'>
+                                <Route index element={<EditRequestOfCustomer />} />
+                            </Route>
+                        </Route>
                     </ErrorBoundaryRoutes>
                 </TabPanel>
 
@@ -117,8 +122,8 @@ const HostPartyRoutes = () => {
                     </ErrorBoundaryRoutes>
                 </TabPanel>
 
-            </Box>
-        </Box>
+            </Box >
+        </Box >
 
     )
 

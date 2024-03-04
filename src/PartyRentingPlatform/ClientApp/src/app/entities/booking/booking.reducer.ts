@@ -110,6 +110,38 @@ export const getRequestOfCustomer = createAsyncThunk("booking/fetch_request_of_c
     return axios.get<IBooking[]>(requestUrl)
   }
 )
+
+// get booking detail customer
+export const getRequestDetailOfCustomer = createAsyncThunk("booking/fetch_details_entity_of_customer", async (id: string | number) => {
+  const requestUrl = `${API_BOOKING.host.GETBOOKINGS}/${id}`;
+  return axios.get<IBooking>(requestUrl)
+},
+  { serializeError: serializeAxiosError }
+)
+
+export const updateAcceptForRequest = createAsyncThunk("booking/confirm-request", async (id: string | number, thunkAPI) => {
+  const requestUrl = await axios.put<IBooking>(`${API_BOOKING.host.ACCEPTBOOKING}/${id}/accept`);
+  thunkAPI.dispatch(filterRequestOfCustomerByStatus({ query: 1 }))
+  return requestUrl;
+},
+  { serializeError: serializeAxiosError }
+)
+
+export const updateRejectForRequest = createAsyncThunk("booking/reject-request", async (id: string | number, thunkAPI) => {
+  const requestUrl = await axios.put<IBooking>(`${API_BOOKING.host.REJECTBOOKING}/${id}/reject`);
+  thunkAPI.dispatch(filterRequestOfCustomerByStatus({ query: 1 }))
+
+  return requestUrl;
+},
+  { serializeError: serializeAxiosError }
+)
+
+export const filterRequestOfCustomerByStatus = createAsyncThunk("booking/filter-request", async ({ query, page, size, sort }: IQueryParams) => {
+  const requestUrl = await axios.get<IBooking[]>(`${API_BOOKING.host.GETBOOKINGSBYSTATUS}/${query}?${sort ? `page=${page}&size=${size}&sort=${sort}&` : ''}cacheBuster=${new Date().getTime()}`);
+  return (requestUrl)
+},
+  { serializeError: serializeAxiosError }
+)
 // slice
 
 export const BookingSlice = createEntitySlice({
@@ -126,7 +158,7 @@ export const BookingSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getRequestOfCustomer,getEntities), (state, action) => {
+      .addMatcher(isFulfilled(filterRequestOfCustomerByStatus, getRequestOfCustomer, getEntities), (state, action) => {
         const { data, headers } = action.payload;
 
         return {
@@ -136,18 +168,18 @@ export const BookingSlice = createEntitySlice({
           totalItems: parseInt(headers['x-total-count'], 10),
         };
       })
-      .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity), (state, action) => {
+      .addMatcher(isFulfilled(updateRejectForRequest, updateAcceptForRequest, createEntity, updateEntity, partialUpdateEntity), (state, action) => {
         state.updating = false;
         state.loading = false;
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity), state => {
+      .addMatcher(isPending(filterRequestOfCustomerByStatus, getEntities, getEntity), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;
       })
-      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity), state => {
+      .addMatcher(isPending(updateRejectForRequest, updateAcceptForRequest, createEntity, updateEntity, partialUpdateEntity, deleteEntity), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.updating = true;

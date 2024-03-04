@@ -5,6 +5,7 @@ using PartyRentingPlatform.Domain.Entities;
 using PartyRentingPlatform.Domain.Services.Interfaces;
 using PartyRentingPlatform.Domain.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using PartyRentingPlatform.Crosscutting.Enums;
 
 namespace PartyRentingPlatform.Domain.Services;
 
@@ -89,4 +90,13 @@ public class BookingService : IBookingService
         return page;
     }
 
+    public virtual async Task<IPage<Booking>> FindAllForHostByStatus(string userId, BookingStatus bookingStatus, IPageable pageable)
+    {
+        var page = await _bookingRepository.QueryHelper()
+            .Include(booking => booking.Room)
+            .Include(booking => booking.User)
+            .Filter(booking => booking.Room.UserId == userId && booking.Status == bookingStatus)
+            .GetPageAsync(pageable);
+        return page;
+    }
 }

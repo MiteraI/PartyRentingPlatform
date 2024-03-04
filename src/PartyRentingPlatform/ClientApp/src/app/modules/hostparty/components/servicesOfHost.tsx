@@ -17,13 +17,14 @@ const ServicesOfHost: React.FC<IServicesOfHost> = (props) => {
     const services = useAppSelector((state => state.service.entities));
     const [open, setOpen] = useState<boolean>(false)
     const navigate = useNavigate()
+    const [page, setPage] = useState<number>(0);
 
 
 
     useEffect(() => {
         dispatch(reset())
-        dispatch(getServicesOfHost({ page: 0, size: 5, sort: "id,asc" }))
-    }, [])
+        dispatch(getServicesOfHost({ page: page, size: 5, sort: "id,asc" }))
+    }, [page])
 
 
     const handleIsOpen = () => {
@@ -38,6 +39,10 @@ const ServicesOfHost: React.FC<IServicesOfHost> = (props) => {
         dispatch(deleteServiceOfHost(id));
     }
 
+    const handlePage = (event: React.ChangeEvent, page: number) => {
+        setPage(page - 1);
+
+    }
 
     return (
 
@@ -54,7 +59,7 @@ const ServicesOfHost: React.FC<IServicesOfHost> = (props) => {
             </Box>
             <ListTabPanelServiceOfCustomer editfunction={handelEdit} deletefunction={handleDeleteService} data={services} />
             <Grid sx={{ marginTop: "10px", flexGrow: 1 }}>
-                <Pagination style={{ display: "flex", justifyContent: "right" }} count={10} variant="outlined" shape="rounded" />
+                <Pagination onChange={handlePage} style={{ display: "flex", justifyContent: "right" }} count={10} variant="outlined" shape="rounded" />
             </Grid>
             {/* </TabPanel> */}
         </>

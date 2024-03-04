@@ -264,8 +264,19 @@ namespace PartyRentingPlatform.Controllers
             _log.LogDebug("REST request to get a page of Host Bookings");
             var userIdClaim = User.FindFirst(ClaimTypes.Name);
             var result = await _bookingService.FindAllForHost(userIdClaim.Value, pageable);
-            var page = new Page<BookingDto>(result.Content.Select(entity => _mapper.Map<BookingDto>(entity)).ToList(), pageable, result.TotalElements);
-            return Ok(((IPage<BookingDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
+            var page = new Page<BookingCustomerDto>(result.Content.Select(entity => _mapper.Map<BookingCustomerDto>(entity)).ToList(), pageable, result.TotalElements);
+            return Ok(((IPage<BookingCustomerDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
+        }
+
+        [Authorize(Roles =RolesConstants.HOST)]
+        [HttpGet("host/{status}")]
+        public async Task<ActionResult<IEnumerable<BookingCustomerDto>>> GetAllHostBookingsByStatus([FromRoute] BookingStatus status, IPageable pageable)
+        {
+            _log.LogDebug("REST request to get a page of Host Bookings by status");
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            var result = await _bookingService.FindAllForHostByStatus(userIdClaim.Value, status, pageable);
+            var page = new Page<BookingCustomerDto>(result.Content.Select(entity => _mapper.Map<BookingCustomerDto>(entity)).ToList(), pageable, result.TotalElements);
+            return Ok(((IPage<BookingCustomerDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
         }
 
         [Authorize(Roles = RolesConstants.HOST)]
