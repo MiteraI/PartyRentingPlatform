@@ -18,9 +18,9 @@ const CustomerRoutes = () => (
                 <Route path="request-to-book">
                     <Route path=":id">
                         <Route index element={
-                            <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
+                            // <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
                                 <RoomBookingForCustomer />
-                            </PrivateRoute>
+                            // </PrivateRoute>
                         } />
                     </Route>
                 </Route>
