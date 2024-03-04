@@ -8,7 +8,9 @@ const API_BOOKING = {
         REJECTBOOKING: "api/bookings",// api/bookings/{id}/reject,
         GETBOOKINGSBYSTATUS: "api/bookings/host"
     },
-    customer: {}
+    customer: {
+        CANCELBOOKING: "api/bookings",
+    }
 }
 
 export default API_BOOKING

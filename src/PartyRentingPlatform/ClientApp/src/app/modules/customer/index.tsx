@@ -6,6 +6,7 @@ import PrivateRoute from "app/shared/auth/private-route"
 import { AUTHORITIES } from "app/config/constants"
 import RoomBookingForCustomer from "./room/room-booking"
 import BookingTracking from "./room/booking-tracking"
+import UserPage from "./booking/booking-list"
 const CustomerRoutes = () => (
     <div>
         <ErrorBoundaryRoutes>
@@ -33,6 +34,13 @@ const CustomerRoutes = () => (
                             // </PrivateRoute>
                         } />
                     </Route>
+                </Route>
+                <Route path="booking-list">
+                        <Route index element={
+                            // <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
+                                <UserPage />
+                            // </PrivateRoute>
+                        } />
                 </Route>
 
             </Route>

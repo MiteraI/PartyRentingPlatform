@@ -8,14 +8,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useLocation } from 'react-router-dom';
 import moment from 'moment';
 
-
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { getEntityOfCustomers, getEntities as getRooms } from 'app/entities/room/room.reducer';
-import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { IBooking } from 'app/shared/model/booking.model';
-import { BookingStatus } from 'app/shared/model/enumerations/booking-status.model';
 import { getEntity, updateEntity, createEntityByCustomer, reset } from 'app/entities/booking/booking.reducer';
 import { Avatar, CardMedia, Container, Divider, Grid, Typography } from '@mui/material';
 import { styled } from '@mui/system';
@@ -51,7 +47,7 @@ const RoomBookingForCustomer = () => {
   useEffect(() => {
     // Check if createdBookingId is available and redirect
     if (createdBookingId !== null) {
-      navigate(`/booking-tracking/${createdBookingId}`);
+      navigate(`/room/booking-tracking/${createdBookingId}`);
     }
   }, [createdBookingId, navigate]);
 
@@ -77,9 +73,6 @@ const RoomBookingForCustomer = () => {
     }
   }, [location.search]);
 
-
-
-
   const roomEntity = useAppSelector(state => state.room.entity);
   const serviceList = roomEntity.services || [];
   console.log(roomEntity);
@@ -87,12 +80,10 @@ const RoomBookingForCustomer = () => {
   const isNew = true;
 
   const rooms = useAppSelector(state => state.room.entities);
-  const users = useAppSelector(state => state.userManagement.users);
   const bookingEntity = useAppSelector(state => state.booking.entity);
   const loading = useAppSelector(state => state.booking.loading);
   const updating = useAppSelector(state => state.booking.updating);
   const updateSuccess = useAppSelector(state => state.booking.updateSuccess);
-  const bookingStatusValues = Object.keys(BookingStatus);
   const account = useAppSelector(state => state.authentication.account);
 
   const parallaxImages = [
@@ -108,34 +99,13 @@ const RoomBookingForCustomer = () => {
     if (isNew) {
       dispatch(reset());
     } else {
-      // dispatch(getEntity(id));
     }
   }, []);
 
   useEffect(() => {
     if (updateSuccess) {
-      // handleClose();
     }
   }, [updateSuccess]);
-
-  // useEffect(() => {
-
-  //   const totalServiceFee = Object.keys(quantityMap).reduce((total, serviceId) => {
-  //     const service = serviceList.find(service => service.id == serviceId);
-  //     if (service) {
-  //       return total + (service.price * quantityMap[serviceId]);
-  //     }
-  //     return total;
-  //   }, 0);
-
-  //   // Cập nhật state serviceFee
-  //   setServiceFee(totalServiceFee);
-  // }, [quantityMap, serviceList]);
-
-  // useEffect(() => {
-  //   const hours = (endTime - startTime) / 3600000;
-  //   if (hours > 0) { setNumberOfHours(hours) };
-  // }, [startTime, endTime, startDate]);
 
 
   const saveEntity = async (values) => {
@@ -157,18 +127,12 @@ const RoomBookingForCustomer = () => {
         ...bookingEntity,
         ...values,
         roomId: rooms.find(it => it.id.toString() === id)?.id,
-        // user: users.find(it => it.id.toString() === account.id),s
         bookingDetails: [{ "serviceId": 1, "serviceQuantity": 5 }, { "serviceId": 2, "serviceQuantity": 12 }],
 
       };
 
-
-
-      // Dispatch the createEntityByCustomer action
       const createEntityByCustomerAction = await dispatch(createEntityByCustomer(entity));
-      // type createEntityByCustomerAction = PayloadAction<AxiosResponse<IBooking>, string, { arg: string | number; requestId: string; requestStatus: "fulfilled" }, never>;
       const newBookingId = (createEntityByCustomerAction.payload as AxiosResponse<IBooking>)?.data?.id || null;
-      console.log(newBookingId);
       // Set the createdBookingId state
       setCreatedBookingId(newBookingId);
 
@@ -186,10 +150,12 @@ const RoomBookingForCustomer = () => {
         endTime: convertDateTimeFromServer(endDateFromUrl),
         status: 'APPROVING',
         price: roomEntity.price,
+        customerName: 'Tên mặc định',
       }
       : {
         status: 'APPROVING',
         ...bookingEntity,
+        customerName: account?.firstName + " " + account?.lastName,
         bookTime: convertDateTimeFromServer(bookingEntity.bookTime),
         startTime: convertDateTimeFromServer(bookingEntity.startTime),
         endTime: convertDateTimeFromServer(bookingEntity.endTime),
@@ -270,7 +236,6 @@ const RoomBookingForCustomer = () => {
                 spacing={1}
                 alignItems="center"
                 style={{ cursor: 'pointer' }}
-              // onClick={() => openModal(service)}
               >
                 <Grid item xs={10}>
                   <Typography variant="subtitle1" fontWeight="bold">
@@ -289,24 +254,14 @@ const RoomBookingForCustomer = () => {
                   </Typography>
                 </Grid>
                 <Grid item xs={2} container justifyContent="flex-end">
-                  {/* Quantity controls in room-detail */}
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    {/* <button onClick={() => handleDecrementQuantity(service.id)}>-</button> */}
-                    {/* <span style={{ margin: '0 10px' }}>{quantityMap.find(item => item.id === parseInt(service.id))?.quantity}</span> */}
                     <span style={{ margin: '0 10px' }}>{quantityMap.find(item => item.id === service.id)?.quantity}</span>
-                    {/* <button onClick={() => handleIncrementQuantity(service.id)}>+</button> */}
                   </div>
                 </Grid>
               </Grid>
             ))}
 
-            {/* <Typography variant="h5">Start Date from URL: {startDateFromUrl}</Typography> */}
-            {/* <Typography variant="h5">End Date from URL: {endDateFromUrl}</Typography> */}
-
-
-
             <Divider style={{ marginBottom: '40px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
-
 
             <div className="room-detail-header">
               <h4>Fill in your information</h4>
