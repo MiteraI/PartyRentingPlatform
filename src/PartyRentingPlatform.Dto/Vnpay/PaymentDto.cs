@@ -7,12 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PartyRentingPlatform.Crosscutting.Enums
+namespace PartyRentingPlatform.Dto.Vnpay
 {
-    public enum TransactionStatus
+    public class PaymentDto
     {
-        FAILED,
-        SUCCESS, //00
-        CANCELLED //02
+        public double Price { get; set; }
+        public string ReturnUrl { get; set; }  
     }
 }

@@ -28,23 +28,27 @@ public class AccountController : ControllerBase
     private readonly IMailService _mailService;
     private readonly UserManager<User> _userManager;
     private readonly IUserService _userService;
+    private readonly IWalletService _walletService;
 
     public AccountController(ILogger<AccountController> log, UserManager<User> userManager, IUserService userService,
-        IMapper userMapper, IMailService mailService)
+        IMapper userMapper, IMailService mailService, IWalletService walletService)
     {
         _log = log;
         _userMapper = userMapper;
         _userManager = userManager;
         _userService = userService;
         _mailService = mailService;
+        _walletService = walletService;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> RegisterAccount([FromBody] ManagedUserDto managedUserDto)
     {
         if (!CheckPasswordLength(managedUserDto.Password)) throw new InvalidPasswordException();
+        managedUserDto.ImageUrl = "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
         var user = await _userService.RegisterUser(_userMapper.Map<User>(managedUserDto), managedUserDto.Password);
-        _mailService.SendActivationEmail(user);
+        await _walletService.Save(new Wallet { UserId = user.Id, Balance = 0 });
+        await _mailService.SendActivationEmail(user);
         return CreatedAtAction(nameof(GetAccount), user);
     }
 

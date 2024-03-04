@@ -146,6 +146,9 @@ namespace PartyRentingPlatform.Controllers
 
             Booking booking = _mapper.Map<Booking>(bookingDto);
 
+            //If there is no booking details
+            if (booking.BookingDetails.Count == 0) return BadRequest("Booking must have at least 1 service");
+
             //Check if StartTime is before EndTime
             if (booking.StartTime > booking.EndTime) return BadRequest("Start time must be before end time");
 
@@ -266,6 +269,19 @@ namespace PartyRentingPlatform.Controllers
             var result = await _bookingService.FindAllForHost(userIdClaim.Value, pageable);
             var page = new Page<BookingCustomerDto>(result.Content.Select(entity => _mapper.Map<BookingCustomerDto>(entity)).ToList(), pageable, result.TotalElements);
             return Ok(((IPage<BookingCustomerDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
+        }
+
+        [Authorize(Roles = RolesConstants.HOST)]
+        [HttpGet("host/details/{id}")]
+        public async Task<IActionResult> GetHostBooking([FromRoute] long? id)
+        {
+            _log.LogDebug($"REST request to get Host Booking : {id}");
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            var result = await _bookingService.FindOneForHost(id);
+            if (result == null) return BadRequest("Booking not found");
+            if (result.Room.UserId != userIdClaim.Value) return BadRequest("Booking's room does not belong to user");
+            BookingCustomerDto bookingDto = _mapper.Map<BookingCustomerDto>(result);
+            return ActionResultUtil.WrapOrNotFound(bookingDto);
         }
 
         [Authorize(Roles =RolesConstants.HOST)]

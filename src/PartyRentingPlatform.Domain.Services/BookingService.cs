@@ -90,6 +90,22 @@ public class BookingService : IBookingService
         return page;
     }
 
+    public virtual async Task<Booking> FindOneForHost(long? id)
+    {
+        var result = await _bookingRepository.QueryHelper()
+            .Include(booking => booking.BookingDetails)
+            .Include(booking => booking.Room)
+            .GetOneAsync(booking => booking.Id == id);
+
+        foreach (var bookingDetail in result.BookingDetails)
+        {
+            bookingDetail.Service = await _serviceRepository.QueryHelper()
+                .GetOneAsync(service => service.Id == bookingDetail.ServiceId);
+        }
+
+        return result;
+    }
+
     public virtual async Task<IPage<Booking>> FindAllForHostByStatus(string userId, BookingStatus bookingStatus, IPageable pageable)
     {
         var page = await _bookingRepository.QueryHelper()
