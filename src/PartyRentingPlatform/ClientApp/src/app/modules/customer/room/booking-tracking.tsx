@@ -16,6 +16,9 @@ import { Steps, Timeline } from 'antd';
 import { Col, Row } from 'reactstrap';
 import './requestToBook.scss';
 import moment from 'moment';
+import AddTaskOutlinedIcon from '@mui/icons-material/AddTaskOutlined';
+import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
+import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined';
 import { LocalDiningOutlined, SnowmobileOutlined, VerifiedUserOutlined } from '@mui/icons-material';
 // import TimelineItem from "examples/Timeline/TimelineItem";
 
@@ -121,7 +124,7 @@ const BookingTracking = () => {
                         </Col>
 
                         <Col md="2" style={{ display: 'flex' }}>
-                            {isApproving && (<Button
+                            {isApproving && (<Button 
                                 style={{ margin: 'auto', color: 'white', backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px', justifyContent: 'center', alignItems: 'center' }}
                             >
                                 <strong>Back Home</strong>
@@ -281,24 +284,24 @@ const BookingTracking = () => {
                             <Steps
                                 items={[
                                     {
-                                        title: 'Login',
+                                        title: 'Waiting',
                                         status: 'finish',
-                                        icon: <VerifiedUserOutlined />,
+                                        icon: <AddTaskOutlinedIcon />,
                                     },
                                     {
-                                        title: 'Verification',
+                                        title: 'Accpeted',
                                         status: 'finish',
-                                        icon: <LocalDiningOutlined />,
+                                        icon: <DoneOutlinedIcon />,
                                     },
                                     {
-                                        title: 'Pay',
+                                        title: 'Serving',
                                         status: 'process',
                                         icon: <LocalDiningOutlined />,
                                     },
                                     {
-                                        title: 'Done',
+                                        title: 'Payment',
                                         status: 'wait',
-                                        icon: <SnowmobileOutlined />,
+                                        icon: <PaymentOutlinedIcon />,
                                     },
                                 ]}
                             />
