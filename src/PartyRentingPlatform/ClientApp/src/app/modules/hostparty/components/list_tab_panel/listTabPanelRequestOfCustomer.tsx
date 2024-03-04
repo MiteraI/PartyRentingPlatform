@@ -1,9 +1,11 @@
-import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from "@mui/material"
+import { Avatar, Box, Button, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from "@mui/material"
 import React from "react"
 import DeleteIcon from '@mui/icons-material/Delete';
 import FolderIcon from '@mui/icons-material/Folder';
 import { IBooking } from "app/shared/model/booking.model";
 import EditIcon from "@mui/icons-material/Edit"
+import { useAppDispatch } from "app/config/store";
+import { updateAcceptForRequest, updateRejectForRequest } from "app/entities/booking/booking.reducer";
 
 interface IListTabPanelRequestOfCustomer {
     data: IBooking[],
@@ -14,6 +16,16 @@ interface IListTabPanelRequestOfCustomer {
 
 const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = (props) => {
     const { data, editfunction, deletefunction } = props
+    const dispatch = useAppDispatch()
+
+    const handleAccept = (id: string | number) => {
+        dispatch(updateAcceptForRequest(id))
+    }
+
+    const handleReject = (id: string | number) => {
+        dispatch(updateRejectForRequest(id))
+    }
+
 
     return (
         <List dense>
@@ -24,7 +36,13 @@ const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = 
                             key={request.id}
                             secondaryAction={
                                 <>
-                                    <IconButton edge="end" aria-label="delete">
+                                    <Button onClick={() => handleAccept(request.id)} variant="contained" color="success">
+                                        Accept
+                                    </Button>
+                                    <Button onClick={() => handleReject(request.id)} sx={{ marginLeft: "15px" }} variant="contained" color="error">
+                                        Reject
+                                    </Button>
+                                    <IconButton sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
                                         <EditIcon />
                                     </IconButton>
 

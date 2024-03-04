@@ -18,6 +18,15 @@ const RequestOfCustomer: React.FC<IRequestOfCustomer> = (props) => {
     const dispatch = useAppDispatch()
     const requestOfCustomer = useAppSelector((state) => state.booking.entities) as IBooking[]
 
+    const handleEditFunction = (id: string | number) => {
+
+    }
+
+    const handleDeleteFunction = (id: string | number) => {
+
+    }
+
+
     useEffect(() => {
         dispatch(getRequestOfCustomer({ page: 0, size: 5, sort: "id,asc" }))
     }, [])
@@ -25,7 +34,7 @@ const RequestOfCustomer: React.FC<IRequestOfCustomer> = (props) => {
 
     return (
         <>
-            <ListTabPanelRequestOfCustomer data={requestOfCustomer} />
+            <ListTabPanelRequestOfCustomer editfunction={handleEditFunction} deletefunction={handleDeleteFunction} data={requestOfCustomer} />
             <Grid sx={{ marginTop: "10px", flexGrow: 1 }}>
                 <Pagination style={{ display: "flex", justifyContent: "right" }} count={10} variant="outlined" shape="rounded" />
             </Grid>
