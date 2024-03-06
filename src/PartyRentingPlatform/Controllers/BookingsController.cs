@@ -35,19 +35,22 @@ namespace PartyRentingPlatform.Controllers
         private readonly IMapper _mapper;
         private readonly IBookingService _bookingService;
         private readonly IRoomService _roomService;
+        private readonly IWalletService _walletService;
         private readonly IServiceService _serviceService;
 
         public BookingsController(ILogger<BookingsController> log,
         IMapper mapper,
         IBookingService bookingService,
         IRoomService roomService,
-        IServiceService serviceService)
+        IServiceService serviceService,
+        IWalletService walletService)
         {
             _log = log;
             _mapper = mapper;
             _bookingService = bookingService;
             _roomService = roomService;
             _serviceService = serviceService;
+            _walletService = walletService;
         }
 
         // Admin related/ Jhipster generated code
@@ -154,12 +157,15 @@ namespace PartyRentingPlatform.Controllers
 
             //Check if StartTime is 3 days in advance
             if (booking.StartTime < DateTime.Now.AddDays(3)) return BadRequest("Start time must be at least 3 days in advance");
-            
-            // TODO: Check if balance is enough
 
             //Getting userId from token and adding it to booking, must use ClaimTypes.Name
             //Noted in TokenProvider.cs
             var userIdClaim = User.FindFirst(ClaimTypes.Name);
+
+            // TODO: Check if balance is enough
+            if (await _walletService.CurrentBalanceForUser(userIdClaim.Value) < (double) booking.TotalPrice)
+                return BadRequest("Your is balance is not enough");
+
             booking.UserId = userIdClaim.Value;
 
             booking.BookTime = DateTime.Now;
@@ -205,11 +211,46 @@ namespace PartyRentingPlatform.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.Name);
             if (booking.UserId != userIdClaim.Value) return BadRequest("Booking does not belong to user");
 
-            if (booking.Status != BookingStatus.APPROVING) return BadRequest("Booking cannot be cancelled");
-            booking.Status = BookingStatus.CANCEL;
-            await _bookingService.Save(booking);
-            return Ok(booking)
-                .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
+            //If user cancel booking before 60 hours until start time and booking status is accepted, refund 50% of total price (because user paid 50% deposit)
+            //If user cancel booking under 60 hours until start time and booking status is accepted, refund 15% of total price (because user paid 50% deposit)
+            //If user cancel booking under 12 hours until start time and booking status is accepted, no refund
+            //If user cancel and booking status is approving then just change status to cancel
+            //TODO: Send notification to room owner
+            if (booking.StartTime > DateTime.Now.AddHours(60) && booking.Status == BookingStatus.ACCEPTED)
+            {
+                booking.Status = BookingStatus.CANCEL;
+                await _bookingService.Save(booking);
+                await _walletService.IncreaseBalanceForUser(booking.UserId, Math.Ceiling((double)booking.TotalPrice * 0.5 / 1000) * 1000);
+                await _walletService.DeductBalanceForUser(booking.Room.UserId, Math.Ceiling((double)booking.TotalPrice * 0.5 / 1000) * 1000);
+                return Ok(booking)
+                    .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
+            }
+            else if (booking.StartTime < DateTime.Now.AddHours(60) && booking.Status == BookingStatus.ACCEPTED)
+            {
+                booking.Status = BookingStatus.CANCEL;
+                await _bookingService.Save(booking);
+                await _walletService.IncreaseBalanceForUser(booking.UserId, Math.Ceiling((double)booking.TotalPrice * 0.15 / 1000) * 1000);
+                await _walletService.DeductBalanceForUser(booking.Room.UserId, Math.Ceiling((double)booking.TotalPrice * 0.15 / 1000) * 1000);
+                return Ok(booking)
+                    .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
+            }
+            else if (booking.StartTime < DateTime.Now.AddHours(12) && booking.Status == BookingStatus.ACCEPTED)
+            {
+                booking.Status = BookingStatus.CANCEL;
+                await _bookingService.Save(booking);
+                return Ok(booking)
+                    .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
+            }
+            else if (booking.Status == BookingStatus.APPROVING)
+            {
+                booking.Status = BookingStatus.CANCEL;
+                await _bookingService.Save(booking);
+                return Ok(booking)
+                    .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
+            } else
+            {
+                return BadRequest("Cannot cancel booking");
+            }
         }
 
         [Authorize(Roles = RolesConstants.USER)]
@@ -229,7 +270,11 @@ namespace PartyRentingPlatform.Controllers
             booking.Status = BookingStatus.SUCCESS;
             await _bookingService.Save(booking);
 
-            //TODO: Deduct balance from user
+            // Pays rest of money to room's owner
+            //Deduct balance from booking's user and increase balance for room's user
+            //Deposit money equals half total price and round it to 1000s
+            await _walletService.IncreaseBalanceForUser(booking.Room.UserId, Math.Ceiling((double) booking.TotalPrice * 0.4 / 1000) * 1000);
+            await _walletService.DeductBalanceForUser(booking.UserId, Math.Ceiling((double)booking.TotalPrice / 2 / 1000) * 1000);
 
             return Ok(booking)
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
@@ -310,8 +355,16 @@ namespace PartyRentingPlatform.Controllers
             if (room.UserId != userIdClaim.Value) return BadRequest("Room does not belong to user");
 
             if (booking.Status != BookingStatus.APPROVING) return BadRequest("Booking cannot be accepted");
+
             booking.Status = BookingStatus.ACCEPTED;
             await _bookingService.Save(booking);
+
+            //Pays deposit to room's owner
+            //Deduct balance from booking's user and increase balance for room's user
+            //Deposit money equals half total price and round it to 1000s
+            await _walletService.IncreaseBalanceForUser(booking.Room.UserId, Math.Ceiling((double)booking.TotalPrice / 2 / 1000) * 1000);
+            await _walletService.DeductBalanceForUser(booking.UserId, Math.Ceiling((double)booking.TotalPrice / 2 / 1000) * 1000);
+
             return Ok(booking)
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
         }

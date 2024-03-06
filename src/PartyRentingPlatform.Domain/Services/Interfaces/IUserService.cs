@@ -25,4 +25,7 @@ public interface IUserService
     Task UpdateUser(string firstName, string lastName, string email, string langKey, string imageUrl);
     Task<User> GetUserWithUserRoles();
     Task<IPage<User>> GetAllPublicUsers(IPageable pageable);
+    Task<User> UpdateProfile(User user);
+    Task<User> UpdateAvatar(string imageUrl);
+    Task<User> UpdateToHost(string userId);
 }

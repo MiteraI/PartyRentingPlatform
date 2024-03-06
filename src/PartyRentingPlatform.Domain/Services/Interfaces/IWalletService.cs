@@ -13,7 +13,8 @@ namespace PartyRentingPlatform.Domain.Services.Interfaces
     public interface IWalletService
     {
         Task<Wallet> Save(Wallet wallet);
-        Task IncreaseAmountOfWalletByUserId(string? userId, double amount);
-        Task DecreateAmountOfWalletByUserId(string? userId, double amount);
+        Task<double> CurrentBalanceForUser(string? userId);
+        Task DeductBalanceForUser(string? userId, double amount);
+        Task IncreaseBalanceForUser(string? userId, double amount);
     }
 }

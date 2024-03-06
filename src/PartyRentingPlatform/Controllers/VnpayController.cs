@@ -54,7 +54,7 @@ namespace PartyRentingPlatform.Controllers
 
             await _transactionService.Save(transaction);
 
-            await _walletService.IncreaseAmountOfWalletByUserId(userIdClaim?.Value, paymentSuccessDto.Amount);
+            await _walletService.IncreaseBalanceForUser(userIdClaim?.Value, paymentSuccessDto.Amount);
 
             return Ok("Payment success");
         }
