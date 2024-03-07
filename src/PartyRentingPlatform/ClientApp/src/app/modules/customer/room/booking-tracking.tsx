@@ -20,6 +20,12 @@ import AddTaskOutlinedIcon from '@mui/icons-material/AddTaskOutlined';
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
 import PaymentOutlinedIcon from '@mui/icons-material/PaymentOutlined';
 import { LocalDiningOutlined, SnowmobileOutlined, VerifiedUserOutlined } from '@mui/icons-material';
+import { AddTaskOutlined as WaitingIcon, DoneOutlined as AcceptedIcon, LocalDiningOutlined as ServingIcon, PaymentOutlined as PaymentIcon } from '@mui/icons-material';
+
+import { ClockCircleOutlined, CheckOutlined, CloseCircleOutlined, DollarCircleOutlined, SmileOutlined } from '@ant-design/icons';
+
+const { Step } = Steps;
+
 import { cancelBookingForCustomer } from 'app/entities/booking/booking.reducer';
 // import TimelineItem from "examples/Timeline/TimelineItem";
 
@@ -83,6 +89,39 @@ const BookingDetailItem = ({ label, value }) => (
     </Grid>
 );
 
+function getCurrentStepIndex(status) {
+    switch (status) {
+        case 'APPROVING':
+            return 0;
+        case 'ACCEPTED':
+            return 1;
+        case 'SUCCESS':
+            return 3;
+        case 'CANCEL':
+            return 4;
+        case 'REJECTED':
+            return 5;
+        default:
+            return 2;
+    }
+}
+
+
+function getStatus(currentStatus, targetStatus) {
+    if (getCurrentStepIndex(currentStatus) > getCurrentStepIndex(targetStatus)) {
+        return 'finish';
+    }
+    if ((currentStatus === targetStatus)) {
+        return 'finish';
+    } else if (currentStatus === 'REJECTED' && targetStatus === 'ACCEPTED') {
+        return 'error';
+    } else {
+        return 'wait';
+    }
+}
+
+
+
 const BookingTracking = () => {
     const dispatch = useAppDispatch();
     const { id } = useParams<'id'>();
@@ -127,7 +166,7 @@ const BookingTracking = () => {
                         </Col>
 
                         <Col md="2" style={{ display: 'flex' }}>
-                            {isApproving && (<Button 
+                            {isApproving && (<Button
                                 style={{ margin: 'auto', color: 'white', backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px', justifyContent: 'center', alignItems: 'center' }}
                             >
                                 <strong>Back Home</strong>
@@ -277,48 +316,48 @@ const BookingTracking = () => {
                         <Col md="2" style={{ display: 'flex' }}>
                             {isApproving && (<Button
                                 style={{ margin: 'auto', color: 'white', backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px', justifyContent: 'center', alignItems: 'center' }}
-                            onClick={handleCancel}
+                                onClick={handleCancel}
                             >
                                 <strong>Cancel</strong>
                             </Button>)}
                         </Col>
                     </Row>
-                    <Row style={{ padding: '20px', paddingTop: '0px' }}>
-                        <Box>
-                            <Steps
-                                items={[
-                                    {
-                                        title: 'Waiting',
-                                        status: 'finish',
-                                        icon: <AddTaskOutlinedIcon />,
-                                    },
-                                    {
-                                        title: 'Accpeted',
-                                        status: 'finish',
-                                        icon: <DoneOutlinedIcon />,
-                                    },
-                                    {
-                                        title: 'Serving',
-                                        status: 'process',
-                                        icon: <LocalDiningOutlined />,
-                                    },
-                                    {
-                                        title: 'Payment',
-                                        status: 'wait',
-                                        icon: <PaymentOutlinedIcon />,
-                                    },
-                                ]}
-                            />
-                        </Box>
 
+                    <Row style={{ padding: '20px', paddingTop: '0px' }}>
+                        <Steps current={getCurrentStepIndex(bookingEntity?.status)} status="process">
+                            <Step
+                                title="Waiting"
+                                icon={<ClockCircleOutlined />}
+                                // description={<Typography variant="body2">Waiting for approval</Typography>}
+                                status={getStatus(bookingEntity?.status, 'APPROVING')}
+                            />
+                            <Step
+                                title="Accepted"
+                                icon={<CheckOutlined />}
+                                // description={<Typography variant="body2">Your booking has been accepted</Typography>}
+                                status={getStatus(bookingEntity?.status, 'ACCEPTED')}
+                            />
+                            <Step
+                                title="Serving"
+                                icon={<SmileOutlined />}
+                                // description={<Typography variant="body2">You are currently being served</Typography>}
+                                status={getStatus(bookingEntity?.status, 'SERVING')}
+                            />
+                            <Step
+                                title="Payment"
+                                icon={<DollarCircleOutlined />}
+                                // description={<Typography variant="body2">Payment completed</Typography>}
+                                status={getStatus(bookingEntity?.status, 'DONE')}
+                            />
+                        </Steps>
                     </Row>
 
-
+           
 
                 </Container>
             </Grid>
 
-            
+
         </BookingDetailContainer>
 
 

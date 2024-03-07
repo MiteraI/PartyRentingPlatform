@@ -7,9 +7,19 @@ import { AUTHORITIES } from "app/config/constants"
 import RoomBookingForCustomer from "./room/room-booking"
 import BookingTracking from "./room/booking-tracking"
 import UserPage from "./booking/booking-list"
+import Profile from "./profile/profile"
 const CustomerRoutes = () => (
     <div>
         <ErrorBoundaryRoutes>
+            <Route path="profile">
+                <Route path=":id">
+                    <Route index element={
+                        // <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
+                        <Profile />
+                        // </PrivateRoute>
+                    } />
+                </Route>
+            </Route>
             <Route path="room/*">
                 <Route path="detail"  >
                     <Route path=":id">
@@ -21,7 +31,7 @@ const CustomerRoutes = () => (
                     <Route path=":id">
                         <Route index element={
                             // <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
-                                <RoomBookingForCustomer />
+                            <RoomBookingForCustomer />
                             // </PrivateRoute>
                         } />
                     </Route>
@@ -30,17 +40,17 @@ const CustomerRoutes = () => (
                     <Route path=":id">
                         <Route index element={
                             // <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
-                                <BookingTracking />
+                            <BookingTracking />
                             // </PrivateRoute>
                         } />
                     </Route>
                 </Route>
                 <Route path="booking-list">
-                        <Route index element={
-                            // <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
-                                <UserPage />
-                            // </PrivateRoute>
-                        } />
+                    <Route index element={
+                        // <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
+                        <UserPage />
+                        // </PrivateRoute>
+                    } />
                 </Route>
 
             </Route>
