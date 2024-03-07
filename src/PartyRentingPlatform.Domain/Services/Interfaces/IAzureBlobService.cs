@@ -14,5 +14,6 @@ namespace PartyRentingPlatform.Domain.Services.Interfaces
     {
         Task<string> UploadRoomImage(IFormFile image);
         Task<IList<string>> UploadRoomImages(IList<IFormFile> image);
+        Task<string> UploadAvatar(IFormFile image);
     }
 }

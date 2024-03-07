@@ -27,7 +27,7 @@ public class ProfileInfoController : ControllerBase
     public ActionResult<ProfileInfoDto> GetProfileInfos()
     {
         _log.LogDebug("REST request to get profile informations");
-        return Ok(new ProfileInfoDto(GetDisplayRibbonOnProfiles(), GetActiveProfile()));
+        return Ok(new ProfileInfoDto(GetDisplayRibbonOnProfiles(), GetVnpReturnUrl(), GetActiveProfile()));
     }
 
     private List<string> GetActiveProfile()
@@ -55,5 +55,10 @@ public class ProfileInfoController : ControllerBase
     private string GetDisplayRibbonOnProfiles()
     {
         return _configuration.GetSection("RibbonInfo")["display-ribbon-on-profiles"];
+    }
+
+    private string GetVnpReturnUrl()
+    {
+        return _configuration.GetValue<string>("vnp_ReturnUrl");
     }
 }

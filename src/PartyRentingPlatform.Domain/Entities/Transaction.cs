@@ -17,6 +17,7 @@ namespace PartyRentingPlatform.Domain.Entities
         public double Amount { get; set; }
         public TransactionStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string? TransactionNo { get; set; } // For query Vnpay portal transaction
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public User? User { get; set; }

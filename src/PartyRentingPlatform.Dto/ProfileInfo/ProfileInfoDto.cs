@@ -11,10 +11,13 @@ public class ProfileInfoDto
     [JsonProperty("activeProfiles")]
     public List<string> ActiveProfiles { get; set; }
 
-    public ProfileInfoDto(string displayRibbonOnProfiles, List<string> activeProfiles)
+    [JsonProperty("vnp_ReturnUrl")]
+    public string VnpReturnUrl { get; set; }
+
+    public ProfileInfoDto(string displayRibbonOnProfiles, string vnpReturnUrl, List<string> activeProfiles)
     {
         DisplayRibbonOnProfiles = displayRibbonOnProfiles;
         ActiveProfiles = activeProfiles;
-
+        VnpReturnUrl = vnpReturnUrl;
     }
 }
