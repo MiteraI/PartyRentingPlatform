@@ -46,7 +46,6 @@ const EditRoomOfHost = () => {
         }
     }
 
-    const [status_form, setStatus_form] = useState<number>(updateStatus())
 
 
     useEffect(() => {
@@ -57,10 +56,9 @@ const EditRoomOfHost = () => {
     }, [])
 
     const handelSubmit = (values: IRoom) => {
-        const newValue = { ...room, ...values, promotions: promotion, services: service, status: status_form } as IRoom;
-        console.log(newValue);
-
-        dispatch(updateEntityOfHost({ id, room: newValue }));
+        const newValue = { ...room, ...values, services:room.services } as IRoom;
+        const newValueWithServices = { ...room, ...values, services: service } as IRoom;
+        dispatch(updateEntityOfHost({ id, room: service.length === 0 ? newValue : newValueWithServices }));
     }
 
     const handlePromotions = (newPromotion: number[]) => {
@@ -74,8 +72,9 @@ const EditRoomOfHost = () => {
     }
 
 
-    const handleStatus = (status: number) => {
-        setStatus_form(status)
+    const handleDefaultValueServices = () => {
+        return room?.services.map((service) => service.id)
+
     }
 
 
@@ -94,9 +93,9 @@ const EditRoomOfHost = () => {
         { label: "Price", name: "price", type: "text", initialData: room?.price },
         { label: "Room Capacity", name: "roomCapacity", type: "text", initialData: room?.roomCapacity },
         // { label: "Rating", name: "rating", type: "text", initialData: room?.rating },
-        { label: "Status", name: "status", type: "text", alone: true, element: "select", initialData: updateStatus(), selectData: selectStatusForm, onChangeFormItem: handleStatus },
+        { label: "Status", name: "status", type: "text", alone: true, element: "select", initialData: updateStatus(), selectData: selectStatusForm },
         { label: "Promotions", name: "promotions", type: "text", element: "select", selectData: [], onChangeFormItem: handlePromotions },
-        { label: "Services", name: "services", type: "text", element: "select", selectData: services, onChangeFormItem: handleServices },
+        { label: "Services", name: "services", type: "text", element: "select", selectData: services, initialData: handleDefaultValueServices(), onChangeFormItem: handleServices },
     ]
 
     return (

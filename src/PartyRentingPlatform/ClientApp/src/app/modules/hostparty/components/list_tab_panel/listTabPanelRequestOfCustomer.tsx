@@ -1,11 +1,12 @@
 import { Avatar, Box, Button, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from "@mui/material"
-import React from "react"
+import React, { useState } from "react"
 import DeleteIcon from '@mui/icons-material/Delete';
 import FolderIcon from '@mui/icons-material/Folder';
 import { IBooking } from "app/shared/model/booking.model";
 import EditIcon from "@mui/icons-material/Edit"
-import { useAppDispatch } from "app/config/store";
-import { updateAcceptForRequest, updateRejectForRequest } from "app/entities/booking/booking.reducer";
+import { useAppDispatch, useAppSelector } from "app/config/store";
+import { getOneRequestDetailOfCustomer, updateAcceptForRequest, updateRejectForRequest } from "app/entities/booking/booking.reducer";
+import CustomeDetailRequestCustomer from "app/shared/layout/customeDetail/custome-detail-request-customer";
 
 interface IListTabPanelRequestOfCustomer {
     status: number
@@ -18,6 +19,8 @@ interface IListTabPanelRequestOfCustomer {
 const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = (props) => {
     const { data, status, editfunction, deletefunction } = props
     const dispatch = useAppDispatch()
+    const [open, setOpen] = useState<boolean>(false);
+    const detailRequest = useAppSelector(state => state.booking.entity);
 
     const handleAccept = (id: string | number) => {
         dispatch(updateAcceptForRequest(id))
@@ -47,43 +50,59 @@ const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = 
         )
     }
 
+
+    const handleOpenModal = (id: string | number) => {
+        setOpen(true)
+        dispatch(getOneRequestDetailOfCustomer(id))
+    }
+
+    const handleOpen = () => {
+        setOpen(!open)
+    }
     return (
-        <List dense>
-            {data?.length > 0 ?
-                data.map((request) => (
-                    <ListItemButton>
+        <>
+            <CustomeDetailRequestCustomer data={detailRequest} handleOpen={handleOpen} isOpen={open} title="Request detal" />
+            <List dense sx={{ height: "340.125px" }}>
+                {data?.length > 0 ?
+                    data.map((request) => (
                         <ListItem
+                            sx={{
+                                paddingLeft: "7px",
+                                paddingRight: "7px"
+                            }}
                             key={request.id}
                             secondaryAction={
                                 <>
                                     <ActionForApproving id={request.id} />
-                                    <IconButton sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
+                                    <IconButton edge="end" aria-label="delete">
                                         <EditIcon />
                                     </IconButton>
 
-                                    <IconButton sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
+                                    <IconButton edge="end" aria-label="delete">
                                         <DeleteIcon />
                                     </IconButton>
                                 </>
                             }
                         >
-                            <ListItemAvatar>
-                                <Avatar>
-                                    <FolderIcon />
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={request.customerName}
-                                secondary={request.status}
-                            />
+                            <ListItemButton onClick={() => handleOpenModal(request.id)}>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <FolderIcon />
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText
+                                    primary={request.customerName}
+                                    secondary={request.status}
+                                />
 
 
+                            </ListItemButton>
                         </ListItem>
-                    </ListItemButton>
 
-                )) : <div></div>}
+                    )) : <div></div>}
 
-        </List>
+            </List>
+        </>
     )
 }
 

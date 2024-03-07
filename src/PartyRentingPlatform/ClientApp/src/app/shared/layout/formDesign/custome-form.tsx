@@ -55,8 +55,9 @@ const CustomeForm: React.FC<IFormDesign> = (props) => {
                             {
                                 formItem.element === "select" ?
                                     <Select
+                                        
                                         mode={formItem.alone ? undefined : "multiple"}
-                                        onChange={(value) => formItem.onChangeFormItem(value)}
+                                        onChange={formItem.onChangeFormItem ? (value) => formItem.onChangeFormItem(value) : undefined}
 
                                     >
                                         {formItem.selectData.map((object) => <Option value={object.id}>{object.serviceName || object.name}</Option>)}

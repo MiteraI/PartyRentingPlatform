@@ -22,6 +22,8 @@ namespace PartyRentingPlatform.Domain.Services.Interfaces
 
         Task<IPage<Booking>> FindAllForHost(string userId, IPageable pageable);
 
+        Task<Booking> FindOneForHost(long? id);
+
         Task<IPage<Booking>> FindAllForHostByStatus(string userId, BookingStatus bookingStatus, IPageable pageable);
     }
 }

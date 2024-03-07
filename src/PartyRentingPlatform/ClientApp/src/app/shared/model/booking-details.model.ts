@@ -7,6 +7,7 @@ export interface IBookingDetails {
   service?: IService;
   serviceId?: number | null;
   booking?: IBooking | null;
+  serviceName?: string
 }
 
 export const defaultValue: Readonly<IBookingDetails> = {};

@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PartyRentingPlatform.Domain.Services
 {
@@ -19,6 +20,7 @@ namespace PartyRentingPlatform.Domain.Services
     {
         private readonly IConfiguration _configuration;
         private readonly BlobContainerClient _roomImageContainerClient;
+        private readonly BlobContainerClient _avatarContainerClient;
         private readonly string _azureBlobStorageAccountName;
         private readonly string _azureBlobStorageKey;
         public AzureBlobService(IConfiguration configuration)
@@ -35,6 +37,24 @@ namespace PartyRentingPlatform.Domain.Services
 
             //Azure Container Clients
             _roomImageContainerClient = blobServiceClient.GetBlobContainerClient("room-images");
+            _avatarContainerClient = blobServiceClient.GetBlobContainerClient("avatars");
+        }
+
+        public async Task<string> UploadAvatar(IFormFile image)
+        {
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+            var blobClient = _avatarContainerClient.GetBlobClient(fileName);
+
+            using (var stream = image.OpenReadStream())
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await stream.CopyToAsync(memoryStream);
+                    var imageBytes = memoryStream.ToArray();
+                    await blobClient.UploadAsync(new MemoryStream(imageBytes));
+                }
+            }
+            return blobClient.Uri.AbsoluteUri;
         }
 
         public async Task<string> UploadRoomImage(IFormFile image)

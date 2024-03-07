@@ -21,8 +21,8 @@ const HeaderAdmin: React.FC<IHeaderProps> = (props: IHeaderProps) => {
                 <Nav id="header-tabs" className="ms-auto" navbar>
                     <Home />
                     {isAuthenticated && <EntitiesMenu />}
-                    {isAuthenticated && isAdmin && <AdminMenu showOpenAPI={props.isOpenAPIEnabled} />}
-                    <AccountMenu isAuthenticated={props.isAuthenticated} />
+                    {isAuthenticated && isAdmin && <AdminMenu showOpenAPI={isAuthenticated} />}
+                    <AccountMenu isAuthenticated={isAuthenticated} />
                 </Nav>
             </Collapse>
         </Navbar>

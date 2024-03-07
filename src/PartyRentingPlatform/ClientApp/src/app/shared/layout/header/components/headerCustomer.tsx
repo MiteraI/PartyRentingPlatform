@@ -16,6 +16,9 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PersonIcon from '@mui/icons-material/Person';
 import AuthenticateIcon from "./AuthenticateIcon";
 import { Storage } from "react-jhipster";
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import { Button, Drawer } from "antd";
+import Wallet from "./wallet/wallet";
 
 interface HeaderCustomerProps {
     isAuthenticated: boolean
@@ -29,6 +32,7 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
     const [open, setOpen] = React.useState(false);
     const [options, setOptions] = React.useState([]);
     const loading = open && options.length === 0;
+    const [openWallet, setOpenWallet] = useState<boolean>(false)
 
     const handleProfileMenuOpen = () => {
         navigate("/login")
@@ -41,9 +45,14 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
 
 
 
+    const handleWalletModal = () => {
+        setOpenWallet(!openWallet)
+    }
+
 
     return (
         <Box sx={{ flexGrow: 1 }}>
+            <Wallet open={openWallet} handleClose={handleWalletModal} />
             <AppBar
                 sx={{ backgroundColor: "#FFFFFF", padding: "10px", boxShadow: "0px 13px 23px -13px rgba(0,0,0,0.5)", }}
                 position="static"
@@ -68,9 +77,9 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
 
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={4} color="error">
-                                <MailIcon color="warning" />
+                        <IconButton onClick={handleWalletModal} size="large"  color="inherit">
+                            <Badge color="error">
+                                <AccountBalanceWalletIcon color="warning" />
                             </Badge>
                         </IconButton>
                         <IconButton

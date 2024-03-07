@@ -18,6 +18,8 @@ import 'slick-carousel/slick/slick-theme.css';
 
 
 import './home.scss';
+import { addDeposit } from 'app/entities/wallet/wallet.reducer';
+import { toast } from 'react-toastify';
 
 const Home = () => {
   const dispatch = useAppDispatch();
@@ -27,6 +29,9 @@ const Home = () => {
   const serviceList = useAppSelector(state => state.service.entities);
   const [currentPage, setCurrentPageloading] = useState(0);
 
+
+
+  const updateSuccess = useAppSelector(state => state.wallet.updateSuccess);
 
   // Bổ sung một số hàm trợ giúp để tạo ra biểu tượng ngôi sao
   const generateStarIcons = (rating) => {
@@ -41,6 +46,24 @@ const Home = () => {
   useEffect(() => {
     dispatch(getEntityOfCustomers({ page: currentPage, size: 100, sort: 'id,asc' }));
   }, [dispatch]);
+
+
+  // use to deposit money to host or customer
+
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const amount = Number(urlParams.get('vnp_Amount'));
+    const transactionNo = Number(urlParams.get("vnp_TransactionNo"));
+
+
+    if (urlParams && amount != 0 && transactionNo != 0) {
+      dispatch(addDeposit({ amount, transactionNo, status: 1 })) // status 1 : success
+      window.history.replaceState({}, "", "http://localhost:9000/")
+      toast.success("Bạn đã nạp tiền thành công")
+    }
+  })
+
 
   // Define your carousel items
   const carouselItems = [
@@ -133,6 +156,9 @@ const Home = () => {
     slidesToScroll: 1,
   };
 
+
+  console.log(localStorage.getItem("user").split(`"`).join(``));
+
   return (
 
     <div className='home-page'>
@@ -140,8 +166,8 @@ const Home = () => {
         <Col md="6">
           <h1 className="display-4">Khám phá các bữa tiệc nào!!!</h1>
           <p className="lead">Hãy tìm điểm dừng chân tiếp theo cho bữa tiệc hoành tráng của bạn.</p>
-          {account?.login ? (
-            <Alert color="success">Welcome back, {account.login}!</Alert>
+          {localStorage.getItem("user") ? (
+            <Alert color="success">Chào mừng {localStorage.getItem("user").split(`"`).join(``)} đến với chúng tôi!</Alert>
           ) : (
             <div>
               <Alert color="warning">
