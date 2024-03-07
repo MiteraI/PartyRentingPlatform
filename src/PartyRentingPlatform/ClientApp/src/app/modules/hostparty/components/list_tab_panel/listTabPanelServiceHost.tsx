@@ -20,22 +20,26 @@ const ListTabPanelServiceOfCustomer: React.FC<IListTabPanelServicesOfCustomer> =
         <List dense sx={{ height: "340.125px" }}>
             {data?.length > 0 ?
                 data.map((service) => (
-                    <ListItemButton>
-                        <ListItem
-                            key={service.id}
-                            secondaryAction={
-                                <>
-                                    <IconButton onClick={() => editfunction(service.id)} edge="end" aria-label="delete">
-                                        <EditIcon />
-                                    </IconButton>
+                    <ListItem
+                        sx={{
+                            paddingLeft: "7px",
+                            paddingRight: "7px"
+                        }}
+                        key={service.id}
+                        secondaryAction={
+                            <>
+                                <IconButton onClick={() => editfunction(service.id)} edge="end" aria-label="delete">
+                                    <EditIcon />
+                                </IconButton>
 
-                                    <IconButton onClick={() => deletefunction(service.id)} sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </>
-                            }
-                        >
+                                <IconButton onClick={() => deletefunction(service.id)} edge="end" aria-label="delete">
+                                    <DeleteIcon />
+                                </IconButton>
+                            </>
+                        }
+                    >
 
+                        <ListItemButton>
                             <ListItemAvatar>
                                 <Avatar>
                                     <FolderIcon />
@@ -46,8 +50,8 @@ const ListTabPanelServiceOfCustomer: React.FC<IListTabPanelServicesOfCustomer> =
                                 secondary={`Price: ${service.price} & Description: ${service.description}`}
 
                             />
-                        </ListItem>
-                    </ListItemButton>
+                        </ListItemButton>
+                    </ListItem>
 
                 )) : <div></div>}
 

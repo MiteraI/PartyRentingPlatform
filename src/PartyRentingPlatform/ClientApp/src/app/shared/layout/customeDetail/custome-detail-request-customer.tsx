@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogTitle } from "@mui/material"
 import { Tag } from "antd"
 import { IBooking } from "app/shared/model/booking.model"
 import { IRoom } from "app/shared/model/room.model"
+import dayjs from "dayjs"
 import React from "react"
 import { Col, Row } from "reactstrap"
 
@@ -24,7 +25,7 @@ const CustomeDetailRequestCustomer: React.FC<ICustomeDetail> = (props) => {
     const { title, data, handleOpen, isOpen } = props
     const colStyle: React.CSSProperties = {
         textAlign: "center",
-        marginBottom:"10px"
+        marginBottom: "10px"
     }
 
     return (
@@ -49,10 +50,14 @@ const CustomeDetailRequestCustomer: React.FC<ICustomeDetail> = (props) => {
                             <Col style={colStyle} md={6}>Customer name: {data?.customerName}</Col>
                             <Col style={colStyle} md={6}>Total price: {data?.totalPrice}</Col>
                             <Col style={colStyle} md={6}>Status: {data?.status}</Col>
-                            <Col style={colStyle} md={6}>Start time: {data?.startTime?.date()}</Col>
-                            <Col style={colStyle} md={6}>End time : {data?.endTime?.date()}</Col>
-                            <Col style={colStyle} md={6}>Created by: {data?.user?.login}</Col>
-                            
+                            <Col style={colStyle} md={6}>Start time: {dayjs(data?.startTime).locale("vi").format("DD/MM/YYYY")}</Col>
+                            <Col style={colStyle} md={6}>End time : {dayjs(data?.endTime).locale("vi").format("DD/MM/YYYY")}</Col>
+                            <Col style={colStyle} md={6}>Services use : {data?.bookingDetails?.map((service) => {
+                                return (
+                                    <Tag color="blue-inverse">{service.service.serviceName}</Tag>
+                                )
+                            })}</Col>
+
                         </Row>
 
                     </Col>

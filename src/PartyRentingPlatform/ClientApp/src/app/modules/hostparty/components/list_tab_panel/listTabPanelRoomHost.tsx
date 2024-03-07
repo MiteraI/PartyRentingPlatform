@@ -32,24 +32,28 @@ const ListTabPanelRoomHost: React.FC<IListTabPanelRoomHost> = (props) => {
         <>
             <CustomeDetail data={detailRoomOfHost} handleOpen={handleOpenDetail} isOpen={open} title="Room detail" />
             <List dense sx={{ height: "340.125px" }}>
-
                 {data?.length > 0 ?
                     data.map((room) => (
-                        <ListItemButton onClick={() => handleDetailRoom(room.id)}>
-                            <ListItem
-                                key={room.id}
-                                secondaryAction={
-                                    <>
-                                        <IconButton onClick={() => editfunction(room.id)} edge="end" aria-label="delete">
-                                            <EditIcon />
-                                        </IconButton>
+                        <ListItem
+                            sx={{
+                                paddingLeft: "7px",
+                                paddingRight: "7px"
+                            }}
+                            key={room.id}
+                            secondaryAction={
+                                <>
+                                    <IconButton onClick={() => editfunction(room.id)} edge="end" aria-label="edit">
+                                        <EditIcon />
+                                    </IconButton>
 
-                                        <IconButton onClick={() => deletefunction(room.id)} sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </>
-                                }
-                            >
+                                    <IconButton onClick={() => deletefunction(room.id)} edge="end" aria-label="delete">
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </>
+                            }
+                        >
+                            <ListItemButton onClick={() => handleDetailRoom(room.id)}>
+
                                 <ListItemAvatar>
                                     <Avatar>
                                         <FolderIcon />
@@ -59,8 +63,8 @@ const ListTabPanelRoomHost: React.FC<IListTabPanelRoomHost> = (props) => {
                                     primary={room.roomName}
                                     secondary={room.description}
                                 />
-                            </ListItem>
-                        </ListItemButton>
+                            </ListItemButton>
+                        </ListItem>
 
                     )) : <div></div>}
 

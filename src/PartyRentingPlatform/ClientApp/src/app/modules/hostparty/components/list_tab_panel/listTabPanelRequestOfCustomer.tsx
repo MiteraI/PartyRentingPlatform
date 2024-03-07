@@ -65,22 +65,26 @@ const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = 
             <List dense sx={{ height: "340.125px" }}>
                 {data?.length > 0 ?
                     data.map((request) => (
-                        <ListItemButton onClick={() => handleOpenModal(request.id)}>
-                            <ListItem
-                                key={request.id}
-                                secondaryAction={
-                                    <>
-                                        <ActionForApproving id={request.id} />
-                                        <IconButton sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
-                                            <EditIcon />
-                                        </IconButton>
+                        <ListItem
+                            sx={{
+                                paddingLeft: "7px",
+                                paddingRight: "7px"
+                            }}
+                            key={request.id}
+                            secondaryAction={
+                                <>
+                                    <ActionForApproving id={request.id} />
+                                    <IconButton edge="end" aria-label="delete">
+                                        <EditIcon />
+                                    </IconButton>
 
-                                        <IconButton sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </>
-                                }
-                            >
+                                    <IconButton edge="end" aria-label="delete">
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </>
+                            }
+                        >
+                            <ListItemButton onClick={() => handleOpenModal(request.id)}>
                                 <ListItemAvatar>
                                     <Avatar>
                                         <FolderIcon />
@@ -92,8 +96,8 @@ const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = 
                                 />
 
 
-                            </ListItem>
-                        </ListItemButton>
+                            </ListItemButton>
+                        </ListItem>
 
                     )) : <div></div>}
 

@@ -45,7 +45,16 @@ namespace PartyRentingPlatform.Controllers
             var user = await _userService.GetUserWithUserRoles();
             if (user == null) throw new InternalServerErrorException("User could not be found");
             var profileDto = _mapper.Map<ProfileDto>(user);
+            profileDto.Balance = await _walletService.CurrentBalanceForUser(user.Id);
             return Ok(profileDto);
+        }
+
+        [HttpGet("balance")]
+        public virtual async Task<ActionResult<double>> GetBalance()
+        {
+            var userId = User.FindFirst(ClaimTypes.Name).Value;
+            var balance = await _walletService.CurrentBalanceForUser(userId);
+            return Ok(balance);
         }
 
         [HttpPost("avatar")]
@@ -68,7 +77,6 @@ namespace PartyRentingPlatform.Controllers
 
             var user = await _userService.UpdateProfile(_mapper.Map<User>(profileDto));
             var updatedUser = _mapper.Map<ProfileDto>(user);
-            updatedUser.Balance = await _walletService.CurrentBalanceForUser(user.Id);
             return updatedUser;
         }
 

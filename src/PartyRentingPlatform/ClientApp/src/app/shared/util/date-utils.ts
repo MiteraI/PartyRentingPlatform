@@ -7,3 +7,5 @@ export const convertDateTimeFromServer = date => (date ? dayjs(date).format(APP_
 export const convertDateTimeToServer = (date?: string): dayjs.Dayjs | null => (date ? dayjs(date) : null);
 
 export const displayDefaultDateTime = () => dayjs().startOf('day').format(APP_LOCAL_DATETIME_FORMAT);
+
+export const convertDateTimeToVietName = date => (date ? dayjs(date).locale("vi").format("DD/MM/YYYY") : null);
