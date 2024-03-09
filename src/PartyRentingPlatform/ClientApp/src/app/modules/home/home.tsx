@@ -28,6 +28,7 @@ const Home = () => {
   const account = useAppSelector((state) => state.authentication.account);
   const serviceList = useAppSelector(state => state.service.entities);
   const [currentPage, setCurrentPageloading] = useState(0);
+  const userExisted = localStorage.getItem("user");
 
 
 
@@ -156,9 +157,6 @@ const Home = () => {
     slidesToScroll: 1,
   };
 
-
-  console.log(localStorage.getItem("user").split(`"`).join(``));
-
   return (
 
     <div className='home-page'>
@@ -166,8 +164,8 @@ const Home = () => {
         <Col md="6">
           <h1 className="display-4">Khám phá các bữa tiệc nào!!!</h1>
           <p className="lead">Hãy tìm điểm dừng chân tiếp theo cho bữa tiệc hoành tráng của bạn.</p>
-          {localStorage.getItem("user") ? (
-            <Alert color="success">Chào mừng {localStorage.getItem("user").split(`"`).join(``)} đến với chúng tôi!</Alert>
+          {userExisted != null ? (
+            <Alert color="success">Chào mừng {userExisted ?? userExisted.split(`"`).join(``)} đến với chúng tôi!</Alert>
           ) : (
             <div>
               <Alert color="warning">

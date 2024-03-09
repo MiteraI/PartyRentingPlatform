@@ -7,6 +7,7 @@ import { getBalance, getHistoryTransactions } from "app/shared/reducers/applicat
 import { formatCurrency } from "app/shared/util/currency-utils";
 import { convertDateTimeToVietName } from "app/shared/util/date-utils";
 import React, { ChangeEventHandler, useEffect, useState } from "react"
+import { Storage } from "react-jhipster";
 
 interface IWallet {
     open: boolean,
@@ -27,6 +28,8 @@ const Wallet: React.FC<IWallet> = (props) => {
     const vnpay = useAppSelector(state => state.wallet.entity)
     const balance = useAppSelector(state => state.applicationProfile.balance) as number;
     const historyTransactions = useAppSelector(state => state.applicationProfile.entities) as IHistoryTransactions[];
+    const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated)
+
 
     const handleFinish = (values: any) => {
         const returnUrl = "http://localhost:9000/"
@@ -47,15 +50,8 @@ const Wallet: React.FC<IWallet> = (props) => {
     }, [balance])
 
 
-    const listStyle: React.CSSProperties = {
-        width: "100%",
-
-    }
-
-
-
     return (
-        <Drawer title="Wallet" onClose={handleClose} open={open}>
+        <Drawer mask title="Wallet" onClose={handleClose} open={open}>
             <Flex
                 vertical
                 gap="small"
