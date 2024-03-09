@@ -22,6 +22,7 @@ using Microsoft.EntityFrameworkCore;
 using PartyRentingPlatform.Crosscutting.Constants;
 using PartyRentingPlatform.Dto.Room;
 using System.Security.Claims;
+using PartyRentingPlatform.Dto.Booking;
 
 namespace PartyRentingPlatform.Controllers
 {
@@ -33,16 +34,19 @@ namespace PartyRentingPlatform.Controllers
         private readonly ILogger<RoomsController> _log;
         private readonly IMapper _mapper;
         private readonly IRoomService _roomService;
+        private readonly IBookingService _bookingService;
         private readonly IAzureBlobService _azureBlobService;
 
         public RoomsController(ILogger<RoomsController> log,
         IMapper mapper,
         IRoomService roomService,
+        IBookingService bookingService,
         IAzureBlobService azureBlobService)
         {
             _log = log;
             _mapper = mapper;
             _roomService = roomService;
+            _bookingService = bookingService;
             _azureBlobService = azureBlobService;
         }
 
@@ -124,11 +128,24 @@ namespace PartyRentingPlatform.Controllers
             RoomHostDto roomHostDto = _mapper.Map<RoomHostDto>(result);
 
             // If the user is not the host/ not authenticated and the room is not valid, they are not allowed to see the room
-            if (roomHostDto.Status != RoomStatus.VALID)
+            if (roomHostDto.Status != RoomStatus.VALID) return BadRequest("You are not allowed to see this room");
 
-                return BadRequest("You are not allowed to see this room");
+            var ratings = await _bookingService.GetAllBookingForRoom(id, null);
+
+            // Map ratings to BookingRatingDto and put it in roomHostDto
+            roomHostDto.Ratings = ratings.Content.Select(booking => _mapper.Map<BookingRatingDto>(booking)).ToList();
 
             return ActionResultUtil.WrapOrNotFound(roomHostDto);
+        }
+
+        // Customer can search for rooms by name, rating, and address in query parameters
+        [HttpGet("customer/search")]
+        public async Task<ActionResult<IEnumerable<RoomHostDto>>> SearchRooms([FromQuery] string roomName, [FromQuery] int? rating, [FromQuery] string address, IPageable pageable)
+        {
+            _log.LogDebug("REST request to get a page of Rooms by name, rating, and address");
+            var result = await _roomService.FindAllByRoomNameAndRatingAndAddress(roomName, rating, address, pageable);
+            var page = new Page<RoomHostDto>(result.Content.Select(entity => _mapper.Map<RoomHostDto>(entity)).ToList(), pageable, result.TotalElements);
+            return Ok(((IPage<RoomHostDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
         }
 
         // -------------------------------------------------
