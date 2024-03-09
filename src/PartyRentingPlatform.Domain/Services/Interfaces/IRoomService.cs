@@ -20,5 +20,9 @@ namespace PartyRentingPlatform.Domain.Services.Interfaces
         Task<IPage<Room>> FindAllByHostId(string userId, IPageable pageable);
 
         Task<Room> FindOneWithFullDetails(long? id);
+
+        Task<IPage<Room>> FindAllByRoomNameAndRatingAndAddress(string roomName, int? rating, string? address, IPageable pageable);
+
+        Task UpdateRating(long? id, int rating);
     }
 }

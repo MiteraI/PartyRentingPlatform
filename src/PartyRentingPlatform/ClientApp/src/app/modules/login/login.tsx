@@ -35,7 +35,7 @@ export const Login = () => {
   if (isAuthenticated && isAdmin) {
     return <Navigate to={'/admin/docs'} replace />;
   } else if (isAuthenticated) {
-    return <Navigate to={from} replace />
+    return <Navigate to={from} />
   }
 
 

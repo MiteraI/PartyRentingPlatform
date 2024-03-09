@@ -79,6 +79,15 @@ public class BookingService : IBookingService
         return result;
     }
 
+    public async Task<IPage<Booking>> GetAllBookingForRoom(long? roomId, IPageable pageable)
+    {
+        return await _bookingRepository.QueryHelper()
+            .Include(booking => booking.User)
+            .Filter(booking => booking.RoomId == roomId)
+            .GetPageAsync(pageable);
+    }
+
+
     // Find all bookings that belong to a host from combining all of the host's rooms's bookings
     public virtual async Task<IPage<Booking>> FindAllForHost(string userId, IPageable pageable)
     {
@@ -114,5 +123,18 @@ public class BookingService : IBookingService
             .Filter(booking => booking.Room.UserId == userId && booking.Status == bookingStatus)
             .GetPageAsync(pageable);
         return page;
+    }
+
+    // Background worker 
+    public async Task CancelBookingWithoutAcceptedAfterOneDay()
+    {
+        var bookings = await _bookingRepository.QueryHelper()
+            .Filter(booking => booking.Status == BookingStatus.APPROVING && booking.BookTime < DateTime.Now.AddDays(-1))
+            .GetAllAsync();
+        foreach (var booking in bookings)
+        {
+            booking.Status = BookingStatus.CANCEL;
+            await _bookingRepository.SaveChangesAsync();
+        }
     }
 }
