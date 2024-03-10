@@ -126,7 +126,7 @@ const BookingCreate: React.FC<IBookingCreate> = (props) => {
 
                         <Input type="number" />
                     </Form.Item>
-                    <Form.Item
+                    {/* <Form.Item
                         label="formFiles"
                         name="formFiles"
                         rules={[
@@ -136,7 +136,7 @@ const BookingCreate: React.FC<IBookingCreate> = (props) => {
                     >
 
                         <input type="file" onChange={handleUpLoadPicture} />
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item
                         label="promotions"

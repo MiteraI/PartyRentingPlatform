@@ -41,7 +41,9 @@ const Wallet: React.FC<IWallet> = (props) => {
     }
 
     useEffect(() => {
-        window.open(vnpay, "_blank")
+        if (vnpay != null) {
+            window.open(vnpay, "_blank")
+        }
     }, [vnpay])
 
     useEffect(() => {

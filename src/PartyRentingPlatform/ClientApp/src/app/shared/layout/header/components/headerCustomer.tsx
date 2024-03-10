@@ -56,7 +56,6 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
                 position="static"
             >
                 <Toolbar>
-
                     <NavLink to="/" style={{ textDecoration: "none" }} >
                         <Box
                             component="img"
@@ -73,7 +72,6 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
 
                     <CustomeSearch />
 
-                    <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
 
                         {userExisted ?

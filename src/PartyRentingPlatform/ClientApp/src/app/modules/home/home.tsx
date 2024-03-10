@@ -54,7 +54,7 @@ const Home = () => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const amount = Number(urlParams.get('vnp_Amount'));
+    const amount = Number(urlParams.get('vnp_Amount')) / 100;
     const transactionNo = Number(urlParams.get("vnp_TransactionNo"));
 
 
@@ -133,8 +133,6 @@ const Home = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [animating, setAnimating] = useState(false);
 
-  console.log(roomList);
-
   // Carousel handlers
   const next = () => {
     if (animating) return;
@@ -165,7 +163,7 @@ const Home = () => {
           <h1 className="display-4">Khám phá các bữa tiệc nào!!!</h1>
           <p className="lead">Hãy tìm điểm dừng chân tiếp theo cho bữa tiệc hoành tráng của bạn.</p>
           {userExisted != null ? (
-            <Alert color="success">Chào mừng {userExisted ?? userExisted.split(`"`).join(``)} đến với chúng tôi!</Alert>
+            <Alert color="success">Chào mừng {userExisted ? userExisted.split(`"`).join(``) : ""} đến với chúng tôi!</Alert>
           ) : (
             <div>
               <Alert color="warning">

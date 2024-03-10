@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { isNumber, Storage, ValidatedField, ValidatedForm } from 'react-jhipster';
 import StarIcon from '@mui/icons-material/Star';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -150,7 +150,7 @@ const RoomBookingForCustomer = () => {
         endTime: convertDateTimeFromServer(endDateFromUrl),
         status: 'APPROVING',
         price: roomEntity.price,
-        customerName: 'Tên mặc định',
+        customerName: Storage.local.get("user"),
       }
       : {
         status: 'APPROVING',
