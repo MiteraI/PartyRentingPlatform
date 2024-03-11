@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { Button, Card, Drawer, Flex, Form, Input, message } from "antd"
+import { Button, Card, Drawer, Flex, Form, Input, InputNumber, message } from "antd"
 import { useAppDispatch, useAppSelector } from "app/config/store";
 import { createDeposit } from "app/entities/wallet/wallet.reducer";
 import { IHistoryTransactions } from "app/shared/model/wallet.model";
@@ -73,12 +73,12 @@ const Wallet: React.FC<IWallet> = (props) => {
                         <Box sx={{ display: "flex" }}>
                             <Form.Item
                                 rules={[{
-                                    required: true, min: 50000, max: 10000000, message: `The amount you can deposit between ${formatCurrency(50000)} and ${formatCurrency(10000000)}}`
+                                    required: true, message: `The amount you can deposit between ${formatCurrency(50000)} and ${formatCurrency(10000000)}}`
                                 }]}
                                 style={{ marginBottom: "0px", marginRight: "3px", flexGrow: 1 }}
                                 name={"price"}
                             >
-                                <Input style={{ padding: "8px" }} type="number" />
+                                <Input type="number" min={50000} max={10000000} style={{ padding: "8px" }}/>
                             </Form.Item>
                             <Button loading={loading} htmlType="submit" size="large" >Nạp tiền</Button>
                         </Box>

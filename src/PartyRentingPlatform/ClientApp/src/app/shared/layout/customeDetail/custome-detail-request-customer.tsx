@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogTitle } from "@mui/material"
 import { Tag } from "antd"
 import { IBooking } from "app/shared/model/booking.model"
 import { IRoom } from "app/shared/model/room.model"
+import { formatCurrency } from "app/shared/util/currency-utils"
 import dayjs from "dayjs"
 import React from "react"
 import { Col, Row } from "reactstrap"
@@ -48,7 +49,7 @@ const CustomeDetailRequestCustomer: React.FC<ICustomeDetail> = (props) => {
                         <Row md={12}>
                             <Col style={colStyle} md={6}>Room name: {data?.room?.roomName}</Col>
                             <Col style={colStyle} md={6}>Customer name: {data?.customerName}</Col>
-                            <Col style={colStyle} md={6}>Total price: {data?.totalPrice}</Col>
+                            <Col style={colStyle} md={6}>Total price: {formatCurrency(data?.totalPrice)}</Col>
                             <Col style={colStyle} md={6}>Status: {data?.status}</Col>
                             <Col style={colStyle} md={6}>Start time: {dayjs(data?.startTime).locale("vi").format("DD/MM/YYYY")}</Col>
                             <Col style={colStyle} md={6}>End time : {dayjs(data?.endTime).locale("vi").format("DD/MM/YYYY")}</Col>
