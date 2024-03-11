@@ -15,7 +15,7 @@ interface IRequestOfCustomer {
 
 
 const RequestOfCustomer: React.FC<IRequestOfCustomer> = (props) => {
-    const [status, setStatus] = useState<number>(5)
+    const [status, setStatus] = useState<number>(1)
     const dispatch = useAppDispatch()
     const requestOfCustomer = useAppSelector((state) => state.booking.entities) as IBooking[]
     const [page, setPage] = useState<number>(0);

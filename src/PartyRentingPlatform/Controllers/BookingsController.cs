@@ -162,10 +162,6 @@ namespace PartyRentingPlatform.Controllers
             //Noted in TokenProvider.cs
             var userIdClaim = User.FindFirst(ClaimTypes.Name);
 
-            // TODO: Check if balance is enough
-            if (await _walletService.CurrentBalanceForUser(userIdClaim.Value) < (double) booking.TotalPrice)
-                return BadRequest("Your is balance is not enough");
-
             booking.UserId = userIdClaim.Value;
 
             booking.BookTime = DateTime.Now;
@@ -176,6 +172,7 @@ namespace PartyRentingPlatform.Controllers
             Room bookedRoom = await _roomService.FindOne(booking.RoomId);
             if (bookedRoom == null) return BadRequest("Room not found");
             if (bookedRoom.Status != RoomStatus.VALID) return BadRequest("Room is not available");
+            if (bookedRoom.UserId.ToLower().Equals(userIdClaim.Value.ToLower())) return BadRequest("You cannot book your own room");
 
             //Calculate service price
             long servicePrice = 0;
@@ -188,6 +185,10 @@ namespace PartyRentingPlatform.Controllers
 
             //Calculate total price
             booking.TotalPrice = (long)(bookedRoom.Price * (booking.EndTime - booking.StartTime).TotalHours) + servicePrice;
+
+            // Check if balance is enough
+            if (await _walletService.CurrentBalanceForUser(userIdClaim.Value) < (double)booking.TotalPrice)
+                return BadRequest("Your is balance is not enough");
 
             //It will automatically generate new booking details to database
             await _bookingService.Save(booking);

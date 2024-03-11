@@ -36,7 +36,7 @@ const RoomOfHost: React.FC<IRoomOfHost> = (props) => {
     }
 
     const handleDeleteRoomOfHostById = (id: string | number) => {
-        dispatch(deleteEntityOfHost(id));
+        dispatch(deleteEntityOfHost({ id, page }));
     }
 
     const handleMoveToEditRoomPage = (id: string | number) => {

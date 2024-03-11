@@ -32,7 +32,7 @@ const Wallet: React.FC<IWallet> = (props) => {
 
 
     const handleFinish = (values: any) => {
-        const returnUrl = "http://localhost:9000/"
+        const returnUrl = Storage.local.get("dynamic-url")
         const value: IDeposit = {
             price: values?.price,
             returnUrl
@@ -73,7 +73,7 @@ const Wallet: React.FC<IWallet> = (props) => {
                         <Box sx={{ display: "flex" }}>
                             <Form.Item
                                 rules={[{
-                                    required: true, message: "Please type in the money you want to deposit"
+                                    required: true, min: 50000, max: 10000000, message: `The amount you can deposit between ${formatCurrency(50000)} and ${formatCurrency(10000000)}}`
                                 }]}
                                 style={{ marginBottom: "0px", marginRight: "3px", flexGrow: 1 }}
                                 name={"price"}

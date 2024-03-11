@@ -11,7 +11,7 @@ const FilterRequestOfCustomer: React.FC<IFilterRequestOfCustomer> = (props) => {
     return (
         <Select
             size="small"
-            defaultValue={"5"}
+            defaultValue={"1"}
             labelId="demo-select-small-label"
             label="Filter"
             id="demo-select-small"

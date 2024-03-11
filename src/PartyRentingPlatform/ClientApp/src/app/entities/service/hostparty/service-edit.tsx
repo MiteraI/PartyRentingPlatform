@@ -4,6 +4,7 @@ import { useParams } from "react-router"
 import React, { useEffect } from "react"
 import { IService } from "app/shared/model/service.model";
 import { getServiceOfHost, reset, updateServiceOfHost } from "../service.reducer";
+import { formatCurrency } from "app/shared/util/currency-utils";
 
 
 const EditServiceOfHost = () => {
@@ -18,9 +19,25 @@ const EditServiceOfHost = () => {
 
 
     const listFormItem: IFormItemDesign[] = [
-        { label: "serviceName", name: "serviceName", type: "text", initialData: service?.serviceName },
-        { label: "price", name: "price", type: "text", initialData: service?.price },
-        { label: "description", name: "description", type: "text", initialData: service?.description },
+        {
+            label: "Service name", name: "serviceName", type: "text", initialData: service?.serviceName,
+            rules: [
+                { required: true, message: "Please input your service name" }
+            ]
+        },
+        {
+            label: "Price", name: "price", type: "number", initialData: service?.price,
+            min: 10000,
+            max: 5000000,
+            rules: [
+                { required: true, message: `The price of service must be between ${formatCurrency(10000)} and ${formatCurrency(5000000)}` }
+            ]
+        },
+        {
+            label: "Description", name: "description", type: "text", initialData: service?.description, rules: [{
+                required: true, message: "Please inpunt description"
+            }]
+        },
     ]
 
 
