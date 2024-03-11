@@ -57,7 +57,7 @@ const Wallet: React.FC<IWallet> = (props) => {
             <Flex
                 vertical
                 gap="small"
-                style={{ width: "100%" }}
+                style={{ height: "100%" }}
             >
                 <Box textAlign={"center"} >
                     Số dư
@@ -87,26 +87,27 @@ const Wallet: React.FC<IWallet> = (props) => {
                 </Box>
                 <Button size="large" block>Rút tiền</Button>
 
-
-                <Box sx={{ height: "48vh", marginTop: "30px", overflowY: "scroll" }}>
+                <Box sx={{ marginTop: "30px" }}>
                     <h2>Lịch sử giao dịch</h2>
-                    <Box sx={{ marginTop: "10px", padding: "5px" }}>
-                        {historyTransactions?.map((history) => {
-                            return (
-                                <Box sx={{ marginBottom: "10px", boxShadow: "1px 1px 7px 1px #adadad", padding: "15px", borderRadius: "8px" }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                        <div>
-                                            Transaction No: {history.transactionNo}
+                    <Box sx={{ height: "48vh", overflowY: "scroll" }}>
+                        <Box sx={{ marginTop: "10px", padding: "5px" }}>
+                            {historyTransactions?.map((history) => {
+                                return (
+                                    <Box sx={{ marginBottom: "10px", boxShadow: "1px 1px 7px 1px #adadad", padding: "15px", borderRadius: "8px" }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                            <div>
+                                                Transaction No: {history.transactionNo}
+                                            </div>
+                                            <div>
+                                                Status: {history.status}
+                                            </div>
                                         </div>
-                                        <div>
-                                            Status: {history.status}
-                                        </div>
-                                    </div>
-                                    <div>Create at: {convertDateTimeToVietName(history.createdAt)}</div>
-                                    <div>Amount: +{formatCurrency(history.amount)}</div>
-                                </Box>
-                            )
-                        })}
+                                        <div>Create at: {convertDateTimeToVietName(history.createdAt)}</div>
+                                        <div>Amount: +{formatCurrency(history.amount)}</div>
+                                    </Box>
+                                )
+                            })}
+                        </Box>
                     </Box>
                 </Box>
             </Flex>

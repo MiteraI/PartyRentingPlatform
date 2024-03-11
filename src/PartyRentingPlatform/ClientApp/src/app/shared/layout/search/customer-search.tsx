@@ -15,7 +15,11 @@ const CustomeSearch: React.FC = () => {
     const navigate = useNavigate()
 
     const handelFindRoomByName = (e: ChangeEvent<HTMLInputElement>) => {
-        dispatch(searchEntitiesForAll({ roomName: e.target.value, page: 0, size: 5, sort: "id,asc" }))
+        if (e.target.value == "" || e.target.value == null) {
+
+        } else {
+            dispatch(searchEntitiesForAll({ roomName: e.target.value, page: 0, size: 5, sort: "id,asc" }))
+        }
     }
 
     const handleToPageDetail = (id: number) => {

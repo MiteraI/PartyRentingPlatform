@@ -227,38 +227,41 @@ const RoomBookingForCustomer = () => {
               </Typography>
             </Grid>
 
+            <h4>Service: </h4>
             {selectedServiceFromUrl?.map((service, index) => (
-              <Grid
-                key={index}
-                item
-                xs={12}
-                container
-                spacing={1}
-                alignItems="center"
-                style={{ cursor: 'pointer' }}
-              >
-                <Grid item xs={10}>
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    {serviceList.find(item => item.id === parseInt(service.id))?.serviceName}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    style={{
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      color: '#b4b4b4'
-                    }}
-                  >
-                    {serviceList.find(item => item.id === parseInt(service.id))?.description}
-                  </Typography>
+              <>
+                <Grid
+                  key={index}
+                  item
+                  xs={12}
+                  container
+                  spacing={1}
+                  alignItems="center"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <Grid item xs={10}>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {serviceList.find(item => item.id === parseInt(service.id))?.serviceName}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        color: '#b4b4b4'
+                      }}
+                    >
+                      {serviceList.find(item => item.id === parseInt(service.id))?.description}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={2} container justifyContent="flex-end">
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      Quantity:  <span style={{ margin: '0 10px' }}>{quantityMap.find(item => item.id === service.id)?.quantity}</span>
+                    </div>
+                  </Grid>
                 </Grid>
-                <Grid item xs={2} container justifyContent="flex-end">
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{ margin: '0 10px' }}>{quantityMap.find(item => item.id === service.id)?.quantity}</span>
-                  </div>
-                </Grid>
-              </Grid>
+              </>
             ))}
 
             <Divider style={{ marginBottom: '40px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
@@ -330,12 +333,12 @@ const RoomBookingForCustomer = () => {
 
                     <Col md="6">
                       <div className="booking-info">
-                        <Typography style={{ height: '60px' }} variant="subtitle1"><strong>{roomEntity.roomName}</strong></Typography>
+                        <Typography variant="subtitle1"><strong>{roomEntity.roomName}</strong></Typography>
                         <Typography variant="subtitle2">{roomEntity.address}</Typography>
-                        <div style={{ display: 'flex', alignItems: 'left' }}>
+                        {/* <div style={{ display: 'flex', alignItems: 'left' }}>
                           <StarIcon style={{ height: '20px', color: 'gold' }} />
                           <Typography variant="subtitle2" style={{ marginLeft: '2px' }}><strong>{roomEntity.rating || 0}</strong></Typography>
-                        </div>
+                        </div> */}
                       </div>
                     </Col>
                   </Row>
@@ -380,20 +383,6 @@ const RoomBookingForCustomer = () => {
                   </Row>
 
                   <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
-                  <Row>
-
-                    <Col md="6">
-                      <div className="room-detail-header">
-                        <Typography variant="subtitle1"><strong>Total (VNĐ)</strong></Typography>
-                      </div>
-                    </Col>
-
-                    <Col md="4" style={{ marginLeft: 'auto' }}>
-                      <div className="room-detail-header">
-                        <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + (roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
-                      </div>
-                    </Col>
-                  </Row>
 
                   <Col md="6">
                     <div className="room-detail-header">
