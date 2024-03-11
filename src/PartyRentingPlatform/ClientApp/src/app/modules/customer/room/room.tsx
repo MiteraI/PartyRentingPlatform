@@ -218,13 +218,13 @@ const RoomDetailForCustomer = () => {
     const disabledRangeTime: RangePickerProps['disabledTime'] = (_, type) => {
         if (type === 'start') {
           return {
-            disabledHours: () => range(0, 10),
+            disabledHours: () => range(0, 8),
             disabledMinutes: () => range(1, 60),
             disabledSeconds: () => range(1, 60),
           };
         }
         return {
-          disabledHours: () => range(0, 10),
+          disabledHours: () => range(0, 8),
           disabledMinutes: () => range(1, 60),
           disabledSeconds: () => range(1, 60),
         };

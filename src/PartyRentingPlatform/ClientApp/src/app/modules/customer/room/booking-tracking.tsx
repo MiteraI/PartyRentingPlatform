@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button, Grid, Typography, Paper, Avatar, LinearProgress, Chip, Card, Box, Icon, Divider, CardMedia, Container } from '@mui/material';
 import { Rating } from '@mui/material';
@@ -134,16 +134,53 @@ const BookingTracking = () => {
 
     // Ensure bookingEntity and bookingEntity.room are not null or undefined
     const roomEntity = bookingEntity?.room || null;
+    const serviceList = bookingEntity?.bookingDetails?.map((bookingDetail) => ({
+        id: bookingDetail.service.id,
+        name: bookingDetail.service.serviceName,
+        price: bookingDetail.service.price,
+        description: bookingDetail.service.description,
+        quantity: bookingDetail.serviceQuantity,
+    }));
+
+    const [serviceFee, setServiceFee] = useState<number>(0);
+    const [numberOfHours, setNumberOfHours] = useState<number>(0);
 
     const isApproving = bookingEntity?.status === 'APPROVING';
     const isSuccess = bookingEntity?.status === 'SUCCESS';
-    console.log(bookingEntity);
+    const isAccepted = bookingEntity?.status === 'ACCEPTED';
+    console.log(serviceList);
 
+
+    useEffect(() => {
+        const startDateTmp = new Date(bookingEntity?.startTime);
+        const endDateTmp = new Date(bookingEntity?.endTime);
+
+        // Kiểm tra nếu startDate và endDate là đối tượng Date hợp lệ
+        if (!isNaN(startDateTmp.getTime()) && !isNaN(endDateTmp.getTime())) {
+            const timeDifferenceInMilliseconds = endDateTmp.getTime() - startDateTmp.getTime();
+            const numberOfHours = timeDifferenceInMilliseconds / (1000 * 60 * 60);
+
+            setNumberOfHours(numberOfHours);
+        } else {
+            console.error('Invalid date format');
+        }
+
+
+    }, [bookingEntity, roomEntity]);
+
+    useEffect(() => {
+        let totalFee = 0;
+        serviceList?.map((selectedService) => {
+          totalFee += selectedService.quantity * selectedService.price;
+        }
+    
+        );
+        setServiceFee(totalFee);
+    
+      }, [bookingEntity, roomEntity]);
 
     const handleCancel = () => {
-        // Add logic to handle cancellation here
-        // You may dispatch an action or perform an API call
-        // based on your application's architecture
+
         dispatch(cancelBookingForCustomer(id));
     };
 
@@ -161,7 +198,7 @@ const BookingTracking = () => {
                     <Row style={{ padding: '20px' }}>
                         <Col md="10" style={{ paddingLeft: '15px' }}>
                             <Typography style={{ height: '60px' }} variant="h4"><strong>Thanks for your booking</strong></Typography>
-                            <Typography style={{ color: '#938A88' }} variant="subtitle1"><strong>your booking has been recieved</strong></Typography>
+                            {isAccepted && (<Typography style={{ color: '#e51d51' }} variant="subtitle1"><strong>your booking is ready now</strong></Typography>)}
 
                         </Col>
 
@@ -203,8 +240,54 @@ const BookingTracking = () => {
                             </Row>
                         </div>
 
-
                         <Divider style={{ marginBottom: '20px', backgroundColor: '#000', opacity: 0.18 }} />
+
+                        <h4>Service</h4>
+                        {serviceList?.map((service, index) => (
+                            <>
+                                <Grid
+                                    key={index}
+                                    item
+                                    xs={12}
+                                    container
+                                    spacing={1}
+                                    alignItems="center"
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <Grid item xs={10}>
+                                        <Typography style={{ display: 'inline-block' }} variant="subtitle1" fontWeight="bold">
+                                            {service.name}
+                                        </Typography>
+                                        <Typography style={{ display: 'inline-block', color: 'white' }} variant="subtitle1" fontWeight="bold">
+                                            {'_'}
+                                        </Typography>
+                                        <Typography style={{ display: 'inline-block', color: '#BCBAC2' }} variant="subtitle1" fontWeight="bold">
+                                            {' x   ' + service.quantity}
+                                        </Typography>
+
+                                        <Typography
+                                            variant="body2"
+                                            style={{
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                color: '#b4b4b4'
+                                            }}
+                                        >
+                                            {'  '}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={2} container justifyContent="flex-end">
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <span style={{ margin: '0 10px' }}>{service.price}</span>
+                                        </div>
+                                    </Grid>
+                                </Grid>
+                            </>
+                        ))}
+
+
+                        <Divider style={{ marginTop: '20px', marginBottom: '20px', backgroundColor: '#000', opacity: 0.18 }} />
 
 
                         <Row>
@@ -221,7 +304,7 @@ const BookingTracking = () => {
 
                                     {/* {numberOfHours > 0 && (
                                         <div className="room-detail-header">
-                                            <Typography variant="subtitle2">{"VNĐ " + bookingEntity.price + " x " + numberOfHours + " giờ"}</Typography>
+                                            <Typography variant="subtitle2">{"VNĐ " + bookingEntity.price + " x " + numberOfHours + " hour"}</Typography>
                                         </div>
                                     )}
 
@@ -249,13 +332,14 @@ const BookingTracking = () => {
                             </Row>
 
                             <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
+                            <h4>Price details</h4>
                             <Row>
 
-                                <Col md="6">
+                                {/* <Col md="6">
                                     <div className="room-detail-header">
                                         <Typography variant="subtitle1"><strong>Total (VNĐ)</strong></Typography>
                                     </div>
-                                </Col>
+                                </Col> */}
 
                                 <Col md="4" style={{ marginLeft: 'auto' }}>
                                     <div className="room-detail-header">
@@ -264,23 +348,32 @@ const BookingTracking = () => {
                                 </Col>
                             </Row>
 
-                            <Col md="6">
-                                <div className="room-detail-header">
-                                    <Typography variant="subtitle2">{"VNĐ " + bookingEntity.price + " x 2 ngày"}</Typography>
-                                </div>
-                                <div className="room-detail-header">
-                                    <Typography variant="subtitle2">Phí dịch vụ</Typography>
-                                </div>
+                            <Col md="6" style={{ marginTop: '15px' }}>
+                                {numberOfHours > 0 && (
+                                    <div className="room-detail-header">
+                                        <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x " + numberOfHours + " hour"}</Typography>
+                                    </div>
+                                )}
+
+                                {serviceFee > 0 && (<div className="room-detail-header">
+                                    <Typography variant="subtitle2">Service fee</Typography>
+                                </div>)}
                             </Col>
 
-                            <Col md="4" style={{ marginLeft: 'auto' }}>
-                                <div className="room-detail-header">
-                                    <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + bookingEntity.price * 2}</Typography>
-                                </div>
-                                <div className="room-detail-header">
-                                    <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + 100.000}</Typography>
-                                </div>
+
+                            <Col md="4" style={{ marginLeft: 'auto', marginTop: '15px' }}>
+                                {numberOfHours > 0 && (
+                                    <div className="room-detail-header">
+                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * numberOfHours}</Typography>
+                                    </div>
+                                )}
+                                {serviceFee > 0 && (
+                                    <div className="room-detail-header">
+                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + serviceFee}</Typography>
+                                    </div>
+                                )}
                             </Col>
+
                         </Row>
 
                         <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
@@ -294,7 +387,7 @@ const BookingTracking = () => {
 
                             <Col md="4" style={{ marginLeft: 'auto' }}>
                                 <div className="room-detail-header">
-                                    <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + bookingEntity.price * 2}</strong></Typography>
+                                    <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + "VNĐ " + (roomEntity?.price * numberOfHours + serviceFee)}</strong></Typography>
                                 </div>
                             </Col>
                         </Row>
@@ -352,7 +445,7 @@ const BookingTracking = () => {
                         </Steps>
                     </Row>
 
-           
+
 
                 </Container>
             </Grid>

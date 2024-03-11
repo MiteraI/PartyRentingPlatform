@@ -48,7 +48,19 @@ const RoomBookingForCustomer = () => {
   }));
 
   const location = useLocation();
+  // Lấy giá trị của selectedService từ URL parameter
+  const bookingDetailsParam = new URLSearchParams(location.search).get('selectedService');
+  
+  // Chuyển đổi chuỗi JSON thành mảng JavaScript
+  // const bookingDetails = bookingDetailsParam ? JSON.parse(bookingDetailsParam) : [];
 
+  const bookingDetails = bookingDetailsParam
+  ? JSON.parse(bookingDetailsParam).map((item) => ({
+      serviceId: item.id,
+      serviceQuantity: item.quantity,
+      // Bạn có thể sao chép các trường khác nếu cần
+    }))
+  : [];
 
   const navigate = useNavigate();
 
@@ -61,6 +73,7 @@ const RoomBookingForCustomer = () => {
 
   const roomEntity = useAppSelector(state => state.room.entity);
   const serviceList = roomEntity.services || [];
+  console.log(new URLSearchParams(location.search).get('selectedService'));
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -91,9 +104,6 @@ const RoomBookingForCustomer = () => {
       setQuantityMap(parsedSelectedService);
       console.log(quantityMap);
 
-
-
-      // Xử lý số giờ
     } catch (error) {
       console.error('Error parsing Selected Service:', error);
     }
@@ -101,13 +111,10 @@ const RoomBookingForCustomer = () => {
 
 
   useEffect(() => {
-    console.log(selectedServiceFromUrl);
-    console.log(serviceList);
     let totalFee = 0;
     selectedServiceFromUrl?.map((selectedService) => {
       let tmp = serviceList?.find(item => item.id === parseInt(selectedService.id))?.price;
       totalFee += tmp * parseInt(selectedService.quantity);
-      // console.log(selectedService.quantity);
     }
 
     );
@@ -165,9 +172,10 @@ const RoomBookingForCustomer = () => {
       const entity = {
         ...bookingEntity,
         ...values,
-        roomId: rooms.find(it => it.id.toString() === id)?.id,
+        roomId: id,
         // trả về mảng object serviceId, serviceQuantity
-        bookingDetails: [{ "serviceId": 1, "serviceQuantity": 1 }],
+        // bookingDetails: [{ "serviceId": 1, "serviceQuantity": 1 }],
+        bookingDetails: bookingDetails,
 
       };
 
