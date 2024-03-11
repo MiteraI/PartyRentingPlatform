@@ -26,6 +26,14 @@ export default function AuthenticateIcon() {
     window.location.href = "/"
   }
 
+  const handleBookingHisory = () => {
+    navigate('room/booking-list');
+  }
+
+  const handleGoToProfile = () => {
+    navigate('profile');
+  }
+
   const handleNavigateToDashboard = () => {
     navigate("hostparty/room");
   }
@@ -37,10 +45,10 @@ export default function AuthenticateIcon() {
         <PersonIcon color='warning' />
       </MenuButton>
       <Menu style={{ position: "relative", zIndex: 10 }} slots={{ listbox: Listbox }}>
-        <MenuItem component={Link} to={`/profile/1`}>Profile</MenuItem>
+        <MenuItem onClick={handleGoToProfile} component={Link} to={`profile/1`}>Profile</MenuItem>
         {/* <MenuItem >Profile</MenuItem> */}
-        <MenuItem>
-          Password
+        <MenuItem onClick={handleBookingHisory} component={Link} to={`room/booking-list`}>
+          Booking History
         </MenuItem>
 
         {/* if host party == dashboard of host party */}

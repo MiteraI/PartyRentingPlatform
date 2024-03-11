@@ -71,17 +71,17 @@ const Home = () => {
     {
       src: 'https://www.parents.com/thmb/--pZafKsgGSb8NrJVrV7lqJId9g=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/BirthdayParty-GettyImages-1600792233-c2a961509556414f9f41b92b8471a551.jpg',
       altText: 'Party Room 1',
-      caption: 'Không gian tuyệt vời!',
+      caption: 'Great space!',
     },
     {
       src: 'https://berkscountyliving.com/downloads/18196/download/iStock-918933880.jpg?cb=1155e4a7652ab617e102986ad35ab972',
       altText: 'Party Room 2',
-      caption: 'Dịch vụ hấp dẫn!',
+      caption: 'The best service!',
     },
     {
       src: 'https://st3.depositphotos.com/1002111/14176/i/1600/depositphotos_141766842-stock-photo-happy-kids-birthday.jpg',
       altText: 'Party Room 3',
-      caption: 'Phục vụ chu đáo!',
+      caption: 'Convenient!',
     },
     // Add more carousel items as needed
   ];
@@ -257,7 +257,7 @@ const Home = () => {
                         </div>
                         {/* Giá tiền */}
                         <Typography style={{ marginTop: '2px' }} variant="body2" color="text.primary">
-                          <strong>{item.price} VND</strong> / ngày
+                          <strong>{item.price} VND</strong> / hour
                         </Typography>
                       </div>
                       {/* Card actions */}

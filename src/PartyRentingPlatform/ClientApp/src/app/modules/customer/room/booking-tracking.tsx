@@ -4,7 +4,7 @@ import { Button, Grid, Typography, Paper, Avatar, LinearProgress, Chip, Card, Bo
 import { Rating } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import StarIcon from '@mui/icons-material/Star';
-import { getEntity } from 'app/entities/booking/booking.reducer';
+import { getEntityForCustomer } from 'app/entities/booking/booking.reducer';
 import { styled } from '@mui/system';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -127,7 +127,7 @@ const BookingTracking = () => {
     const { id } = useParams<'id'>();
 
     useEffect(() => {
-        dispatch(getEntity(id));
+        dispatch(getEntityForCustomer(id));
     }, [dispatch, id]);
 
     const bookingEntity = useAppSelector(state => state.booking.entity);

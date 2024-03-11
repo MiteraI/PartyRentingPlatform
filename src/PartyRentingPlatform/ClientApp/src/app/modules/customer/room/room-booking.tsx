@@ -10,19 +10,27 @@ import moment from 'moment';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
 import { IBooking } from 'app/shared/model/booking.model';
-import { getEntity, updateEntity, createEntityByCustomer, reset } from 'app/entities/booking/booking.reducer';
+import { updateEntity, createEntityByCustomer, reset } from 'app/entities/booking/booking.reducer';
+import { getEntityForCustomer } from 'app/entities/room/room.reducer';
 import { Avatar, CardMedia, Container, Divider, Grid, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import { AxiosResponse } from 'axios';
 import './requestToBook.scss';
+import { forEach } from 'lodash';
 
 
 const RoomBookingForCustomer = () => {
 
   const dispatch = useAppDispatch();
   const { id } = useParams<'id'>();
+
+  useEffect(() => {
+    dispatch(getEntityForCustomer(id));
+  }, [dispatch, id]);
+
+
+
   const [createdBookingId, setCreatedBookingId] = useState<number | null>(null); // State to hold the created booking
   const [startDateFromUrl, setStartDateFromUrl] = useState<string | null>(null);
   const [endDateFromUrl, setEndDateFromUrl] = useState<string | null>(null);
@@ -51,6 +59,9 @@ const RoomBookingForCustomer = () => {
     }
   }, [createdBookingId, navigate]);
 
+  const roomEntity = useAppSelector(state => state.room.entity);
+  const serviceList = roomEntity.services || [];
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
 
@@ -61,22 +72,49 @@ const RoomBookingForCustomer = () => {
     setStartDateFromUrl(startDateParam);
     setEndDateFromUrl(endDateParam);
 
+    const startDateTmp = new Date(startDateParam);
+    const endDateTmp = new Date(endDateParam);
+
+    // Kiểm tra nếu startDate và endDate là đối tượng Date hợp lệ
+    if (!isNaN(startDateTmp.getTime()) && !isNaN(endDateTmp.getTime())) {
+      const timeDifferenceInMilliseconds = endDateTmp.getTime() - startDateTmp.getTime();
+      const numberOfHours = timeDifferenceInMilliseconds / (1000 * 60 * 60);
+
+      setNumberOfHours(numberOfHours);
+    } else {
+      console.error('Invalid date format');
+    }
 
     try {
-      // Parse selectedServiceParam into an array
       const parsedSelectedService = JSON.parse(selectedServiceParam || '[]');
       setSelectedServiceFromUrl(parsedSelectedService);
-      console.log('Meoww: ' + selectedServiceFromUrl);
       setQuantityMap(parsedSelectedService);
-      console.log('Selected Service from URL:', parsedSelectedService);
+      console.log(quantityMap);
+
+
+
+      // Xử lý số giờ
     } catch (error) {
       console.error('Error parsing Selected Service:', error);
     }
   }, [location.search]);
 
-  const roomEntity = useAppSelector(state => state.room.entity);
-  const serviceList = roomEntity.services || [];
-  console.log(roomEntity);
+
+  useEffect(() => {
+    console.log(selectedServiceFromUrl);
+    console.log(serviceList);
+    let totalFee = 0;
+    selectedServiceFromUrl?.map((selectedService) => {
+      let tmp = serviceList?.find(item => item.id === parseInt(selectedService.id))?.price;
+      totalFee += tmp * parseInt(selectedService.quantity);
+      // console.log(selectedService.quantity);
+    }
+
+    );
+    setServiceFee(totalFee);
+
+  }, [selectedServiceFromUrl, serviceList]);
+
 
   const isNew = true;
 
@@ -129,7 +167,7 @@ const RoomBookingForCustomer = () => {
         ...values,
         roomId: rooms.find(it => it.id.toString() === id)?.id,
         // trả về mảng object serviceId, serviceQuantity
-        bookingDetails: [{ "serviceId": 1, "serviceQuantity": 5 }, { "serviceId": 2, "serviceQuantity": 12 }],
+        bookingDetails: [{ "serviceId": 1, "serviceQuantity": 1 }],
 
       };
 
@@ -231,33 +269,39 @@ const RoomBookingForCustomer = () => {
 
             <h4>Service: </h4>
             {selectedServiceFromUrl?.map((service, index) => (
-              <Grid
-                key={index}
-                item
-                xs={12}
-                container
-                spacing={1}
-                alignItems="center"
-                style={{ cursor: 'pointer' }}
-              >
-                {/* Đây nè */}
-                <Grid item xs={10}>
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    {serviceList.find(item => item.id === parseInt(service.id))?.serviceName}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    style={{
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      color: '#b4b4b4'
-                    }}
-                  >
-                    {serviceList.find(item => item.id === parseInt(service.id))?.description}
-                  </Typography>
+              <>
+                <Grid
+                  key={index}
+                  item
+                  xs={12}
+                  container
+                  spacing={1}
+                  alignItems="center"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <Grid item xs={10}>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {serviceList.find(item => item.id === parseInt(service.id))?.serviceName}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        color: '#b4b4b4'
+                      }}
+                    >
+                      {serviceList.find(item => item.id === parseInt(service.id))?.description}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={2} container justifyContent="flex-end">
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <span style={{ margin: '0 10px' }}>{quantityMap.find(item => item.id === service.id)?.quantity}</span>
+                    </div>
+                  </Grid>
                 </Grid>
-              </Grid>
+              </>
             ))}
 
             <Divider style={{ marginBottom: '40px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
@@ -331,10 +375,10 @@ const RoomBookingForCustomer = () => {
                       <div className="booking-info">
                         <Typography variant="subtitle1"><strong>{roomEntity.roomName}</strong></Typography>
                         <Typography variant="subtitle2">{roomEntity.address}</Typography>
-                        {/* <div style={{ display: 'flex', alignItems: 'left' }}>
+                        <div style={{ display: 'flex', alignItems: 'left' }}>
                           <StarIcon style={{ height: '20px', color: 'gold' }} />
                           <Typography variant="subtitle2" style={{ marginLeft: '2px' }}><strong>{roomEntity.rating || 0}</strong></Typography>
-                        </div> */}
+                        </div>
                       </div>
                     </Col>
                   </Row>
@@ -348,7 +392,7 @@ const RoomBookingForCustomer = () => {
                   <h4>Price details</h4>
 
                   <Row>
-                    <Typography variant="subtitle2" align='center'>You won't be charged yet</Typography>
+                    {/* <Typography variant="subtitle2" align='center'>You won't be charged yet</Typography> */}
 
 
                     <Col md="6" style={{ marginTop: '15px' }}>
@@ -359,7 +403,7 @@ const RoomBookingForCustomer = () => {
                       )}
 
                       {serviceFee > 0 && (<div className="room-detail-header">
-                        <Typography variant="subtitle2">Phí dịch vụ</Typography>
+                        <Typography variant="subtitle2">Service fee</Typography>
                       </div>)}
                     </Col>
 
@@ -378,14 +422,14 @@ const RoomBookingForCustomer = () => {
                     </Col>
                   </Row>
 
-                  <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
+                  {/* <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} /> */}
 
-                  <Col md="6">
+                  {/* <Col md="6">
                     <div className="room-detail-header">
-                      <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x 2 ngày"}</Typography>
+                      <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x 2 hour"}</Typography>
                     </div>
                     <div className="room-detail-header">
-                      <Typography variant="subtitle2">Phí dịch vụ</Typography>
+                      <Typography variant="subtitle2">Service fee</Typography>
                     </div>
                   </Col>
 
@@ -396,7 +440,7 @@ const RoomBookingForCustomer = () => {
                     <div className="room-detail-header">
                       <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + 100.000}</Typography>
                     </div>
-                  </Col>
+                  </Col> */}
                 </Row>
 
                 <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
@@ -410,7 +454,7 @@ const RoomBookingForCustomer = () => {
 
                   <Col md="4" style={{ marginLeft: 'auto' }}>
                     <div className="room-detail-header">
-                      <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + roomEntity.price * 2}</strong></Typography>
+                      <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + "VNĐ " + (roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
                     </div>
                   </Col>
                 </Row>

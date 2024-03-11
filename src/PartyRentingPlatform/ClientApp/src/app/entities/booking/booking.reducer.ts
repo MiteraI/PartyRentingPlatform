@@ -44,7 +44,7 @@ export const getEntity = createAsyncThunk(
 export const getEntityForCustomer = createAsyncThunk(
   'booking/fetch_entity_by_customer',
   async (id: string | number) => {
-    const requestUrl = `${apiUrl}/${id}`;
+    const requestUrl = `${apiUrl}` + `/customer` + `/${id}`;
     return axios.get<IBooking>(requestUrl);
   },
   { serializeError: serializeAxiosError },
@@ -195,7 +195,7 @@ export const BookingSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-     
+
       .addMatcher(isFulfilled(filterRequestOfCustomerByStatus, getRequestOfCustomer, getEntities, getEntitiesForCustomer), (state, action) => {
         const { data, headers } = action.payload;
 
@@ -212,7 +212,7 @@ export const BookingSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(filterRequestOfCustomerByStatus, getEntities, getEntity), state => {
+      .addMatcher(isPending(filterRequestOfCustomerByStatus, getEntities, getEntity, getEntityForCustomer), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;
