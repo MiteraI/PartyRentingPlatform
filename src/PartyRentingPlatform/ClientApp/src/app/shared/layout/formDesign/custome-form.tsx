@@ -1,6 +1,6 @@
 import { Rule } from "antd/es/form"
 import React, { ChangeEventHandler, useEffect, useState } from "react"
-import { Button, Form, Input, Select } from "antd"
+import { Button, Form, Input, InputNumber, Select } from "antd"
 import { Col, Row } from "reactstrap"
 import { useAppDispatch } from "app/config/store"
 import { reset } from "app/entities/room/room.reducer"
@@ -19,7 +19,9 @@ export interface IFormItemDesign {
     type: InputType,
     element?: ElementType
     selectData?: any[],
-    alone?: true
+    alone?: true,
+    min?: number,
+    max?: number
 }
 
 
@@ -55,16 +57,17 @@ const CustomeForm: React.FC<IFormDesign> = (props) => {
                             {
                                 formItem.element === "select" ?
                                     <Select
-                                        
                                         mode={formItem.alone ? undefined : "multiple"}
                                         onChange={formItem.onChangeFormItem ? (value) => formItem.onChangeFormItem(value) : undefined}
-
                                     >
                                         {formItem.selectData.map((object) => <Option value={object.id}>{object.serviceName || object.name}</Option>)}
                                     </Select>
-
                                     :
-                                    < Input type={formItem.type} onChange={formItem.onChangeFormItem} />
+                                    formItem.type === "number"
+                                        ?
+                                        <InputNumber min={formItem.min} max={formItem.max} type="number" onChange={formItem.onChangeFormItem} />
+                                        :
+                                        <Input type={formItem.type} onChange={formItem.onChangeFormItem} />
                             }
                         </Form.Item>
                     </Col>

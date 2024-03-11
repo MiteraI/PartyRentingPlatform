@@ -5,6 +5,7 @@ import FolderIcon from '@mui/icons-material/Folder';
 import { IBooking } from "app/shared/model/booking.model";
 import EditIcon from "@mui/icons-material/Edit"
 import { IService } from "app/shared/model/service.model";
+import { formatCurrency } from "app/shared/util/currency-utils";
 
 interface IListTabPanelServicesOfCustomer {
     data: IService[],
@@ -47,7 +48,7 @@ const ListTabPanelServiceOfCustomer: React.FC<IListTabPanelServicesOfCustomer> =
                             </ListItemAvatar>
                             <ListItemText
                                 primary={service.serviceName}
-                                secondary={`Price: ${service.price} & Description: ${service.description}`}
+                                secondary={`Price: ${formatCurrency(service.price)} & Description: ${service.description}`}
 
                             />
                         </ListItemButton>

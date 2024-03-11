@@ -2,6 +2,7 @@ import { Image } from "@mui/icons-material"
 import { Dialog, DialogContent, DialogTitle } from "@mui/material"
 import { Tag } from "antd"
 import { IRoom } from "app/shared/model/room.model"
+import { formatCurrency } from "app/shared/util/currency-utils"
 import React from "react"
 import { Col, Row } from "reactstrap"
 
@@ -23,7 +24,7 @@ const CustomeDetail: React.FC<ICustomeDetail> = (props) => {
     const { title, data, handleOpen, isOpen } = props
     const colStyle: React.CSSProperties = {
         textAlign: "center",
-        marginBottom:"10px"
+        marginBottom: "10px"
     }
 
     return (
@@ -47,7 +48,7 @@ const CustomeDetail: React.FC<ICustomeDetail> = (props) => {
                             <Col style={colStyle} md={6}>Room name: {data?.roomName}</Col>
                             <Col style={colStyle} md={6}>Address: {data?.address}</Col>
                             <Col style={colStyle} md={6}>Description: {data?.description}</Col>
-                            <Col style={colStyle} md={6}>Price: {data?.price}</Col>
+                            <Col style={colStyle} md={6}>Price: {formatCurrency(data?.price)}</Col>
                             <Col style={colStyle} md={6}>Room capacity: {data?.roomCapacity}</Col>
                             <Col style={colStyle} md={6}>Rating : {data?.rating}</Col>
                             <Col style={colStyle} md={6}>Created by: {data?.user.login}</Col>

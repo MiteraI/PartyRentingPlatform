@@ -74,13 +74,13 @@ const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = 
                             secondaryAction={
                                 <>
                                     <ActionForApproving id={request.id} />
-                                    <IconButton edge="end" aria-label="delete">
+                                    {/* <IconButton edge="end" aria-label="delete">
                                         <EditIcon />
                                     </IconButton>
 
                                     <IconButton edge="end" aria-label="delete">
                                         <DeleteIcon />
-                                    </IconButton>
+                                    </IconButton> */}
                                 </>
                             }
                         >

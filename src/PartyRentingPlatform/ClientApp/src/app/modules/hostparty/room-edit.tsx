@@ -56,7 +56,7 @@ const EditRoomOfHost = () => {
     }, [])
 
     const handelSubmit = (values: IRoom) => {
-        const newValue = { ...room, ...values, services:room.services } as IRoom;
+        const newValue = { ...room, ...values, services: room.services } as IRoom;
         const newValueWithServices = { ...room, ...values, services: service } as IRoom;
         dispatch(updateEntityOfHost({ id, room: service.length === 0 ? newValue : newValueWithServices }));
     }
@@ -87,14 +87,41 @@ const EditRoomOfHost = () => {
     ]
 
     const listFormItem: IFormItemDesign[] = [
-        { label: "Room name", name: "roomName", type: "text", initialData: room?.roomName },
-        { label: "Address", name: "address", type: "text", initialData: room?.address },
-        { label: "Description", name: "description", type: "text", initialData: room?.description },
-        { label: "Price", name: "price", type: "text", initialData: room?.price },
-        { label: "Room Capacity", name: "roomCapacity", type: "text", initialData: room?.roomCapacity },
+        {
+            label: "Room name", name: "roomName", type: "text", initialData: room?.roomName,
+            rules: [
+                { required: true, message: "Please input room name" }
+            ]
+        },
+        {
+            label: "Address", name: "address", type: "text", initialData: room?.address, rules: [
+                { required: true, message: "Please input address" }
+            ]
+        },
+        {
+            label: "Description", name: "description", type: "text", initialData: room?.description, rules: [
+                { required: true, message: "Please input description" }
+            ]
+        },
+        {
+            label: "Price", name: "price", type: "number", initialData: room?.price, min: 100000, rules: [
+                { required: true, message: "Please input price" }
+            ]
+        },
+        {
+            label: "Room Capacity", name: "roomCapacity", type: "number", initialData: room?.roomCapacity, min: 5, rules: [
+                { required: true, message: "Please input room capacity" }
+            ]
+        },
         // { label: "Rating", name: "rating", type: "text", initialData: room?.rating },
-        { label: "Status", name: "status", type: "text", alone: true, element: "select", initialData: updateStatus(), selectData: selectStatusForm },
-        { label: "Promotions", name: "promotions", type: "text", element: "select", selectData: [], onChangeFormItem: handlePromotions },
+        {
+            label: "Status", name: "status", type: "text", alone: true, element: "select", initialData: updateStatus(), selectData: selectStatusForm, rules: [
+                { required: true, message: "Please input status" }
+            ]
+        },
+        {
+            label: "Promotions", name: "promotions", type: "text", element: "select", selectData: [], onChangeFormItem: handlePromotions
+        },
         { label: "Services", name: "services", type: "text", element: "select", selectData: services, initialData: handleDefaultValueServices(), onChangeFormItem: handleServices },
     ]
 

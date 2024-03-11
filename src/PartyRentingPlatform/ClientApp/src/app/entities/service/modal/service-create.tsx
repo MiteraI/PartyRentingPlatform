@@ -1,9 +1,10 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material"
-import { Form, Input } from "antd"
+import { Form, Input, InputNumber } from "antd"
 import { useAppDispatch } from "app/config/store"
 import { IService } from "app/shared/model/service.model"
 import React from "react"
 import { createServiceOfHost } from "../service.reducer"
+import { formatCurrency } from "app/shared/util/currency-utils"
 
 
 interface IServiceModal {
@@ -39,7 +40,7 @@ const ServiceModal: React.FC<IServiceModal> = (props) => {
                         label="serviceName"
                         name="serviceName"
                         rules={[
-                            { required: true, message: "Please input " }
+                            { required: true, message: "Please input service name " }
                         ]}
                     >
 
@@ -50,17 +51,17 @@ const ServiceModal: React.FC<IServiceModal> = (props) => {
                         label="price"
                         name="price"
                         rules={[
-                            { required: true, message: "Please input " }
+                            { required: true, message: `The price of service must be between ${formatCurrency(10000)} and ${formatCurrency(5000000)}` }
                         ]}
                     >
 
-                        <Input />
+                        <InputNumber min={10000} max={5000000} />
                     </Form.Item>
                     <Form.Item
                         label="description"
                         name="description"
                         rules={[
-                            { required: true, message: "Please input " }
+                            { required: true, message: "Please input description" }
                         ]}
                     >
                         <Input />

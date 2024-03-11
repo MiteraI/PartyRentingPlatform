@@ -142,10 +142,10 @@ export const updateEntityOfHost = createAsyncThunk("room/update_entity_host", as
 )
 
 
-export const deleteEntityOfHost = createAsyncThunk('room/delelte_entity_host', async (id: string | number, thunkAPI) => {
+export const deleteEntityOfHost = createAsyncThunk('room/delelte_entity_host', async ({ id, page }: { id: string | number, page: number }, thunkAPI) => {
   const requestUrl = `${API_ROOM.host.DELETEROOMAPI}/${id}`;
   const result = await axios.delete<IRoom>(requestUrl)
-  thunkAPI.dispatch(getEntityOfHost({}))
+  thunkAPI.dispatch(getEntityOfHost({ page: page, size: 5, sort: "id,asc" }))
   return result
 },
   {

@@ -1,7 +1,7 @@
 import { UploadOutlined } from "@mui/icons-material"
 import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, OutlinedInput } from "@mui/material"
 import SelectInput, { SelectChangeEvent } from "@mui/material/Select/SelectInput"
-import { Form, Input, Select, Upload } from "antd"
+import { Form, Input, InputNumber, Select, Upload } from "antd"
 import { UploadChangeParam, UploadFile } from "antd/es/upload"
 import { IBooking } from "app/shared/model/booking.model"
 import React, { ChangeEventHandler, useState } from "react"
@@ -10,6 +10,7 @@ import MultipleSelect from "./components/MultipleSelectInput"
 import { IRoom } from "app/shared/model/room.model"
 import { useAppDispatch } from "app/config/store"
 import { createEntity, createEntityOfHost } from "app/entities/room/room.reducer"
+import { formatCurrency } from "app/shared/util/currency-utils"
 
 
 interface IBookingCreate {
@@ -56,89 +57,69 @@ const BookingCreate: React.FC<IBookingCreate> = (props) => {
                 <DialogContent dividers>
 
                     <Form.Item
-                        label="roomname"
+                        label="Room name"
                         name="roomName"
                         rules={[
-                            { required: true, message: "Please input your username" }
+                            { required: true, message: "Please input room name" }
                         ]}
                     >
 
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        label="address"
+                        label="Address"
                         name="address"
                         rules={[
-                            { required: true, message: "Please input your username" }
+                            { required: true, message: "Please input address" }
                         ]}
                     >
 
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        label="description"
+                        label="Description"
                         name="description"
                         rules={[
-                            { required: true, message: "Please input your username" }
+                            { required: true, message: "Please input description" }
                         ]}
                     >
 
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        label="price"
+                        label="Price"
                         name="price"
                         rules={[
-                            { required: true, message: "Please input your username" }
+                            { required: true, message: `The price must be equal or more than ${formatCurrency(100000)}` }
                         ]}
                     >
 
-                        <Input />
+                        <InputNumber min={100000} />
                     </Form.Item>
                     <Form.Item
-                        label="roomCapacity"
+                        label="Room capacity"
                         name="roomCapacity"
                         rules={[
-                            { required: true, message: "Please input your username" }
+                            { required: true, message: "The amount of people must be over than 5" }
                         ]}
                     >
 
-                        <Input />
+                        <InputNumber min={5} />
                     </Form.Item>
+
                     <Form.Item
-                        label="rating"
-                        name="rating"
-                        rules={[
-                            { required: true, message: "Please input your username" },
-                            { required: true, min: 0, max: 5, message: "The rating should be from 1-5" }
-                        ]}
-                    >
-
-                        <Input type="number" />
-                    </Form.Item>
-                    <Form.Item
-                        label="status"
-                        name="status"
-                        rules={[
-                            { required: true, message: "Please input your status" }
-                        ]}
-                    >
-
-                        <Input type="number" />
-                    </Form.Item>
-                    {/* <Form.Item
-                        label="formFiles"
+                        label="File picture"
                         name="formFiles"
                         rules={[
-                            { required: true, message: "Please input your username" }
+                            { required: true, message: "Please input file" }
                         ]}
                         initialValue={''}
                     >
 
                         <input type="file" onChange={handleUpLoadPicture} />
-                    </Form.Item> */}
+                    </Form.Item>
 
-                    <Form.Item
+                    {/* <Form.Item
                         label="promotions"
                         name="promotions"
                         initialValue={[]}
@@ -169,7 +150,7 @@ const BookingCreate: React.FC<IBookingCreate> = (props) => {
                                 { label: "5", value: 4 },
                             ]}
                         />
-                    </Form.Item>
+                    </Form.Item> */}
                 </DialogContent>
                 <DialogActions>
                     <Button>Cancle</Button>

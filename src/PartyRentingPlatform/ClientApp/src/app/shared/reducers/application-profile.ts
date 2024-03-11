@@ -2,6 +2,7 @@ import axios from 'axios';
 
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { serializeAxiosError } from './reducer.utils';
+import { Storage } from 'react-jhipster';
 
 const initialState = {
   ribbonEnv: '',
@@ -9,7 +10,8 @@ const initialState = {
   isOpenAPIEnabled: false,
   loading: false,
   balance: 0,
-  entities: []
+  entities: [],
+  vnp_ReturnUrl: ""
 };
 
 export type ApplicationProfileState = Readonly<typeof initialState>;
@@ -37,6 +39,9 @@ export const ApplicationProfileSlice = createSlice({
       state.ribbonEnv = data['display-ribbon-on-profiles'];
       state.inProduction = data.activeProfiles.includes('prod');
       state.isOpenAPIEnabled = data.activeProfiles.includes('api-docs');
+      state.vnp_ReturnUrl = data.vnp_ReturnUrl;
+
+      Storage.local.set("dynamic-url", data.vnp_ReturnUrl);
     });
     builder.addCase(getBalance.fulfilled, (state, action) => {
       state.loading = false
