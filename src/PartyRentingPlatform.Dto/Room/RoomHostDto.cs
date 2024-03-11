@@ -3,6 +3,7 @@
 
 using Microsoft.AspNetCore.Http;
 using PartyRentingPlatform.Crosscutting.Enums;
+using PartyRentingPlatform.Dto.Booking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,7 @@ namespace PartyRentingPlatform.Dto.Room
         public List<RoomImageDto> ImageURLs { get; set; } = new List<RoomImageDto>();
         public List<RoomServiceHostDto> Services { get; set; } = new List<RoomServiceHostDto>();
         public List<RoomPromoDto> Promotions { get; set; } = new List<RoomPromoDto>();
+        public List<BookingRatingDto> Ratings { get; set; } = new List<BookingRatingDto>();
 
     }
 }

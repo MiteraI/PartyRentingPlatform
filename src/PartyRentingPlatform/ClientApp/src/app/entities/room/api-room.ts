@@ -2,14 +2,15 @@ const API_ROOM = {
     customer: {
         GETROOMSAPI: "api/rooms/customer",
         GETROOMDETAILSAPI: "api/rooms/customer/details",
+        SEARCHROOMSAPI: "api/rooms/customer/search"
     },
     admin: {},
     host: {
-        GETROOMSAPI :"api/rooms/host",
-        GETDETAILSROOMAPI:"api/rooms/host/details",
-        UPDATEROOMAPI:"api/rooms/host",
-        CREATEROOMAPI :"api/rooms/host",
-        DELETEROOMAPI :"api/rooms/host"
+        GETROOMSAPI: "api/rooms/host",
+        GETDETAILSROOMAPI: "api/rooms/host/details",
+        UPDATEROOMAPI: "api/rooms/host",
+        CREATEROOMAPI: "api/rooms/host",
+        DELETEROOMAPI: "api/rooms/host"
     }
 }
 

@@ -4,6 +4,8 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { IBooking, defaultValue } from 'app/shared/model/booking.model';
 import API_BOOKING from './api-booking';
+import API_ROOM from '../room/api-room';
+import { IRoom } from 'app/shared/model/room.model';
 
 const initialState: EntityState<IBooking> = {
   loading: false,
@@ -117,6 +119,8 @@ export const getRequestOfCustomer = createAsyncThunk("booking/fetch_request_of_c
   }
 )
 
+
+
 // get booking detail customer
 export const getRequestDetailOfCustomer = createAsyncThunk("booking/fetch_details_entity_of_customer", async (id: string | number) => {
   const requestUrl = `${API_BOOKING.host.GETBOOKINGS}/${id}`;
@@ -124,7 +128,7 @@ export const getRequestDetailOfCustomer = createAsyncThunk("booking/fetch_detail
 },
   { serializeError: serializeAxiosError }
 
-  
+
 )
 
 
@@ -191,6 +195,7 @@ export const BookingSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
+     
       .addMatcher(isFulfilled(filterRequestOfCustomerByStatus, getRequestOfCustomer, getEntities, getEntitiesForCustomer), (state, action) => {
         const { data, headers } = action.payload;
 

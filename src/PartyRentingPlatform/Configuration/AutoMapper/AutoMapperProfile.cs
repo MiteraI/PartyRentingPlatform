@@ -44,6 +44,7 @@ namespace PartyRentingPlatform.Configuration.AutoMapper
 
             // Booking mappings
             CreateMap<Booking, BookingDto>().ReverseMap();
+            CreateMap<Booking, BookingRatingDto>().ReverseMap();
             CreateMap<Booking, BookingCustomerDto>().ReverseMap();
 
             CreateMap<BookingDetails, BookingDetailCustomerDto>()

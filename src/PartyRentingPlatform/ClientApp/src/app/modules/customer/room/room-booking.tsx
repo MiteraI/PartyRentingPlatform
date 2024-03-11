@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { isNumber, Storage, ValidatedField, ValidatedForm } from 'react-jhipster';
 import StarIcon from '@mui/icons-material/Star';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -152,7 +152,7 @@ const RoomBookingForCustomer = () => {
         endTime: convertDateTimeFromServer(endDateFromUrl),
         status: 'APPROVING',
         price: roomEntity.price,
-        customerName: 'Tên mặc định',
+        customerName: Storage.local.get("user"),
       }
       : {
         status: 'APPROVING',
@@ -229,6 +229,7 @@ const RoomBookingForCustomer = () => {
               </Typography>
             </Grid>
 
+            <h4>Service: </h4>
             {selectedServiceFromUrl?.map((service, index) => (
               <Grid
                 key={index}
@@ -255,11 +256,6 @@ const RoomBookingForCustomer = () => {
                   >
                     {serviceList.find(item => item.id === parseInt(service.id))?.description}
                   </Typography>
-                </Grid>
-                <Grid item xs={2} container justifyContent="flex-end">
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{ margin: '0 10px' }}>{quantityMap.find(item => item.id === service.id)?.quantity}</span>
-                  </div>
                 </Grid>
               </Grid>
             ))}
@@ -333,12 +329,12 @@ const RoomBookingForCustomer = () => {
 
                     <Col md="6">
                       <div className="booking-info">
-                        <Typography style={{ height: '60px' }} variant="subtitle1"><strong>{roomEntity.roomName}</strong></Typography>
+                        <Typography variant="subtitle1"><strong>{roomEntity.roomName}</strong></Typography>
                         <Typography variant="subtitle2">{roomEntity.address}</Typography>
-                        <div style={{ display: 'flex', alignItems: 'left' }}>
+                        {/* <div style={{ display: 'flex', alignItems: 'left' }}>
                           <StarIcon style={{ height: '20px', color: 'gold' }} />
                           <Typography variant="subtitle2" style={{ marginLeft: '2px' }}><strong>{roomEntity.rating || 0}</strong></Typography>
-                        </div>
+                        </div> */}
                       </div>
                     </Col>
                   </Row>
@@ -383,20 +379,6 @@ const RoomBookingForCustomer = () => {
                   </Row>
 
                   <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
-                  <Row>
-
-                    <Col md="6">
-                      <div className="room-detail-header">
-                        <Typography variant="subtitle1"><strong>Total (VNĐ)</strong></Typography>
-                      </div>
-                    </Col>
-
-                    <Col md="4" style={{ marginLeft: 'auto' }}>
-                      <div className="room-detail-header">
-                        <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + (roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
-                      </div>
-                    </Col>
-                  </Row>
 
                   <Col md="6">
                     <div className="room-detail-header">

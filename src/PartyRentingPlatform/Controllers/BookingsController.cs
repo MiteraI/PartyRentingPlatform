@@ -298,6 +298,7 @@ namespace PartyRentingPlatform.Controllers
             booking.Rating = bookingRatingDto.Rating;
             booking.Comment = bookingRatingDto.Comment;
             await _bookingService.Save(booking);
+            await _roomService.UpdateRating(booking.RoomId, bookingRatingDto.Rating);
             return Ok(booking)
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
         }

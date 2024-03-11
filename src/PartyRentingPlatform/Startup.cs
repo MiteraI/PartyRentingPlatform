@@ -21,11 +21,11 @@ public class Startup : IStartup
         services
             .AddAppSettingsModule(configuration);
 
-
         AddDatabase(configuration, services);
         AddMail(configuration, services);
         AddVnpay(configuration, services);
         AddAzureBlob(configuration, services);
+        AddBackgroundWorker(configuration, services);
     }
 
     public virtual void ConfigureServices(IServiceCollection services, IHostEnvironment environment)
@@ -77,5 +77,10 @@ public class Startup : IStartup
     protected virtual void AddAzureBlob(IConfiguration configuration, IServiceCollection services)
     {
         services.AddAzureBlobModule(configuration);
+    }
+
+    protected virtual void AddBackgroundWorker(IConfiguration configuration, IServiceCollection services)
+    {
+        services.AddBackgroundWorkerModule(configuration);
     }
 }
