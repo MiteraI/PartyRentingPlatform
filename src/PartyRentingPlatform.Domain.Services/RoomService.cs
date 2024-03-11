@@ -7,6 +7,7 @@ using PartyRentingPlatform.Domain.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using PartyRentingPlatform.Crosscutting.Enums;
 using System.Collections.Generic;
+using LanguageExt;
 
 namespace PartyRentingPlatform.Domain.Services;
 
@@ -95,36 +96,42 @@ public class RoomService : IRoomService
 
     public async Task<IPage<Room>> FindAllByRoomNameAndRatingAndAddress(string roomName, int? rating, string? address, IPageable pageable)
     {
+
+       
+
         if (rating == null && address == null)
         {
             return await _roomRepository.QueryHelper()
                        .Include(room => room.User)
                        .Include(room => room.ImageURLs)
-                       .Filter(room => room.RoomName.Contains(roomName))
+                       .Filter(room => room.RoomName.ToUpper().Contains(roomName.ToUpper()))
                        .GetPageAsync(pageable);
-        } else if (rating == null)
+        }
+        else if (rating == null)
         {
             return await _roomRepository.QueryHelper()
                        .Include(room => room.User)
                        .Include(room => room.ImageURLs)
                        .Filter(room => room.Address.Contains(address))
-                       .Filter(room => room.RoomName.Contains(roomName))
+                       .Filter(room => room.RoomName.ToUpper().Contains(roomName.ToUpper()))
                        .GetPageAsync(pageable);
-        } else if (address == null)
+        }
+        else if (address == null)
         {
             return await _roomRepository.QueryHelper()
                        .Include(room => room.User)
                        .Include(room => room.ImageURLs)
                        .Filter(room => room.Rating > rating)
-                       .Filter(room => room.RoomName.Contains(roomName))
+                       .Filter(room => room.RoomName.ToUpper().Contains(roomName.ToUpper()))
                        .GetPageAsync(pageable);
-        } else
+        }
+        else
         {
             return await _roomRepository.QueryHelper()
                        .Include(room => room.User)
                        .Include(room => room.ImageURLs)
                        .Filter(room => room.Rating == rating && room.Address.Contains(address))
-                       .Filter(room => room.RoomName.Contains(roomName))
+                       .Filter(room => room.RoomName.ToUpper().Contains(roomName.ToUpper()))
                        .Filter(room => room.Rating > rating)
                        .GetPageAsync(pageable);
         }

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError, IQueryParamsForSearch } from 'app/shared/reducers/reducer.utils';
 import { IRoom, defaultValue } from 'app/shared/model/room.model';
 import API_ROOM from './api-room';
 
@@ -93,6 +93,16 @@ export const getEntityOfCustomers = createAsyncThunk(
   }
 )
 
+
+export const searchEntitiesForAll = createAsyncThunk("room/search_list_entities", async ({ roomName, address, rating, page, size, sort }: IQueryParamsForSearch) => {
+  const requestUrlRoomNameExisted = `${API_ROOM.customer.SEARCHROOMSAPI}?${`roomName=${roomName}${address ? `&address=${address}` : ``}${rating ? `&rating=${rating}` : ``}`}${sort ? `&page=${page}&size=${size}&sort=${sort}&` : ''}cacheBuster=${new Date().getTime()}`;
+
+  return axios.get<IRoom[]>(requestUrlRoomNameExisted)
+
+},
+  { serializeError: serializeAxiosError }
+)
+
 export const getEntityOfHost = createAsyncThunk(
   'room/fetch_entity_list_hostparty', async ({ page, size, sort }: IQueryParams) => {
     const requestUrl = `${API_ROOM.host.GETROOMSAPI}?${sort ? `page=${page}&size=${size}&sort=${sort}&` : ''}cacheBuster=${new Date().getTime()}`;
@@ -169,6 +179,15 @@ export const RoomSlice = createEntitySlice({
         };
       })
 
+      .addMatcher(isFulfilled(searchEntitiesForAll), (state, action) => {
+        const data = action.payload.data
+        return {
+          ...state,
+          loading: false,
+          searchEntities: data,
+        }
+      })
+
       .addMatcher(isFulfilled(getEntityOfHost), (state, action) => {
         const { data, headers } = action.payload;
 
@@ -196,7 +215,7 @@ export const RoomSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntityOfHost, getEntityOfCustomers, getEntities, getEntity), state => {
+      .addMatcher(isPending(searchEntitiesForAll, getEntityOfHost, getEntityOfCustomers, getEntities, getEntity), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

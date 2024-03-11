@@ -121,7 +121,7 @@ namespace PartyRentingPlatform.Controllers
 
         // Customer can see the details of a room
         [HttpGet("customer/details/{id}")]
-        public async Task<IActionResult> GetRoomWithFullDetailsCustomer([FromRoute] long? id)
+        public async Task<IActionResult> GetRoomWithFullDetailsCustomer([FromRoute] long? id, IPageable pageable)
         {
             _log.LogDebug($"REST request to get Room with full details : {id}");
             var result = await _roomService.FindOneWithFullDetails(id);
@@ -130,7 +130,7 @@ namespace PartyRentingPlatform.Controllers
             // If the user is not the host/ not authenticated and the room is not valid, they are not allowed to see the room
             if (roomHostDto.Status != RoomStatus.VALID) return BadRequest("You are not allowed to see this room");
 
-            var ratings = await _bookingService.GetAllBookingForRoom(id, null);
+            var ratings = await _bookingService.GetAllBookingForRoom(id, pageable);
 
             // Map ratings to BookingRatingDto and put it in roomHostDto
             roomHostDto.Ratings = ratings.Content.Select(booking => _mapper.Map<BookingRatingDto>(booking)).ToList();
