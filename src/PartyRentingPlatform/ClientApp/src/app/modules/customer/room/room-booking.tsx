@@ -66,6 +66,7 @@ const RoomBookingForCustomer = () => {
       // Parse selectedServiceParam into an array
       const parsedSelectedService = JSON.parse(selectedServiceParam || '[]');
       setSelectedServiceFromUrl(parsedSelectedService);
+      console.log('Meoww: ' + selectedServiceFromUrl);
       setQuantityMap(parsedSelectedService);
       console.log('Selected Service from URL:', parsedSelectedService);
     } catch (error) {
@@ -127,6 +128,7 @@ const RoomBookingForCustomer = () => {
         ...bookingEntity,
         ...values,
         roomId: rooms.find(it => it.id.toString() === id)?.id,
+        // trả về mảng object serviceId, serviceQuantity
         bookingDetails: [{ "serviceId": 1, "serviceQuantity": 5 }, { "serviceId": 2, "serviceQuantity": 12 }],
 
       };
@@ -237,6 +239,7 @@ const RoomBookingForCustomer = () => {
                 alignItems="center"
                 style={{ cursor: 'pointer' }}
               >
+                {/* Đây nè */}
                 <Grid item xs={10}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     {serviceList.find(item => item.id === parseInt(service.id))?.serviceName}

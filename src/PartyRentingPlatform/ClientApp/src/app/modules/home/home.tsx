@@ -157,13 +157,13 @@ const Home = () => {
   };
 
 
-  console.log(localStorage.getItem("user").split(`"`).join(``));
+  // console.log(localStorage.getItem("user").split(`"`).join(``));
 
   return (
 
     <div className='home-page'>
       <Row>
-        <Col md="6">
+        {/* <Col md="6">
           <h1 className="display-4">Khám phá các bữa tiệc nào!!!</h1>
           <p className="lead">Hãy tìm điểm dừng chân tiếp theo cho bữa tiệc hoành tráng của bạn.</p>
           {localStorage.getItem("user") ? (
@@ -179,7 +179,7 @@ const Home = () => {
               </Alert>
             </div>
           )}
-        </Col>
+        </Col> */}
         <Col md="12">
           {/* Carousel component */}
           <Carousel activeIndex={activeIndex} next={next} previous={previous}>

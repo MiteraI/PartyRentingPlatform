@@ -12,13 +12,13 @@ const CustomerRoutes = () => (
     <div>
         <ErrorBoundaryRoutes>
             <Route path="profile">
-                <Route path=":id">
-                    <Route index element={
-                        // <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
-                        <Profile />
-                        // </PrivateRoute>
-                    } />
-                </Route>
+                {/* <Route path=":id"> */}
+                <Route index element={
+                    // <PrivateRoute hasAnyAuthorities={[AUTHORITIES.USER]}>
+                    <Profile />
+                    // </PrivateRoute>
+                } />
+                {/* </Route> */}
             </Route>
             <Route path="room/*">
                 <Route path="detail"  >
