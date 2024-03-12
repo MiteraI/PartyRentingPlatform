@@ -22,6 +22,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using PartyRentingPlatform.Dto.Booking;
 using PartyRentingPlatform.Crosscutting.Constants;
+using Microsoft.AspNetCore.SignalR;
+using PartyRentingPlatform.Hubs;
+using PartyRentingPlatform.Hubs.Interfaces;
 
 namespace PartyRentingPlatform.Controllers
 {
@@ -37,13 +40,15 @@ namespace PartyRentingPlatform.Controllers
         private readonly IRoomService _roomService;
         private readonly IWalletService _walletService;
         private readonly IServiceService _serviceService;
+        private readonly INotificationHub _notificationHub;
 
         public BookingsController(ILogger<BookingsController> log,
         IMapper mapper,
         IBookingService bookingService,
         IRoomService roomService,
         IServiceService serviceService,
-        IWalletService walletService)
+        IWalletService walletService,
+        INotificationHub notificationHub)
         {
             _log = log;
             _mapper = mapper;
@@ -51,6 +56,7 @@ namespace PartyRentingPlatform.Controllers
             _roomService = roomService;
             _serviceService = serviceService;
             _walletService = walletService;
+            _notificationHub = notificationHub;
         }
 
         // Admin related/ Jhipster generated code
@@ -248,7 +254,8 @@ namespace PartyRentingPlatform.Controllers
                 await _bookingService.Save(booking);
                 return Ok(booking)
                     .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
-            } else
+            }
+            else
             {
                 return BadRequest("Cannot cancel booking");
             }
@@ -274,7 +281,7 @@ namespace PartyRentingPlatform.Controllers
             // Pays rest of money to room's owner
             //Deduct balance from booking's user and increase balance for room's user
             //Deposit money equals half total price and round it to 1000s
-            await _walletService.IncreaseBalanceForUser(booking.Room.UserId, Math.Ceiling((double) booking.TotalPrice * 0.4 / 1000) * 1000);
+            await _walletService.IncreaseBalanceForUser(booking.Room.UserId, Math.Ceiling((double)booking.TotalPrice * 0.4 / 1000) * 1000);
             await _walletService.DeductBalanceForUser(booking.UserId, Math.Ceiling((double)booking.TotalPrice / 2 / 1000) * 1000);
 
             return Ok(booking)
@@ -331,7 +338,7 @@ namespace PartyRentingPlatform.Controllers
             return ActionResultUtil.WrapOrNotFound(bookingDto);
         }
 
-        [Authorize(Roles =RolesConstants.HOST)]
+        [Authorize(Roles = RolesConstants.HOST)]
         [HttpGet("host/{status}")]
         public async Task<ActionResult<IEnumerable<BookingCustomerDto>>> GetAllHostBookingsByStatus([FromRoute] BookingStatus status, IPageable pageable)
         {
@@ -388,6 +395,16 @@ namespace PartyRentingPlatform.Controllers
             if (booking.Status != BookingStatus.APPROVING) return BadRequest("Booking cannot be rejected");
             booking.Status = BookingStatus.REJECTED;
             await _bookingService.Save(booking);
+
+            await _notificationHub.SendNotificationToUser(booking.UserId
+                , new Notification
+                {
+                    Title = "Booking rejected",
+                    Description = "Your booking has been rejected",
+                    SentTime = DateTime.Now,
+                    Enum = NotificationType.REJECTED
+                });
+
             return Ok(booking)
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
         }

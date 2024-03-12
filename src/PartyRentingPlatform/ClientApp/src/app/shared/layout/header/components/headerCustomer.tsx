@@ -6,7 +6,7 @@ import { AccountCircle, Image, Search } from '@mui/icons-material';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { useNavigate } from "react-router";
+import { json, useNavigate } from "react-router";
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import { divide } from "lodash";
@@ -19,6 +19,7 @@ import { Storage } from "react-jhipster";
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { Button, Drawer } from "antd";
 import Wallet from "./wallet/wallet";
+import * as signalR from "@microsoft/signalr";
 
 interface HeaderCustomerProps {
     isAuthenticated: boolean
@@ -29,7 +30,8 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);
     const [options, setOptions] = React.useState([]);
-    const [openWallet, setOpenWallet] = useState<boolean>(false)
+    const [openWallet, setOpenWallet] = useState<boolean>(false);
+    const [openNotification, setOpenNotification] = useState<boolean>(false);
     const userExisted = Storage.local.get("user")
 
     const handleProfileMenuOpen = () => {
@@ -41,7 +43,23 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
 
     }
 
-
+    const handleNotification = () => {
+        let jwt = Storage.session.get('jhi-authenticationToken');
+        console.log('blablabla')
+        console.log(jwt);
+        const connection = new signalR.HubConnectionBuilder()
+          .withUrl('/notificationHub', { accessTokenFactory: () => jwt })
+          .build();
+        connection
+          .start()
+          .then(() => {
+            console.log('Connected to SignalR Hub');
+          })
+          .catch(error => {
+            console.error(`Error connecting to SignalR Hub: ${error}`);
+          });
+        // setOpenNotification(!openNotification)
+    }
 
     const handleWalletModal = () => {
         setOpenWallet(!openWallet)
@@ -84,16 +102,19 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
                             : <div></div>
                         }
 
-
-                        <IconButton
+                        {userExisted? <IconButton
                             size="small"
                             aria-label="show 17 new notifications"
                             color="inherit"
+                            onClick={handleNotification}
                         >
                             <Badge color="error">
                                 <NotificationsIcon color="warning" />
                             </Badge>
                         </IconButton>
+                        : <div></div>
+                        }
+                        
 
                         {userExisted ?
                             <AuthenticateIcon />

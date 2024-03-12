@@ -78,6 +78,20 @@ public static class SecurityStartup
                     ClockSkew = TimeSpan.Zero,/// remove delay of token when expire
                     NameClaimType = UserNameClaimType
                 };
+
+                cfg.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notificationHub"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return System.Threading.Tasks.Task.CompletedTask;
+                    }
+                };
             });
 
         services.AddScoped<IPasswordHasher<User>, BCryptPasswordHasher>();
