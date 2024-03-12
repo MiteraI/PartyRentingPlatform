@@ -189,6 +189,10 @@ namespace PartyRentingPlatform.Controllers
                 servicePrice += service.Price * bookingDetail.ServiceQuantity;
             }
 
+            //Check if this booking overlapped time and room with another booking
+            if (await _bookingService.CheckOverlappedBooking(booking.StartTime, booking.EndTime, bookedRoom.Id.Value))
+                return BadRequest("This booking overlapped time with another booking. Please choose another time");
+
             //Calculate total price
             booking.TotalPrice = (long)(bookedRoom.Price * (booking.EndTime - booking.StartTime).TotalHours) + servicePrice;
 
