@@ -37,13 +37,18 @@ const CustomeSearch: React.FC = () => {
                 return {
                     label:
                         <div onClick={() => handleOnClick(room.id)} style={{ display: "flex", justifyContent: "space-between" }}>
-                            <div>
-                                <h6>
-                                    {room.roomName}
-                                </h6>
-                                <p>
-                                    Description: {room.description}
-                                </p>
+                            <div style={{ display: "flex", flexGrow: 1 }}>
+                                <div style={{ width: "70px", marginRight: "15px" }}>
+                                    <img style={{ objectFit: "cover" }} width={"100%"} height={"55px"} src={room?.imageURLs[0]?.imageUrl ? room?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"} alt="" />
+                                </div>
+                                <div style={{ width: "100%" }}>
+                                    <h6>
+                                        {room.roomName}
+                                    </h6>
+                                    <p style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", width: "500px" }}>
+                                        Description: {room.description}
+                                    </p>
+                                </div>
                             </div>
                             <div>{generateStarIcons(room.rating)}</div>
                         </div>,

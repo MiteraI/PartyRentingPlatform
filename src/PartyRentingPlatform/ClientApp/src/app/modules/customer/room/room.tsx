@@ -25,6 +25,7 @@ import moment from "moment";
 import { RangePickerProps } from 'antd/es/date-picker';
 import dayjs from 'dayjs';
 import { range } from 'lodash';
+import { formatCurrency } from 'app/shared/util/currency-utils';
 
 
 // import "@vf-alchemy/vattenfall-design-system/scss/main.scss";
@@ -108,9 +109,6 @@ const RoomDetailForCustomer = () => {
         }
     };
 
-
-
-
     const [focusedInput, setFocusedInput] = React.useState(null);
     const [selectedService, setSelectedService] = useState(null); // Track selected service
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -121,14 +119,6 @@ const RoomDetailForCustomer = () => {
     useEffect(() => {
         dispatch(getEntity(id));
     }, [dispatch, id]);
-
-
-
-    // useEffect(() => {
-    //     dispatch(getServiceEntities({ page: currentPage, size: 10, sort: 'id,asc' }));
-    // }, [dispatch]);
-
-
 
     const roomEntity = useAppSelector((state) => state.room.entity);
     const serviceList = roomEntity.services || [];
@@ -218,18 +208,17 @@ const RoomDetailForCustomer = () => {
     const disabledRangeTime: RangePickerProps['disabledTime'] = (_, type) => {
         if (type === 'start') {
             return {
-                disabledHours: () => range(0, 8).concat(range(23, 24)), // Cho phép chọn từ 8h đến 22h
+                disabledHours: () => range(0, 8),
                 disabledMinutes: () => range(1, 60),
                 disabledSeconds: () => range(1, 60),
             };
         }
         return {
-            disabledHours: () => range(0, 8).concat(range(23, 24)), // Cho phép chọn từ 8h đến 22h
+            disabledHours: () => range(0, 8),
             disabledMinutes: () => range(1, 60),
             disabledSeconds: () => range(1, 60),
         };
     };
-
     return (
         <StyledRoomDetail>
             <Grid container spacing={3} mb={2}>
@@ -382,7 +371,7 @@ const RoomDetailForCustomer = () => {
                 <Grid item xs={12} md={4} >
                     <Container style={{ position: 'sticky', top: '100px', padding: '0' }}>
                         <div className="booking-info" style={{ boxShadow: 'rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px', padding: '24px', borderRadius: '10px' }}>
-                            <Typography mb={2} variant="h6"><strong>{roomEntity.price + " VNĐ"}</strong> / hour</Typography>
+                            <Typography mb={2} variant="h6"><strong>{formatCurrency(roomEntity.price)}</strong> / hour</Typography>
                             <Container style={{ marginBottom: '15px', padding: '0', width: '100%', textAlign: 'center' }}>
 
                             </Container>
@@ -442,7 +431,7 @@ const RoomDetailForCustomer = () => {
                                 <Col md="6" style={{ marginTop: '15px' }}>
                                     {numberOfHours > 0 && (
                                         <div className="room-detail-header">
-                                            <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x " + numberOfHours + " hour"}</Typography>
+                                            <Typography variant="subtitle2">{formatCurrency(roomEntity.price) + " x " + numberOfHours + " hour"}</Typography>
                                         </div>
                                     )}
 
@@ -455,12 +444,12 @@ const RoomDetailForCustomer = () => {
                                 <Col md="4" style={{ marginLeft: 'auto', marginTop: '15px' }}>
                                     {numberOfHours > 0 && (
                                         <div className="room-detail-header">
-                                            <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * numberOfHours}</Typography>
+                                            <Typography style={{ textAlign: 'end' }} variant="subtitle2">{formatCurrency(roomEntity.price * numberOfHours)}</Typography>
                                         </div>
                                     )}
                                     {serviceFee > 0 && (
                                         <div className="room-detail-header">
-                                            <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + serviceFee}</Typography>
+                                            <Typography style={{ textAlign: 'end' }} variant="subtitle2">{formatCurrency(serviceFee)}</Typography>
                                         </div>
                                     )}
                                 </Col>
@@ -477,7 +466,7 @@ const RoomDetailForCustomer = () => {
 
                                 <Col md="4" style={{ marginLeft: 'auto' }}>
                                     <div className="room-detail-header">
-                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + (roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
+                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{formatCurrency(roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
                                     </div>
                                 </Col>
                             </Row>

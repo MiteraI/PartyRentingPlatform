@@ -18,6 +18,7 @@ import { styled } from '@mui/system';
 import { AxiosResponse } from 'axios';
 import './requestToBook.scss';
 import { forEach } from 'lodash';
+import { formatCurrency } from 'app/shared/util/currency-utils';
 
 
 const RoomBookingForCustomer = () => {
@@ -160,8 +161,8 @@ const RoomBookingForCustomer = () => {
         values.id = Number(values.id);
       }
       values.bookTime = convertDateTimeToServer(values.bookTime);
-      values.startTime = convertDateTimeToServer(values.startTime);
-      values.endTime = convertDateTimeToServer(values.endTime);
+      values.startTime = convertDateTimeToServer(startDateFromUrl);
+      values.endTime = convertDateTimeToServer(endDateFromUrl);
       if (values.totalPrice !== undefined && typeof values.totalPrice !== 'number') {
         values.totalPrice = Number(values.totalPrice);
       }
@@ -173,8 +174,8 @@ const RoomBookingForCustomer = () => {
         ...bookingEntity,
         ...values,
         roomId: id,
-        // trả về mảng object serviceId, serviceQuantity
-        // bookingDetails: [{ "serviceId": 1, "serviceQuantity": 1 }],
+        startTime: startDateFromUrl,
+        endTime: endDateFromUrl,
         bookingDetails: bookingDetails,
 
       };
@@ -194,10 +195,12 @@ const RoomBookingForCustomer = () => {
     isNew
       ? {
         bookTime: displayDefaultDateTime(),
-        startTime: convertDateTimeFromServer(startDateFromUrl),
-        endTime: convertDateTimeFromServer(endDateFromUrl),
+        startTime: startDateFromUrl,
+        endTime: endDateFromUrl,
         status: 'APPROVING',
-        price: roomEntity.price,
+        // price: roomEntity.price,
+
+        price: roomEntity.price * numberOfHours + serviceFee,
         customerName: Storage.local.get("user"),
       }
       : {
@@ -205,8 +208,8 @@ const RoomBookingForCustomer = () => {
         ...bookingEntity,
         customerName: account?.firstName + " " + account?.lastName,
         bookTime: convertDateTimeFromServer(bookingEntity.bookTime),
-        startTime: convertDateTimeFromServer(bookingEntity.startTime),
-        endTime: convertDateTimeFromServer(bookingEntity.endTime),
+        startTime: startDateFromUrl,
+        endTime: endDateFromUrl,
         room: bookingEntity?.room?.id,
         user: bookingEntity?.user?.id,
 
@@ -319,13 +322,6 @@ const RoomBookingForCustomer = () => {
               {/* <Typography mb={3} variant="subtitle1">{roomEntity.address}</Typography> */}
             </div>
 
-            {/* <Row mt={1}>
-              <p>{roomEntity.description}</p>
-            </Row> */}
-
-
-
-
             <Row className="justify-content-center">
               <Col md="8">
                 {loading ? (
@@ -335,28 +331,7 @@ const RoomBookingForCustomer = () => {
                     {!isNew ? <ValidatedField name="id" required readOnly id="booking-id" label="ID" validate={{ required: true }} /> : null}
                     <ValidatedField label="Customer Name" id="booking-customerName" name="customerName" data-cy="customerName" type="text" />
 
-                    {/* <ValidatedField
-                      label="Start Time"
-                      id="booking-startTime"
-                      name="startTime"
-                      data-cy="startTime"
-                      type="datetime-local"
-                      placeholder="YYYY-MM-DD HH:mm"
-                      validate={{
-                        required: { value: true, message: 'This field is required.' },
-                      }}
-                    />
-                    <ValidatedField
-                      label="End Time"
-                      id="booking-endTime"
-                      name="endTime"
-                      data-cy="endTime"
-                      type="datetime-local"
-                      placeholder="YYYY-MM-DD HH:mm"
-                      validate={{
-                        required: { value: true, message: 'This field is required.' },
-                      }}
-                    /> */}
+                   
                     <Button
                       id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}
                       style={{ backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px' }}
@@ -406,7 +381,7 @@ const RoomBookingForCustomer = () => {
                     <Col md="6" style={{ marginTop: '15px' }}>
                       {numberOfHours > 0 && (
                         <div className="room-detail-header">
-                          <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x " + numberOfHours + " hour"}</Typography>
+                          <Typography variant="subtitle2">{formatCurrency(roomEntity.price) + " x " + numberOfHours + " giờ"}</Typography>
                         </div>
                       )}
 
@@ -419,12 +394,12 @@ const RoomBookingForCustomer = () => {
                     <Col md="4" style={{ marginLeft: 'auto', marginTop: '15px' }}>
                       {numberOfHours > 0 && (
                         <div className="room-detail-header">
-                          <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * numberOfHours}</Typography>
+                          <Typography style={{ textAlign: 'end' }} variant="subtitle2">{formatCurrency(roomEntity.price * numberOfHours)}</Typography>
                         </div>
                       )}
                       {serviceFee > 0 && (
                         <div className="room-detail-header">
-                          <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + serviceFee}</Typography>
+                          <Typography style={{ textAlign: 'end' }} variant="subtitle2">{formatCurrency(serviceFee)}</Typography>
                         </div>
                       )}
                     </Col>
@@ -437,13 +412,13 @@ const RoomBookingForCustomer = () => {
 
                   <Col md="6">
                     <div className="room-detail-header">
-                      <Typography variant="subtitle1"><strong>Total (VNĐ)</strong></Typography>
+                      <Typography variant="subtitle1"><strong>Total ( VNĐ )</strong></Typography>
                     </div>
                   </Col>
 
                   <Col md="4" style={{ marginLeft: 'auto' }}>
                     <div className="room-detail-header">
-                      <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + (roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
+                      <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{formatCurrency(roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
                     </div>
                   </Col>
                 </Row>

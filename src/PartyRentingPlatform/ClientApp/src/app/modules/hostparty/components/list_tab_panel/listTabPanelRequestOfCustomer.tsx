@@ -36,17 +36,17 @@ const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = 
         const { id } = props
 
         return (
-            status === 1 ?
-                <>
-                    <Button onClick={() => handleAccept(id)} variant="contained" color="success">
-                        Accept
-                    </Button>
-                    <Button onClick={() => handleReject(id)} sx={{ marginLeft: "15px" }} variant="contained" color="error">
-                        Reject
-                    </Button>
-                </>
 
-                : <></>
+            <>
+                <Button onClick={() => handleAccept(id)} variant="contained" color="success">
+                    Accept
+                </Button>
+                <Button onClick={() => handleReject(id)} sx={{ marginLeft: "15px" }} variant="contained" color="error">
+                    Reject
+                </Button>
+            </>
+
+
         )
     }
 
@@ -72,16 +72,15 @@ const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = 
                             }}
                             key={request.id}
                             secondaryAction={
-                                <>
-                                    <ActionForApproving id={request.id} />
-                                    {/* <IconButton edge="end" aria-label="delete">
-                                        <EditIcon />
-                                    </IconButton>
+                                request.status === "APPROVING" ? <ActionForApproving id={request.id} /> : <></>
+                                // {/* <IconButton edge="end" aria-label="delete">
+                                //     <EditIcon />
+                                // </IconButton>
 
-                                    <IconButton edge="end" aria-label="delete">
-                                        <DeleteIcon />
-                                    </IconButton> */}
-                                </>
+                                // <IconButton edge="end" aria-label="delete">
+                                //     <DeleteIcon />
+                                // </IconButton> */}
+
                             }
                         >
                             <ListItemButton onClick={() => handleOpenModal(request.id)}>
@@ -101,7 +100,7 @@ const ListTabPanelRequestOfCustomer: React.FC<IListTabPanelRequestOfCustomer> = 
 
                     )) : <div></div>}
 
-            </List>
+            </List >
         </>
     )
 }
