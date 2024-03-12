@@ -319,7 +319,6 @@ const RoomBookingForCustomer = () => {
 
             <div className="room-detail-header">
               <h4>Fill in your information</h4>
-              {/* <Typography mb={3} variant="subtitle1">{roomEntity.address}</Typography> */}
             </div>
 
             <Row className="justify-content-center">
