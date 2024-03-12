@@ -129,6 +129,7 @@ const BookingTracking = () => {
     const { id } = useParams<'id'>();
     const navigate = useNavigate()
 
+
     useEffect(() => {
         dispatch(getEntityForCustomer(id));
     }, [dispatch, id]);

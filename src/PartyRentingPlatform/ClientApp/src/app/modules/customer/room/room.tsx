@@ -110,9 +110,6 @@ const RoomDetailForCustomer = () => {
         }
     };
 
-
-
-
     const [focusedInput, setFocusedInput] = React.useState(null);
     const [selectedService, setSelectedService] = useState(null); // Track selected service
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -389,6 +386,7 @@ const RoomDetailForCustomer = () => {
                             </Container>
 
                             <DatePicker
+                                type='start'
                                 style={{ marginBottom: '16px', width: '100%' }}
                                 disabledDate={disabledDate}
                                 onChange={(date) => setStartDate(date)}
