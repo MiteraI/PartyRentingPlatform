@@ -117,7 +117,7 @@ const Profile = () => {
                         <Typography variant="h4" mt={1} textAlign="left"><strong>{'About ' + profile?.firstName}</strong></Typography>
                         <Button
                             size="large"
-                            style={{ width: '120px', borderColor: 'black', backgroundColor: '#fafafa', color: 'black', height: '48px', borderRadius: '10px', marginBottom: '10px', marginTop: '20px' }}
+                            style={{ width: '120px', borderColor: 'black', backgroundColor: '#fafafa', color: 'black', height: '48px', borderRadius: '10px', marginBottom: '10px', marginTop: '20px', marginRight: '20px' }}
                         >
                             Edit Profile
                         </Button>
