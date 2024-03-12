@@ -15,6 +15,7 @@ namespace PartyRentingPlatform.Dto.Booking
         public long? Id { get; set; }
         public string CustomerName { get; set; }
         public long? TotalPrice { get; set; }
+        public BookingStatus Status { get; set; }
         public DateTime? BookTime { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }

@@ -246,7 +246,7 @@ const RequestToBook = () => {
                 spacing={1}
                 alignItems="center"
                 style={{ cursor: 'pointer' }}
-                // onClick={() => openModal(service)}
+              // onClick={() => openModal(service)}
               >
                 <Grid item xs={10}>
                   <Typography variant="subtitle1" fontWeight="bold">

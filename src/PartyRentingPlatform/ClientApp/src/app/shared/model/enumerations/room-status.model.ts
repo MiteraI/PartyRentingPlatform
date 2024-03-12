@@ -1,11 +1,11 @@
 export enum RoomStatus {
-  BLOCKED = 'BLOCKED',
+  BLOCKED = 0,
 
-  VALID = 'VALID',
+  VALID = 1,
 
-  APPROVING = 'APPROVING',
+  APPROVING = 2,
 
-  DELETED = 'DELETED',
+  DELETED = 3,
 
-  REJECTED = 'REJECTED',
+  REJECTED = 4,
 }

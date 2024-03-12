@@ -7,9 +7,9 @@ import { BookingStatus } from 'app/shared/model/enumerations/booking-status.mode
 export interface IBooking {
   id?: number;
   customerName?: string | null;
-  bookTime?: dayjs.Dayjs;
-  startTime?: dayjs.Dayjs;
-  endTime?: dayjs.Dayjs;
+  bookTime?: dayjs.Dayjs | string;
+  startTime?: dayjs.Dayjs | string;
+  endTime?: dayjs.Dayjs | string;
   totalPrice?: number;
   status?: keyof typeof BookingStatus | null;
   rating?: number | null;

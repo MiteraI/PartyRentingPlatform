@@ -12,7 +12,9 @@ import { AxiosError } from 'axios';
 /**
  * Model for redux actions with pagination
  */
-export type IQueryParams = { query?: string; page?: number; size?: number; sort?: string };
+export type IQueryParams = { query?: any; page?: number; size?: number; sort?: string };
+
+export type IQueryParamsForSearch = { roomName?: string, rating?: number, address?: string, query?: any; page?: number; size?: number; sort?: string };
 
 /**
  * Useful types for working with actions
@@ -71,7 +73,7 @@ export interface EntityState<T> {
   loading: boolean;
   errorMessage: string | null;
   entities: ReadonlyArray<T>;
-  entity: T;
+  entity: T | null;
   links?: any;
   updating: boolean;
   totalItems?: number;

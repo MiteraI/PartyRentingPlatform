@@ -7,6 +7,7 @@ import Slider from 'react-slick';
 import { getEntities, deleteEntity, getEntityOfCustomers } from 'app/entities/room/room.reducer';
 import { getEntities as getServiceEntities } from 'app/entities/service/service.reducer';
 import RoomIcon from '@mui/icons-material/Room';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 
 //Rating 
@@ -18,15 +19,23 @@ import 'slick-carousel/slick/slick-theme.css';
 
 
 import './home.scss';
+import { addDeposit } from 'app/entities/wallet/wallet.reducer';
+import { toast } from 'react-toastify';
+import { formatCurrency } from 'app/shared/util/currency-utils';
+import { IRoom } from 'app/shared/model/room.model';
 
 const Home = () => {
   const dispatch = useAppDispatch();
-  const roomList = useAppSelector((state) => state.room.entities);
+  const roomList = useAppSelector((state) => state.room.entities) as IRoom[];
   const loading = useAppSelector((state) => state.room.loading);
   const account = useAppSelector((state) => state.authentication.account);
   const serviceList = useAppSelector(state => state.service.entities);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPageloading] = useState(0);
+  const userExisted = localStorage.getItem("user");
 
+
+
+  const updateSuccess = useAppSelector(state => state.wallet.updateSuccess);
 
   // Bổ sung một số hàm trợ giúp để tạo ra biểu tượng ngôi sao
   const generateStarIcons = (rating) => {
@@ -42,22 +51,40 @@ const Home = () => {
     dispatch(getEntityOfCustomers({ page: currentPage, size: 100, sort: 'id,asc' }));
   }, [dispatch]);
 
+
+  // use to deposit money to host or customer
+
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const amount = Number(urlParams.get('vnp_Amount')) / 100;
+    const transactionNo = Number(urlParams.get("vnp_TransactionNo"));
+
+
+    if (urlParams && amount != 0 && transactionNo != 0) {
+      dispatch(addDeposit({ amount, transactionNo, status: 1 })) // status 1 : success
+      window.history.replaceState({}, "", "http://localhost:9000/")
+      toast.success("Bạn đã nạp tiền thành công")
+    }
+  })
+
+
   // Define your carousel items
   const carouselItems = [
     {
       src: 'https://www.parents.com/thmb/--pZafKsgGSb8NrJVrV7lqJId9g=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/BirthdayParty-GettyImages-1600792233-c2a961509556414f9f41b92b8471a551.jpg',
       altText: 'Party Room 1',
-      caption: 'Không gian tuyệt vời!',
+      caption: 'Great space!',
     },
     {
       src: 'https://berkscountyliving.com/downloads/18196/download/iStock-918933880.jpg?cb=1155e4a7652ab617e102986ad35ab972',
       altText: 'Party Room 2',
-      caption: 'Dịch vụ hấp dẫn!',
+      caption: 'The best service!',
     },
     {
       src: 'https://st3.depositphotos.com/1002111/14176/i/1600/depositphotos_141766842-stock-photo-happy-kids-birthday.jpg',
       altText: 'Party Room 3',
-      caption: 'Phục vụ chu đáo!',
+      caption: 'Convenient!',
     },
     // Add more carousel items as needed
   ];
@@ -131,6 +158,9 @@ const Home = () => {
     slidesToScroll: 1,
   };
 
+
+  // console.log(localStorage.getItem("user").split(`"`).join(``));
+
   return (
 
     <div className='home-page'>
@@ -138,8 +168,8 @@ const Home = () => {
         {/* <Col md="6">
           <h1 className="display-4">Khám phá các bữa tiệc nào!!!</h1>
           <p className="lead">Hãy tìm điểm dừng chân tiếp theo cho bữa tiệc hoành tráng của bạn.</p>
-          {account?.login ? (
-            <Alert color="success">Welcome back, {account.login}!</Alert>
+          {userExisted != null ? (
+            <Alert color="success">Chào mừng {userExisted ? userExisted.split(`"`).join(``) : ""} đến với chúng tôi!</Alert>
           ) : (
             <div>
               <Alert color="warning">
@@ -203,12 +233,14 @@ const Home = () => {
                     <Paper className="apartment-card" component={Link} to={`/room/detail/${item.id}`} style={{ textDecoration: 'none' }} elevation={3}>
                       {/* Slick Carousel for images */}
                       <div className='slider-container'>
-                        <Slider {...slickSettings}>
+                        <CardMedia className='img-room img' image={item?.imageURLs[0]?.imageUrl ? item?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"}>
+                        </CardMedia>
+                        {/* <Slider {...slickSettings}>
                           {sampleRoomImgs.sort(() => Math.random() - 0.5).map((carouselItem, index) => (
                             <CardMedia className='img-room img' key={index} image={carouselItem.src}>
                             </CardMedia>
                           ))}
-                        </Slider>
+                        </Slider> */}
                       </div>
 
                       {/* Apartment details */}
@@ -216,10 +248,13 @@ const Home = () => {
                         <Typography variant="h6" component="div" className='room-name'>
                           <strong>{item.roomName}</strong>
                         </Typography>
-                        <div className="rating">
-                          {generateStarIcons(item.rating)}
+                        <div className="capacity">
+                          <Typography variant="body2" color="text.secondary" style={{ display: 'inline-block' }}>
+                            <PersonAddIcon sx={{paddingBottom:"3px"}} fontSize='small' color='action' /> {item.roomCapacity}
+                          </Typography>
+
                         </div>
-                        <Typography variant="body2" color="text.secondary" className="description">
+                        <Typography variant="body1" color="text.secondary" className="description">
                           {item.description}
                         </Typography>
                         <div className="address">
@@ -229,8 +264,8 @@ const Home = () => {
                           </Typography>
                         </div>
                         {/* Giá tiền */}
-                        <Typography style={{ marginTop: '2px' }} variant="body2" color="text.primary">
-                          <strong>{item.price} VND</strong> / ngày
+                        <Typography style={{ marginTop: '8px' }} variant="body2" color="text.primary">
+                          <strong>{formatCurrency(item.price)}</strong> / hour
                         </Typography>
                       </div>
                       {/* Card actions */}

@@ -19,8 +19,8 @@ export const RegisterPage = () => {
     [],
   );
 
-  const handleValidSubmit = ({ username, email, firstPassword }) => {
-    dispatch(handleRegister({ login: username, email, password: firstPassword, langKey: 'en' }));
+  const handleValidSubmit = ({ username, email, firstPassword, firstName, lastName }) => {
+    dispatch(handleRegister({ firstName, lastName, login: username, email, password: firstPassword, langKey: 'en' }));
   };
 
   const updatePassword = event => setPassword(event.target.value);
@@ -45,6 +45,36 @@ export const RegisterPage = () => {
       <Row className="justify-content-center">
         <Col md="8">
           <ValidatedForm id="register-form" onSubmit={handleValidSubmit}>
+            <ValidatedField
+              name="firstName"
+              label="First name"
+              placeholder="Your firstname"
+              validate={{
+                required: { value: true, message: 'Your first name is required.' },
+                pattern: {
+                  value: /^[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$|^[_.@A-Za-z0-9-]+$/,
+                  message: 'Your username is invalid.',
+                },
+                minLength: { value: 1, message: 'Your first name is required to be at least 1 character.' },
+                maxLength: { value: 50, message: 'Your first name cannot be longer than 50 characters.' },
+              }}
+              data-cy="firstName"
+            />
+            <ValidatedField
+              name="lastName"
+              label="Last name"
+              placeholder="Your last name"
+              validate={{
+                required: { value: true, message: 'Your last name is required.' },
+                pattern: {
+                  value: /^[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$|^[_.@A-Za-z0-9-]+$/,
+                  message: 'Your last name is invalid.',
+                },
+                minLength: { value: 1, message: 'Your last name is required to be at least 1 character.' },
+                maxLength: { value: 50, message: 'Your last name cannot be longer than 50 characters.' },
+              }}
+              data-cy="lastName"
+            />
             <ValidatedField
               name="username"
               label="Username"

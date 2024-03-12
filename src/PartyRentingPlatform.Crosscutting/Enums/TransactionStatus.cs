@@ -11,8 +11,8 @@ namespace PartyRentingPlatform.Crosscutting.Enums
 {
     public enum TransactionStatus
     {
-        PENDING,
-        SUCCESS,
-        REFUNDED
+        FAILED,
+        SUCCESS, //00
+        CANCELLED //02
     }
 }

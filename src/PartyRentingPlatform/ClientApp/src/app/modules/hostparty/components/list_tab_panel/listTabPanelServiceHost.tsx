@@ -5,6 +5,7 @@ import FolderIcon from '@mui/icons-material/Folder';
 import { IBooking } from "app/shared/model/booking.model";
 import EditIcon from "@mui/icons-material/Edit"
 import { IService } from "app/shared/model/service.model";
+import { formatCurrency } from "app/shared/util/currency-utils";
 
 interface IListTabPanelServicesOfCustomer {
     data: IService[],
@@ -17,25 +18,29 @@ const ListTabPanelServiceOfCustomer: React.FC<IListTabPanelServicesOfCustomer> =
     const { data, editfunction, deletefunction } = props
 
     return (
-        <List dense>
+        <List dense sx={{ height: "340.125px" }}>
             {data?.length > 0 ?
                 data.map((service) => (
-                    <ListItemButton>
-                        <ListItem
-                            key={service.id}
-                            secondaryAction={
-                                <>
-                                    <IconButton onClick={() => editfunction(service.id)} edge="end" aria-label="delete">
-                                        <EditIcon />
-                                    </IconButton>
+                    <ListItem
+                        sx={{
+                            paddingLeft: "7px",
+                            paddingRight: "7px"
+                        }}
+                        key={service.id}
+                        secondaryAction={
+                            <>
+                                <IconButton onClick={() => editfunction(service.id)} edge="end" aria-label="delete">
+                                    <EditIcon />
+                                </IconButton>
 
-                                    <IconButton onClick={() => deletefunction(service.id)} sx={{ marginLeft: "15px" }} edge="end" aria-label="delete">
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </>
-                            }
-                        >
+                                <IconButton onClick={() => deletefunction(service.id)} edge="end" aria-label="delete">
+                                    <DeleteIcon />
+                                </IconButton>
+                            </>
+                        }
+                    >
 
+                        <ListItemButton>
                             <ListItemAvatar>
                                 <Avatar>
                                     <FolderIcon />
@@ -43,10 +48,11 @@ const ListTabPanelServiceOfCustomer: React.FC<IListTabPanelServicesOfCustomer> =
                             </ListItemAvatar>
                             <ListItemText
                                 primary={service.serviceName}
-                                secondary={service.description}
+                                secondary={`Price: ${formatCurrency(service.price)} & Description: ${service.description}`}
+
                             />
-                        </ListItem>
-                    </ListItemButton>
+                        </ListItemButton>
+                    </ListItem>
 
                 )) : <div></div>}
 

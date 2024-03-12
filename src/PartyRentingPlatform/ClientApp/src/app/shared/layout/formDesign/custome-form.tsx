@@ -1,6 +1,6 @@
 import { Rule } from "antd/es/form"
 import React, { ChangeEventHandler, useEffect, useState } from "react"
-import { Button, Form, Input, Select } from "antd"
+import { Button, Form, Input, InputNumber, Select } from "antd"
 import { Col, Row } from "reactstrap"
 import { useAppDispatch } from "app/config/store"
 import { reset } from "app/entities/room/room.reducer"
@@ -18,7 +18,10 @@ export interface IFormItemDesign {
     onChangeFormItem?: (e: any) => void,
     type: InputType,
     element?: ElementType
-    selectData?: any[]
+    selectData?: any[],
+    alone?: true,
+    min?: number,
+    max?: number
 }
 
 
@@ -27,11 +30,6 @@ interface IFormDesign {
     submit: (callback) => void
 }
 
-
-interface ISelect {
-    option: any[],
-    change: (value: any) => void
-}
 
 
 
@@ -55,18 +53,21 @@ const CustomeForm: React.FC<IFormDesign> = (props) => {
                             initialValue={formItem.initialData}
                             rules={formItem.rules}
                         >
+
                             {
                                 formItem.element === "select" ?
                                     <Select
-                                        mode="multiple"
-                                        onChange={(value) => formItem.onChangeFormItem(value)}
-                                        
+                                        mode={formItem.alone ? undefined : "multiple"}
+                                        onChange={formItem.onChangeFormItem ? (value) => formItem.onChangeFormItem(value) : undefined}
                                     >
-                                        {formItem.selectData.map((object) => <Option value={object.id}>{object.serviceName}</Option>)}
+                                        {formItem.selectData.map((object) => <Option value={object.id}>{object.serviceName || object.name}</Option>)}
                                     </Select>
-
                                     :
-                                    < Input type={formItem.type} onChange={formItem.onChangeFormItem} />
+                                    formItem.type === "number"
+                                        ?
+                                        <InputNumber min={formItem.min} max={formItem.max} type="number" onChange={formItem.onChangeFormItem} />
+                                        :
+                                        <Input type={formItem.type} onChange={formItem.onChangeFormItem} />
                             }
                         </Form.Item>
                     </Col>

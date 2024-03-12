@@ -16,6 +16,9 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PersonIcon from '@mui/icons-material/Person';
 import AuthenticateIcon from "./AuthenticateIcon";
 import { Storage } from "react-jhipster";
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import { Button, Drawer } from "antd";
+import Wallet from "./wallet/wallet";
 
 interface HeaderCustomerProps {
     isAuthenticated: boolean
@@ -23,12 +26,11 @@ interface HeaderCustomerProps {
 
 const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
 
-    const { isAuthenticated } = props
-
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);
     const [options, setOptions] = React.useState([]);
-    const loading = open && options.length === 0;
+    const [openWallet, setOpenWallet] = useState<boolean>(false)
+    const userExisted = Storage.local.get("user")
 
     const handleProfileMenuOpen = () => {
         navigate("/login")
@@ -41,15 +43,19 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
 
 
 
+    const handleWalletModal = () => {
+        setOpenWallet(!openWallet)
+    }
+
 
     return (
         <Box sx={{ flexGrow: 1 }}>
+            {userExisted ? <Wallet open={openWallet} handleClose={handleWalletModal} /> : <></>}
             <AppBar
                 sx={{ backgroundColor: "#FFFFFF", padding: "10px", boxShadow: "0px 13px 23px -13px rgba(0,0,0,0.5)", }}
                 position="static"
             >
                 <Toolbar>
-
                     <NavLink to="/" style={{ textDecoration: "none" }} >
                         <Box
                             component="img"
@@ -66,29 +72,34 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
 
                     <CustomeSearch />
 
-                    <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={4} color="error">
-                                <MailIcon color="warning" />
-                            </Badge>
-                        </IconButton>
+
+                        {userExisted ?
+                            <IconButton onClick={handleWalletModal} size="small" color="inherit">
+                                <Badge color="error">
+                                    <AccountBalanceWalletIcon color="warning" />
+                                </Badge>
+                            </IconButton>
+
+                            : <div></div>
+                        }
+
+
                         <IconButton
-                            size="large"
+                            size="small"
                             aria-label="show 17 new notifications"
                             color="inherit"
                         >
-                            <Badge badgeContent={17} color="error">
+                            <Badge color="error">
                                 <NotificationsIcon color="warning" />
                             </Badge>
                         </IconButton>
 
-
-                        {Storage.local.get("user") ?
+                        {userExisted ?
                             <AuthenticateIcon />
                             :
                             <IconButton
-                                size="large"
+                                size="small"
                                 edge="end"
                                 aria-label="account of current user"
                                 // aria-controls={menuId}
@@ -102,7 +113,7 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
                     </Box>
                     <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
-                            size="large"
+                            size="small"
                             aria-label="show more"
                             // aria-controls={mobileMenuId}
                             aria-haspopup="true"

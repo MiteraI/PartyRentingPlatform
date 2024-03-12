@@ -22,6 +22,7 @@
         <PackageReference Include="JHipsterNet.Core" />
         <PackageReference Include="JHipsterNet.Web" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" />
         <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
         <PackageReference Include="Scrutor" />

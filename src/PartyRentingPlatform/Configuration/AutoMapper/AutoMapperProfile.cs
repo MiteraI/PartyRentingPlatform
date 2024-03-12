@@ -6,6 +6,7 @@ using PartyRentingPlatform.Dto;
 using PartyRentingPlatform.Dto.Booking;
 using PartyRentingPlatform.Dto.Room;
 using PartyRentingPlatform.Dto.Service;
+using PartyRentingPlatform.Dto.Profile;
 
 
 namespace PartyRentingPlatform.Configuration.AutoMapper
@@ -19,8 +20,11 @@ namespace PartyRentingPlatform.Configuration.AutoMapper
                 .ForMember(userDto => userDto.Roles, opt => opt.MapFrom(user => user.UserRoles.Select(iur => iur.Role.Name).ToHashSet()))
             .ReverseMap()
                 .ForPath(user => user.UserRoles, opt => opt.MapFrom(userDto => userDto.Roles.Select(role => new UserRole { Role = new Role { Name = role }, UserId = userDto.Id }).ToHashSet()));
-
             CreateMap<User, UserAppDto>().ReverseMap();
+            CreateMap<User, ProfileDto>()
+                .ForMember(profileDto => profileDto.Roles, opt => opt.MapFrom(user => user.UserRoles.Select(iur => iur.Role.Name).ToHashSet()))
+            .ReverseMap()
+                .ForPath(user => user.UserRoles, opt => opt.MapFrom(profileDto => profileDto.Roles.Select(role => new UserRole { Role = new Role { Name = role }, UserId = profileDto.Id }).ToHashSet()));
 
             // Room mappings
             CreateMap<Room, RoomDto>().ReverseMap();
@@ -40,10 +44,8 @@ namespace PartyRentingPlatform.Configuration.AutoMapper
 
             // Booking mappings
             CreateMap<Booking, BookingDto>().ReverseMap();
-            CreateMap<Booking, BookingCustomerDto>()
-                .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room))
-                .ForMember(dest => dest.BookingDetails, opt => opt.MapFrom(src => src.BookingDetails))
-                .ReverseMap();
+            CreateMap<Booking, BookingRatingDto>().ReverseMap();
+            CreateMap<Booking, BookingCustomerDto>().ReverseMap();
 
             CreateMap<BookingDetails, BookingDetailCustomerDto>()
                 .ForMember(dest => dest.ServiceQuantity, opt => opt.MapFrom(src => src.ServiceQuantity))

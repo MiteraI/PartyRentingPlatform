@@ -12,6 +12,7 @@ import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import { AUTHORITIES, ROLES } from 'app/config/constants';
 import { useNavigate } from 'react-router';
 import { Storage } from 'react-jhipster';
+import { Link } from 'react-router-dom';
 export default function AuthenticateIcon() {
 
   const dispatch = useAppDispatch();
@@ -25,6 +26,14 @@ export default function AuthenticateIcon() {
     window.location.href = "/"
   }
 
+  const handleBookingHisory = () => {
+    navigate('room/booking-list');
+  }
+
+  const handleGoToProfile = () => {
+    navigate('profile');
+  }
+
   const handleNavigateToDashboard = () => {
     navigate("hostparty/room");
   }
@@ -36,9 +45,10 @@ export default function AuthenticateIcon() {
         <PersonIcon color='warning' />
       </MenuButton>
       <Menu style={{ position: "relative", zIndex: 10 }} slots={{ listbox: Listbox }}>
-        <MenuItem>Profile</MenuItem>
-        <MenuItem>
-          Password
+        <MenuItem onClick={handleGoToProfile} component={Link} to={`profile/1`}>Profile</MenuItem>
+        {/* <MenuItem >Profile</MenuItem> */}
+        <MenuItem onClick={handleBookingHisory} component={Link} to={`room/booking-list`}>
+          Booking History
         </MenuItem>
 
         {/* if host party == dashboard of host party */}

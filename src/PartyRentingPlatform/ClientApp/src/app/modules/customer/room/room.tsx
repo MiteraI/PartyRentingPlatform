@@ -22,6 +22,11 @@ import './room-detail.scss';
 
 
 import moment from "moment";
+import { RangePickerProps } from 'antd/es/date-picker';
+import dayjs from 'dayjs';
+import { range } from 'lodash';
+import { formatCurrency } from 'app/shared/util/currency-utils';
+import { IRoom } from 'app/shared/model/room.model';
 
 
 // import "@vf-alchemy/vattenfall-design-system/scss/main.scss";
@@ -58,25 +63,51 @@ const RoomDetailForCustomer = () => {
 
     const [startTime, setStartTime] = useState(null); // Declare startTime state
     const [endTime, setEndTime] = useState(null); // Declare endTime state
+    // Thêm state để theo dõi lỗi
+    const [error, setError] = useState<string | null>(null);
 
     const handleBookClick = () => {
-        // Check if startTime and endTime are not null before formatting
-        // if (startTime && endTime) {
-        const formattedStartTime = startDate.format('YYYY-MM-DD') + ' ' + startTime.format('HH:mm:ss');
-        const formattedEndTime = startDate.format('YYYY-MM-DD') + ' ' + endTime.format('HH:mm:ss');
-        console.log(startTime.format('HH:mm:ss'));
-        const selectedServicesArray = Object.keys(quantityMap).map(serviceId => ({
-            id: serviceId,
-            quantity: quantityMap[serviceId],
-        }));
+        // Reset previous errors
+        setError(null);
 
-        const queryString = `startDate=${formattedStartTime}&endDate=${formattedEndTime}&selectedService=${JSON.stringify(selectedServicesArray)}`;
+        // Check if startTime, endTime, and startDate are not null before formatting
+        if (startTime && endTime && startDate) {
+            // Validate date: must be at least 3 days from the current date
+            const currentDate = new Date();
+            const minimumStartDate = new Date();
+            minimumStartDate.setDate(currentDate.getDate() + 3);
 
-        navigate(`/room/request-to-book/${roomEntity.id}?${queryString}`);
-        // } else {
-        //     // Handle the case when startTime or endTime is null
-        //     console.error("Start time and end time must be selected.");
-        // }
+            if (startDate < minimumStartDate) {
+                setError("Selected date must be at least 3 days from the current date.");
+                return;
+            }
+
+            // Validate startTime and endTime
+            const minimumTimeDifference = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+            const startDateTime = new Date(startDate.format('YYYY-MM-DD') + ' ' + startTime.format('HH:mm:ss')).getTime();
+            const endDateTime = new Date(startDate.format('YYYY-MM-DD') + ' ' + endTime.format('HH:mm:ss')).getTime();
+
+            if (endDateTime - startDateTime < minimumTimeDifference) {
+                setError("The time difference between startTime and endTime must be at least 2 hours.");
+                return;
+            }
+
+            // Continue with the rest of the code
+
+            const formattedStartTime = startDate.format('YYYY-MM-DD') + ' ' + startTime.format('HH:mm:ss');
+            const formattedEndTime = startDate.format('YYYY-MM-DD') + ' ' + endTime.format('HH:mm:ss');
+            const selectedServicesArray = Object.keys(quantityMap).map(serviceId => ({
+                id: serviceId,
+                quantity: quantityMap[serviceId],
+            }));
+
+            const queryString = `startDate=${formattedStartTime}&endDate=${formattedEndTime}&selectedService=${JSON.stringify(selectedServicesArray)}`;
+
+            navigate(`/room/request-to-book/${roomEntity.id}?${queryString}`);
+        } else {
+            // Handle the case when startTime, endTime, or startDate is null
+            setError("Start time, end time, and date must be selected.");
+        }
     };
 
     const [focusedInput, setFocusedInput] = React.useState(null);
@@ -98,9 +129,8 @@ const RoomDetailForCustomer = () => {
 
 
 
-    const roomEntity = useAppSelector((state) => state.room.entity);
+    const roomEntity = useAppSelector((state) => state.room.entity) as IRoom;
     const serviceList = roomEntity.services || [];
-    console.log(roomEntity);
 
     useEffect(() => {
         // Kiểm tra xem roomEntity đã được tải chưa
@@ -123,7 +153,7 @@ const RoomDetailForCustomer = () => {
     useEffect(() => {
 
         const totalServiceFee = Object.keys(quantityMap).reduce((total, serviceId) => {
-            const service = serviceList.find(service => service.id == serviceId);
+            const service = serviceList.find(service => service.id == Number(serviceId));
             if (service) {
                 return total + (service.price * quantityMap[serviceId]);
             }
@@ -146,7 +176,6 @@ const RoomDetailForCustomer = () => {
         'https://a0.muscache.com/im/pictures/miso/Hosting-667691518993177053/original/46be33d4-9ad2-4b22-b9f3-d99bb5d0533d.jpeg?im_w=720',
         'https://a0.muscache.com/im/pictures/miso/Hosting-667691518993177053/original/4e702f0e-fd3c-4754-bd2b-a8714dc35f48.jpeg?im_w=720',
         'https://a0.muscache.com/im/pictures/miso/Hosting-667691518993177053/original/4e702f0e-fd3c-4754-bd2b-a8714dc35f48.jpeg?im_w=720',
-
     ];
 
     const navigate = useNavigate();
@@ -162,7 +191,7 @@ const RoomDetailForCustomer = () => {
         setModalIsOpen(false);
     };
 
-    const handleIncrementQuantity = (serviceId: string) => {
+    const handleIncrementQuantity = (serviceId: string | number) => {
         setQuantityMap((prevMap) => ({
             ...prevMap,
             [serviceId]: (prevMap[serviceId] || 0) + 1,
@@ -178,6 +207,27 @@ const RoomDetailForCustomer = () => {
         }));
     };
 
+    const disabledDate: RangePickerProps['disabledDate'] = (current) => {
+        // Can not select days before today and today
+        const today = dayjs().endOf('day');
+        const threeDaysAfter = today.add(3, 'day')
+        return current && current < threeDaysAfter;
+    };
+
+    const disabledRangeTime: RangePickerProps['disabledTime'] = (_, type) => {
+        if (type === 'start') {
+            return {
+                disabledHours: () => range(0, 8),
+                disabledMinutes: () => range(1, 60),
+                disabledSeconds: () => range(1, 60),
+            };
+        }
+        return {
+            disabledHours: () => range(0, 8),
+            disabledMinutes: () => range(1, 60),
+            disabledSeconds: () => range(1, 60),
+        };
+    };
     return (
         <StyledRoomDetail>
             <Grid container spacing={3} mb={2}>
@@ -221,17 +271,17 @@ const RoomDetailForCustomer = () => {
             <div className="room-detail-header" style={{ height: '300px', overflow: 'hidden', borderRadius: '10px' }}>
                 <Row style={{ height: '300px', overflow: 'hidden' }}>
                     <Col md="6" style={{ height: '100%', overflow: 'hidden', paddingRight: '10px' }}>
-                        <img src={parallaxImages[0]} alt={`Room Image 0`} className="full-width" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src={roomEntity?.imageURLs?.length > 0 ? roomEntity?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"} alt={`Room Image 0`} className="full-width" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </Col>
                     <Col md="6" style={{ height: '100%', overflow: 'hidden' }}>
                         <Row style={{ height: '100%', overflow: 'hidden' }}>
                             <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '10px' }}>
-                                <img src={parallaxImages[1]} alt={`Room Image 1`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
-                                <img src={parallaxImages[3]} alt={`Room Image 3`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
+                                <img src={roomEntity?.imageURLs?.length > 0 ? roomEntity?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"} alt={`Room Image 1`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
+                                <img src={roomEntity?.imageURLs?.length > 0 ? roomEntity?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"} alt={`Room Image 3`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
                             </Col>
                             <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '5px' }}>
-                                <img src={parallaxImages[2]} alt={`Room Image 2`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
-                                <img src={parallaxImages[4]} alt={`Room Image 4`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
+                                <img src={roomEntity?.imageURLs?.length > 0 ? roomEntity?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"} alt={`Room Image 2`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
+                                <img src={roomEntity?.imageURLs?.length > 0 ? roomEntity?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"} alt={`Room Image 4`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
                             </Col>
                         </Row>
                     </Col>
@@ -258,7 +308,7 @@ const RoomDetailForCustomer = () => {
                                 />
                                 <div style={{ marginLeft: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                                     <Typography variant="subtitle1"><strong>{roomEntity.user?.login}</strong></Typography>
-                                    <Typography variant="body2">Superhost • 10 months hosting</Typography>
+                                    <Typography variant="body2">Host party • 10 months hosting</Typography>
                                 </div>
                             </div>
                         </Grid>
@@ -330,29 +380,49 @@ const RoomDetailForCustomer = () => {
                 <Grid item xs={12} md={4} >
                     <Container style={{ position: 'sticky', top: '100px', padding: '0' }}>
                         <div className="booking-info" style={{ boxShadow: 'rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px', padding: '24px', borderRadius: '10px' }}>
-                            <Typography mb={2} variant="h6"><strong>${roomEntity.price}</strong> slot</Typography>
+                            <Typography mb={2} variant="h6"><strong>{formatCurrency(roomEntity.price)}</strong> / hour</Typography>
                             <Container style={{ marginBottom: '15px', padding: '0', width: '100%', textAlign: 'center' }}>
 
                             </Container>
 
                             <DatePicker
+                                type='start'
                                 style={{ marginBottom: '16px', width: '100%' }}
+                                disabledDate={disabledDate}
                                 onChange={(date) => setStartDate(date)}
                                 value={startDate}
                                 placeholder="Select Date"
                             />
 
                             {/* Add time pickers for start and end time */}
-                            <TimePicker
-                                style={{ marginBottom: '16px', width: '100%' }}
-                                onChange={(time) => setStartTime(time)}
-                                placeholder="Select Start Time"
-                            />
-                            <TimePicker
-                                style={{ marginBottom: '16px', width: '100%' }}
-                                onChange={(time) => setEndTime(time)}
-                                placeholder="Select End Time"
-                            />
+                            {startDate != null && (
+                                <Row>
+                                    <Col md="6" >
+                                        <TimePicker
+                                            style={{ marginBottom: '16px', width: '100%' }}
+                                            onChange={(time) => setStartTime(time)}
+                                            placeholder="Select Start Time"
+                                            disabledTime={disabledRangeTime}
+                                        />
+
+                                    </Col>
+                                    <Col md="6" >
+
+                                        <TimePicker
+                                            style={{ marginBottom: '16px', width: '100%' }}
+                                            onChange={(time) => setEndTime(time)}
+                                            placeholder="Select End Time"
+                                            disabledTime={disabledRangeTime}
+                                        />
+                                    </Col>
+                                </Row>)}
+
+                            {error && (
+                                <Typography textAlign={'center'} variant="body2" color="error" style={{ marginTop: '10px' }}>
+                                    {error}
+                                </Typography>
+                            )}
+
                             <Button
                                 color="primary"
                                 size="large"
@@ -368,30 +438,29 @@ const RoomDetailForCustomer = () => {
 
 
                                 <Col md="6" style={{ marginTop: '15px' }}>
-                                    <div className="room-detail-header">
-                                        <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x " + numberOfHours + " giờ"}</Typography>
-                                    </div>
-                                    <div className="room-detail-header">
-                                        <Typography variant="subtitle2">Phí dịch vụ</Typography>
-                                    </div>
+                                    {numberOfHours > 0 && (
+                                        <div className="room-detail-header">
+                                            <Typography variant="subtitle2">{formatCurrency(roomEntity.price) + " x " + numberOfHours + " hour"}</Typography>
+                                        </div>
+                                    )}
+
+                                    {serviceFee > 0 && (<div className="room-detail-header">
+                                        <Typography variant="subtitle2">Service fee</Typography>
+                                    </div>)}
                                 </Col>
 
-                                {/* <Col md="6">
-                                    <div className="room-detail-header">
-                                        <Typography variant="subtitle2">{"VNĐ " + serviceFee}</Typography>
-                                    </div>
-                                    <div className="room-detail-header">
-                                        <Typography variant="subtitle2">Phí dịch vụ</Typography>
-                                    </div>
-                                </Col> */}
 
                                 <Col md="4" style={{ marginLeft: 'auto', marginTop: '15px' }}>
-                                    <div className="room-detail-header">
-                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * 2}</Typography>
-                                    </div>
-                                    <div className="room-detail-header">
-                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + serviceFee}</Typography>
-                                    </div>
+                                    {numberOfHours > 0 && (
+                                        <div className="room-detail-header">
+                                            <Typography style={{ textAlign: 'end' }} variant="subtitle2">{formatCurrency(roomEntity.price * numberOfHours)}</Typography>
+                                        </div>
+                                    )}
+                                    {serviceFee > 0 && (
+                                        <div className="room-detail-header">
+                                            <Typography style={{ textAlign: 'end' }} variant="subtitle2">{formatCurrency(serviceFee)}</Typography>
+                                        </div>
+                                    )}
                                 </Col>
                             </Row>
 
@@ -406,7 +475,7 @@ const RoomDetailForCustomer = () => {
 
                                 <Col md="4" style={{ marginLeft: 'auto' }}>
                                     <div className="room-detail-header">
-                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + roomEntity.price * 2}</strong></Typography>
+                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{formatCurrency(roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
                                     </div>
                                 </Col>
                             </Row>

@@ -268,4 +268,32 @@ public class UserService : IUserService
         var roles = await _userManager.GetRolesAsync(user);
         await _userManager.RemoveFromRolesAsync(user, roles);
     }
+
+    // Profile related
+    public virtual async Task<User> UpdateProfile(User userToUpdate)
+    {
+        var user = await _userManager.FindByIdAsync(userToUpdate.Id);
+        user.Login = userToUpdate.Login.ToLower();
+        user.UserName = userToUpdate.Login.ToLower();
+        user.FirstName = userToUpdate.FirstName;
+        user.LastName = userToUpdate.LastName;
+        await _userManager.UpdateAsync(user);
+        return user;
+    }
+
+    public virtual async Task<User> UpdateAvatar(string url)
+    {
+        var userName = _userManager.GetUserName(_httpContextAccessor.HttpContext.User);
+        var user = await _userManager.FindByNameAsync(userName);
+        user.ImageUrl = url;
+        await _userManager.UpdateAsync(user);
+        return user;
+    }
+
+    public virtual async Task<User> UpdateToHost(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        await CreateUserRoles(user, new[] { RolesConstants.HOST });
+        return user;
+    }
 }
