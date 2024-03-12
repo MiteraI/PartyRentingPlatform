@@ -6,6 +6,7 @@ using PartyRentingPlatform.Domain.Services.Interfaces;
 using PartyRentingPlatform.Domain.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using PartyRentingPlatform.Crosscutting.Enums;
+using System.Linq;
 
 namespace PartyRentingPlatform.Domain.Services;
 
@@ -123,6 +124,16 @@ public class BookingService : IBookingService
             .Filter(booking => booking.Room.UserId == userId && booking.Status == bookingStatus)
             .GetPageAsync(pageable);
         return page;
+    }
+
+    public virtual async Task<bool> CheckOverlappedBooking(DateTime startTime, DateTime endTime, long roomId)
+    {
+        var result = await _bookingRepository.QueryHelper()
+            .Filter(booking => booking.RoomId == roomId)
+            .Filter(booking => booking.Status == BookingStatus.ACCEPTED)
+            .Filter(booking => booking.BookTime < endTime && booking.EndTime > startTime)
+            .GetAllAsync();
+        return result.ToList().Count > 0;
     }
 
     // Background worker 

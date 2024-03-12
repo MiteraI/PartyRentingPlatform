@@ -7,6 +7,7 @@ import Slider from 'react-slick';
 import { getEntities, deleteEntity, getEntityOfCustomers } from 'app/entities/room/room.reducer';
 import { getEntities as getServiceEntities } from 'app/entities/service/service.reducer';
 import RoomIcon from '@mui/icons-material/Room';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 
 //Rating 
@@ -21,10 +22,11 @@ import './home.scss';
 import { addDeposit } from 'app/entities/wallet/wallet.reducer';
 import { toast } from 'react-toastify';
 import { formatCurrency } from 'app/shared/util/currency-utils';
+import { IRoom } from 'app/shared/model/room.model';
 
 const Home = () => {
   const dispatch = useAppDispatch();
-  const roomList = useAppSelector((state) => state.room.entities);
+  const roomList = useAppSelector((state) => state.room.entities) as IRoom[];
   const loading = useAppSelector((state) => state.room.loading);
   const account = useAppSelector((state) => state.authentication.account);
   const serviceList = useAppSelector(state => state.service.entities);
@@ -231,12 +233,14 @@ const Home = () => {
                     <Paper className="apartment-card" component={Link} to={`/room/detail/${item.id}`} style={{ textDecoration: 'none' }} elevation={3}>
                       {/* Slick Carousel for images */}
                       <div className='slider-container'>
-                        <Slider {...slickSettings}>
+                        <CardMedia className='img-room img' image={item?.imageURLs[0]?.imageUrl ? item?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"}>
+                        </CardMedia>
+                        {/* <Slider {...slickSettings}>
                           {sampleRoomImgs.sort(() => Math.random() - 0.5).map((carouselItem, index) => (
                             <CardMedia className='img-room img' key={index} image={carouselItem.src}>
                             </CardMedia>
                           ))}
-                        </Slider>
+                        </Slider> */}
                       </div>
 
                       {/* Apartment details */}
@@ -244,9 +248,12 @@ const Home = () => {
                         <Typography variant="h6" component="div" className='room-name'>
                           <strong>{item.roomName}</strong>
                         </Typography>
-                        {/* <div className="rating">
-                          {generateStarIcons(item.rating)}
-                        </div> */}
+                        <div className="capacity">
+                          <Typography variant="body2" color="text.secondary" style={{ display: 'inline-block' }}>
+                            <PersonAddIcon sx={{paddingBottom:"3px"}} fontSize='small' color='action' /> {item.roomCapacity}
+                          </Typography>
+
+                        </div>
                         <Typography variant="body1" color="text.secondary" className="description">
                           {item.description}
                         </Typography>

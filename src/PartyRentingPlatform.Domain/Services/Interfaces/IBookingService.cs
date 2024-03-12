@@ -29,5 +29,7 @@ namespace PartyRentingPlatform.Domain.Services.Interfaces
         Task<IPage<Booking>> GetAllBookingForRoom(long? roomId, IPageable pageable);
 
         Task CancelBookingWithoutAcceptedAfterOneDay();
+
+        Task<bool> CheckOverlappedBooking(DateTime startTime, DateTime endTime, long roomId);
     }
 }
