@@ -217,18 +217,19 @@ const RoomDetailForCustomer = () => {
 
     const disabledRangeTime: RangePickerProps['disabledTime'] = (_, type) => {
         if (type === 'start') {
-          return {
-            disabledHours: () => range(0, 8),
-            disabledMinutes: () => range(1, 60),
-            disabledSeconds: () => range(1, 60),
-          };
+            return {
+                disabledHours: () => range(0, 8).concat(range(23, 24)), // Cho phép chọn từ 8h đến 22h
+                disabledMinutes: () => range(1, 60),
+                disabledSeconds: () => range(1, 60),
+            };
         }
         return {
-          disabledHours: () => range(0, 8),
-          disabledMinutes: () => range(1, 60),
-          disabledSeconds: () => range(1, 60),
+            disabledHours: () => range(0, 8).concat(range(23, 24)), // Cho phép chọn từ 8h đến 22h
+            disabledMinutes: () => range(1, 60),
+            disabledSeconds: () => range(1, 60),
         };
-      };
+    };
+
     return (
         <StyledRoomDetail>
             <Grid container spacing={3} mb={2}>
@@ -387,6 +388,7 @@ const RoomDetailForCustomer = () => {
                             </Container>
 
                             <DatePicker
+                                type='start'
                                 style={{ marginBottom: '16px', width: '100%' }}
                                 disabledDate={disabledDate}
                                 onChange={(date) => setStartDate(date)}

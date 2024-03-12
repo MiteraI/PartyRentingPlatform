@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Button, Grid, Typography, Paper, Avatar, LinearProgress, Chip, Card, Box, Icon, Divider, CardMedia, Container } from '@mui/material';
 import { Rating } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
@@ -126,6 +126,8 @@ const BookingTracking = () => {
     const dispatch = useAppDispatch();
     const { id } = useParams<'id'>();
 
+    const navigate = useNavigate()
+
     useEffect(() => {
         dispatch(getEntityForCustomer(id));
     }, [dispatch, id]);
@@ -184,6 +186,10 @@ const BookingTracking = () => {
         dispatch(cancelBookingForCustomer(id));
     };
 
+    const handleGoToHome = () => {
+        navigate('/');
+    }
+
     const handlePayment = () => {
         // Add logic to handle payment here
         // You may navigate to a payment page or perform other actions
@@ -204,6 +210,7 @@ const BookingTracking = () => {
 
                         <Col md="2" style={{ display: 'flex' }}>
                             {isApproving && (<Button
+                            onClick={handleGoToHome}
                                 style={{ margin: 'auto', color: 'white', backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px', justifyContent: 'center', alignItems: 'center' }}
                             >
                                 <strong>Back Home</strong>

@@ -50,17 +50,17 @@ const RoomBookingForCustomer = () => {
   const location = useLocation();
   // Lấy giá trị của selectedService từ URL parameter
   const bookingDetailsParam = new URLSearchParams(location.search).get('selectedService');
-  
+
   // Chuyển đổi chuỗi JSON thành mảng JavaScript
   // const bookingDetails = bookingDetailsParam ? JSON.parse(bookingDetailsParam) : [];
 
   const bookingDetails = bookingDetailsParam
-  ? JSON.parse(bookingDetailsParam).map((item) => ({
+    ? JSON.parse(bookingDetailsParam).map((item) => ({
       serviceId: item.id,
       serviceQuantity: item.quantity,
       // Bạn có thể sao chép các trường khác nếu cần
     }))
-  : [];
+    : [];
 
   const navigate = useNavigate();
 
@@ -406,7 +406,7 @@ const RoomBookingForCustomer = () => {
                     <Col md="6" style={{ marginTop: '15px' }}>
                       {numberOfHours > 0 && (
                         <div className="room-detail-header">
-                          <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x " + numberOfHours + " giờ"}</Typography>
+                          <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x " + numberOfHours + " hour"}</Typography>
                         </div>
                       )}
 
@@ -430,25 +430,6 @@ const RoomBookingForCustomer = () => {
                     </Col>
                   </Row>
 
-                  {/* <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} /> */}
-
-                  {/* <Col md="6">
-                    <div className="room-detail-header">
-                      <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x 2 hour"}</Typography>
-                    </div>
-                    <div className="room-detail-header">
-                      <Typography variant="subtitle2">Service fee</Typography>
-                    </div>
-                  </Col>
-
-                  <Col md="4" style={{ marginLeft: 'auto' }}>
-                    <div className="room-detail-header">
-                      <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * 2}</Typography>
-                    </div>
-                    <div className="room-detail-header">
-                      <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + 100.000}</Typography>
-                    </div>
-                  </Col> */}
                 </Row>
 
                 <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
@@ -462,7 +443,7 @@ const RoomBookingForCustomer = () => {
 
                   <Col md="4" style={{ marginLeft: 'auto' }}>
                     <div className="room-detail-header">
-                      <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + "VNĐ " + (roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
+                      <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + (roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
                     </div>
                   </Col>
                 </Row>
