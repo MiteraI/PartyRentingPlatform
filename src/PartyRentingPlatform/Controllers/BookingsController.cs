@@ -156,7 +156,7 @@ namespace PartyRentingPlatform.Controllers
             if (booking.StartTime > booking.EndTime) return BadRequest("Start time must be before end time");
 
             //Check if StartTime is 3 days in advance
-            if (booking.StartTime < DateTime.Now.AddDays(3)) return BadRequest("Start time must be at least 3 days in advance");
+             if (booking.StartTime < DateTime.Now.AddDays(3)) return BadRequest("Start time must be at least 3 days in advance");
 
             //Getting userId from token and adding it to booking, must use ClaimTypes.Name
             //Noted in TokenProvider.cs

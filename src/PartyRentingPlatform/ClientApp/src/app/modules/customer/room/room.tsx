@@ -26,6 +26,7 @@ import { RangePickerProps } from 'antd/es/date-picker';
 import dayjs from 'dayjs';
 import { range } from 'lodash';
 import { formatCurrency } from 'app/shared/util/currency-utils';
+import { IRoom } from 'app/shared/model/room.model';
 
 
 // import "@vf-alchemy/vattenfall-design-system/scss/main.scss";
@@ -131,9 +132,8 @@ const RoomDetailForCustomer = () => {
 
 
 
-    const roomEntity = useAppSelector((state) => state.room.entity);
+    const roomEntity = useAppSelector((state) => state.room.entity) as IRoom;
     const serviceList = roomEntity.services || [];
-    console.log(roomEntity);
 
     useEffect(() => {
         // Kiểm tra xem roomEntity đã được tải chưa
@@ -156,7 +156,7 @@ const RoomDetailForCustomer = () => {
     useEffect(() => {
 
         const totalServiceFee = Object.keys(quantityMap).reduce((total, serviceId) => {
-            const service = serviceList.find(service => service.id == serviceId);
+            const service = serviceList.find(service => service.id == Number(serviceId));
             if (service) {
                 return total + (service.price * quantityMap[serviceId]);
             }
@@ -179,7 +179,6 @@ const RoomDetailForCustomer = () => {
         'https://a0.muscache.com/im/pictures/miso/Hosting-667691518993177053/original/46be33d4-9ad2-4b22-b9f3-d99bb5d0533d.jpeg?im_w=720',
         'https://a0.muscache.com/im/pictures/miso/Hosting-667691518993177053/original/4e702f0e-fd3c-4754-bd2b-a8714dc35f48.jpeg?im_w=720',
         'https://a0.muscache.com/im/pictures/miso/Hosting-667691518993177053/original/4e702f0e-fd3c-4754-bd2b-a8714dc35f48.jpeg?im_w=720',
-
     ];
 
     const navigate = useNavigate();
@@ -195,7 +194,7 @@ const RoomDetailForCustomer = () => {
         setModalIsOpen(false);
     };
 
-    const handleIncrementQuantity = (serviceId: string) => {
+    const handleIncrementQuantity = (serviceId: string | number) => {
         setQuantityMap((prevMap) => ({
             ...prevMap,
             [serviceId]: (prevMap[serviceId] || 0) + 1,
@@ -213,7 +212,9 @@ const RoomDetailForCustomer = () => {
 
     const disabledDate: RangePickerProps['disabledDate'] = (current) => {
         // Can not select days before today and today
-        return current && current < dayjs().endOf('day');
+        const today = dayjs().endOf('day');
+        const threeDaysAfter = today.add(3, 'day')
+        return current && current < threeDaysAfter;
     };
 
     const disabledRangeTime: RangePickerProps['disabledTime'] = (_, type) => {
@@ -273,17 +274,17 @@ const RoomDetailForCustomer = () => {
             <div className="room-detail-header" style={{ height: '300px', overflow: 'hidden', borderRadius: '10px' }}>
                 <Row style={{ height: '300px', overflow: 'hidden' }}>
                     <Col md="6" style={{ height: '100%', overflow: 'hidden', paddingRight: '10px' }}>
-                        <img src={parallaxImages[0]} alt={`Room Image 0`} className="full-width" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src={roomEntity?.imageURLs?.length > 0 ? roomEntity?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"} alt={`Room Image 0`} className="full-width" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </Col>
                     <Col md="6" style={{ height: '100%', overflow: 'hidden' }}>
                         <Row style={{ height: '100%', overflow: 'hidden' }}>
                             <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '10px' }}>
-                                <img src={parallaxImages[1]} alt={`Room Image 1`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
-                                <img src={parallaxImages[3]} alt={`Room Image 3`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
+                                <img src={roomEntity?.imageURLs?.length > 0 ? roomEntity?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"} alt={`Room Image 1`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
+                                <img src={roomEntity?.imageURLs?.length > 0 ? roomEntity?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"} alt={`Room Image 3`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
                             </Col>
                             <Col md="6" style={{ height: '100%', overflow: 'hidden', padding: '0', paddingRight: '5px' }}>
-                                <img src={parallaxImages[2]} alt={`Room Image 2`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
-                                <img src={parallaxImages[4]} alt={`Room Image 4`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
+                                <img src={roomEntity?.imageURLs?.length > 0 ? roomEntity?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"} alt={`Room Image 2`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover', paddingBottom: '10px' }} />
+                                <img src={roomEntity?.imageURLs?.length > 0 ? roomEntity?.imageURLs[0]?.imageUrl : "https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"} alt={`Room Image 4`} className="full-width" style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
                             </Col>
                         </Row>
                     </Col>
@@ -310,7 +311,7 @@ const RoomDetailForCustomer = () => {
                                 />
                                 <div style={{ marginLeft: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                                     <Typography variant="subtitle1"><strong>{roomEntity.user?.login}</strong></Typography>
-                                    <Typography variant="body2">Superhost • 10 months hosting</Typography>
+                                    <Typography variant="body2">Host party • 10 months hosting</Typography>
                                 </div>
                             </div>
                         </Grid>

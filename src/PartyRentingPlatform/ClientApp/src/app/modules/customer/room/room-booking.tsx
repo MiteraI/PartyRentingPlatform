@@ -276,7 +276,10 @@ const RoomBookingForCustomer = () => {
               </Typography>
             </Grid>
 
-            <h4>Service: </h4>
+            <Typography variant="subtitle1" fontWeight="bold">
+              Service
+            </Typography>
+
             {selectedServiceFromUrl?.map((service, index) => (
               <>
                 <Grid
