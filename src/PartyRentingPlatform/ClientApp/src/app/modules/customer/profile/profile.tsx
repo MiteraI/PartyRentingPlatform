@@ -11,6 +11,7 @@ import type { Styles as ReactModalStyles } from 'react-modal';
 import { styled } from '@mui/system';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { toast } from 'react-toastify';
 
 const { Content, Sider } = Layout;
 
@@ -35,11 +36,13 @@ const modalStyles: ReactModalStyles = {
 };
 const handleBecomeHost = async () => {
     try {
-        await axios.put('/api/profile/become-host');
+        const res = await axios.put('/api/profile/become-host');
+        if (res.status === 200) {
+            toast.success("Bạn đã cập nhật thành host party")
+        }
         // Nếu API trả về OK, bạn có thể thực hiện các bước cập nhật giao diện hoặc hiển thị thông báo thành công
-        console.log('Successfully become host');
     } catch (error) {
-        console.error('Error becoming host:', error);
+        toast.error('Error becoming host:', error);
         // Xử lý lỗi, có thể hiển thị thông báo lỗi cho người dùng
     }
 };
@@ -52,7 +55,10 @@ const Profile = () => {
         const fetchProfile = async () => {
             try {
                 const response = await axios.get('/api/profile');
+
                 setProfile(response.data);
+
+
 
                 // Kiểm tra nếu authorities chứa 'ROLE_HOST'
                 setIsPartyHost(response.data?.authorities?.includes('ROLE_HOST'));
@@ -125,7 +131,7 @@ const Profile = () => {
                             <Button
                                 size="large"
                                 onClick={handleBecomeHost}
-                                style={{ width: '120px', borderColor: 'black', backgroundColor: '#fafafa', color: 'black', height: '48px', borderRadius: '10px', marginBottom: '10px', marginTop: '20px' }}
+                                style={{ marginLeft: "10px", width: '120px', borderColor: 'black', backgroundColor: '#fafafa', color: 'black', height: '48px', borderRadius: '10px', marginBottom: '10px', marginTop: '20px' }}
                             >
                                 Become Host
                             </Button>

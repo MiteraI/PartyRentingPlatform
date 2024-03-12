@@ -9,6 +9,7 @@ const API_BOOKING = {
         GETBOOKINGSBYSTATUS: "api/bookings/host"
     },
     customer: {
+        CONFIRMBOOKING: "api/bookings",
         CANCELBOOKING: "api/bookings",
     }
 }

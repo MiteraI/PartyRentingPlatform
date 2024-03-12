@@ -156,7 +156,7 @@ namespace PartyRentingPlatform.Controllers
             if (booking.StartTime > booking.EndTime) return BadRequest("Start time must be before end time");
 
             //Check if StartTime is 3 days in advance
-            if (booking.StartTime < DateTime.Now.AddDays(3)) return BadRequest("Start time must be at least 3 days in advance");
+             if (booking.StartTime < DateTime.Now.AddDays(3)) return BadRequest("Start time must be at least 3 days in advance");
 
             //If start time is before 8am or after 11pm
             if (booking.StartTime.Hour < 8 || booking.StartTime.Hour > 23) return BadRequest("Booking time must be between 8am and 11pm");

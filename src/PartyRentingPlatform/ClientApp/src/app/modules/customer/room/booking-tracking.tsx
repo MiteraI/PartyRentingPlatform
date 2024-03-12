@@ -4,7 +4,7 @@ import { Button, Grid, Typography, Paper, Avatar, LinearProgress, Chip, Card, Bo
 import { Rating } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import StarIcon from '@mui/icons-material/Star';
-import { getEntityForCustomer } from 'app/entities/booking/booking.reducer';
+import { confirmBookingForCustomer, getEntityForCustomer } from 'app/entities/booking/booking.reducer';
 import { styled } from '@mui/system';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -28,6 +28,7 @@ const { Step } = Steps;
 
 import { cancelBookingForCustomer } from 'app/entities/booking/booking.reducer';
 import { formatCurrency } from 'app/shared/util/currency-utils';
+import dayjs from 'dayjs';
 // import TimelineItem from "examples/Timeline/TimelineItem";
 
 const BookingDetailContainer = styled('div')(({ theme }) => ({
@@ -150,8 +151,8 @@ const BookingTracking = () => {
 
     const isApproving = bookingEntity?.status === 'APPROVING';
     const isSuccess = bookingEntity?.status === 'SUCCESS';
+    const isCancel = bookingEntity?.status === 'CANCEL';
     const isAccepted = bookingEntity?.status === 'ACCEPTED';
-    console.log(serviceList);
 
 
     useEffect(() => {
@@ -191,11 +192,17 @@ const BookingTracking = () => {
         navigate("/")
     }
 
+    const handleConfirm = () => {
+        dispatch(confirmBookingForCustomer(id))
+    }
+
     const handlePayment = () => {
         // Add logic to handle payment here
         // You may navigate to a payment page or perform other actions
         // based on your application's architecture
     };
+
+
 
     return (
         <BookingDetailContainer>
@@ -423,6 +430,13 @@ const BookingTracking = () => {
                             >
                                 <strong>Cancel</strong>
                             </Button>)}
+
+                            {isAccepted && dayjs() >= dayjs(`${bookingEntity?.startTime}`) && (<Button
+                                style={{ margin: 'auto', color: 'white', backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px', justifyContent: 'center', alignItems: 'center' }}
+                                onClick={handleConfirm}
+                            >
+                                <strong>Confirm</strong>
+                            </Button>)}
                         </Col>
                     </Row>
 
@@ -444,14 +458,44 @@ const BookingTracking = () => {
                                 title="Serving"
                                 icon={<SmileOutlined />}
                                 // description={<Typography variant="body2">You are currently being served</Typography>}
-                                status={getStatus(bookingEntity?.status, 'SERVING')}
+                                status={getStatus(bookingEntity?.status, 'ACCEPTED')}
                             />
-                            <Step
-                                title="Payment"
+
+                            {isApproving && <Step
+                                title={"Payment"}
                                 icon={<DollarCircleOutlined />}
+
                                 // description={<Typography variant="body2">Payment completed</Typography>}
-                                status={getStatus(bookingEntity?.status, 'DONE')}
-                            />
+                                status={getStatus(bookingEntity?.status, 'SUCCESS')}
+                            />}
+
+                            {isAccepted && <Step
+                                title={"Payment"}
+                                icon={<DollarCircleOutlined />}
+
+                                // description={<Typography variant="body2">Payment completed</Typography>}
+                                status={getStatus(bookingEntity?.status, 'SUCCESS')}
+                            />}
+
+                            {isSuccess && <Step
+                                title={"Payment"}
+                                icon={<DollarCircleOutlined />}
+
+                                // description={<Typography variant="body2">Payment completed</Typography>}
+                                status={getStatus(bookingEntity?.status, 'SUCCESS')}
+                            />}
+
+                            {isCancel && <Step
+                                title={"Cancel"}
+                                icon={<DollarCircleOutlined style={{ color: "red" }} />}
+
+                                // description={<Typography variant="body2">Payment completed</Typography>}
+                                status={getStatus(bookingEntity?.status, 'CANCEL')}
+                            />}
+
+
+
+
                         </Steps>
                     </Row>
 
