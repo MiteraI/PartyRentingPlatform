@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Grid, Typography, Paper, Avatar, LinearProgress, Chip, Card, Box, Icon, Divider, CardMedia, Container } from '@mui/material';
 import { Rating } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import StarIcon from '@mui/icons-material/Star';
-import { getEntityForCustomer } from 'app/entities/booking/booking.reducer';
+import { confirmBookingForCustomer, getEntityForCustomer } from 'app/entities/booking/booking.reducer';
 import { styled } from '@mui/system';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -27,6 +27,8 @@ import { ClockCircleOutlined, CheckOutlined, CloseCircleOutlined, DollarCircleOu
 const { Step } = Steps;
 
 import { cancelBookingForCustomer } from 'app/entities/booking/booking.reducer';
+import { formatCurrency } from 'app/shared/util/currency-utils';
+import dayjs from 'dayjs';
 // import TimelineItem from "examples/Timeline/TimelineItem";
 
 const BookingDetailContainer = styled('div')(({ theme }) => ({
@@ -125,6 +127,8 @@ function getStatus(currentStatus, targetStatus) {
 const BookingTracking = () => {
     const dispatch = useAppDispatch();
     const { id } = useParams<'id'>();
+    const navigate = useNavigate()
+
 
     useEffect(() => {
         dispatch(getEntityForCustomer(id));
@@ -134,24 +138,71 @@ const BookingTracking = () => {
 
     // Ensure bookingEntity and bookingEntity.room are not null or undefined
     const roomEntity = bookingEntity?.room || null;
+    const serviceList = bookingEntity?.bookingDetails?.map((bookingDetail) => ({
+        id: bookingDetail.service.id,
+        name: bookingDetail.service.serviceName,
+        price: bookingDetail.service.price,
+        description: bookingDetail.service.description,
+        quantity: bookingDetail.serviceQuantity,
+    }));
+
+    const [serviceFee, setServiceFee] = useState<number>(0);
+    const [numberOfHours, setNumberOfHours] = useState<number>(0);
 
     const isApproving = bookingEntity?.status === 'APPROVING';
     const isSuccess = bookingEntity?.status === 'SUCCESS';
-    console.log(bookingEntity);
+    const isCancel = bookingEntity?.status === 'CANCEL';
+    const isAccepted = bookingEntity?.status === 'ACCEPTED';
 
+
+    useEffect(() => {
+        const startDateTmp = new Date(bookingEntity?.startTime);
+        const endDateTmp = new Date(bookingEntity?.endTime);
+
+        // Kiểm tra nếu startDate và endDate là đối tượng Date hợp lệ
+        if (!isNaN(startDateTmp.getTime()) && !isNaN(endDateTmp.getTime())) {
+            const timeDifferenceInMilliseconds = endDateTmp.getTime() - startDateTmp.getTime();
+            const numberOfHours = timeDifferenceInMilliseconds / (1000 * 60 * 60);
+
+            setNumberOfHours(numberOfHours);
+        } else {
+            console.error('Invalid date format');
+        }
+
+
+    }, [bookingEntity, roomEntity]);
+
+    useEffect(() => {
+        let totalFee = 0;
+        serviceList?.map((selectedService) => {
+            totalFee += selectedService.quantity * selectedService.price;
+        }
+
+        );
+        setServiceFee(totalFee);
+
+    }, [bookingEntity, roomEntity]);
 
     const handleCancel = () => {
-        // Add logic to handle cancellation here
-        // You may dispatch an action or perform an API call
-        // based on your application's architecture
+
         dispatch(cancelBookingForCustomer(id));
     };
+
+    const handleBackHome = () => {
+        navigate("/")
+    }
+
+    const handleConfirm = () => {
+        dispatch(confirmBookingForCustomer(id))
+    }
 
     const handlePayment = () => {
         // Add logic to handle payment here
         // You may navigate to a payment page or perform other actions
         // based on your application's architecture
     };
+
+
 
     return (
         <BookingDetailContainer>
@@ -161,16 +212,19 @@ const BookingTracking = () => {
                     <Row style={{ padding: '20px' }}>
                         <Col md="10" style={{ paddingLeft: '15px' }}>
                             <Typography style={{ height: '60px' }} variant="h4"><strong>Thanks for your booking</strong></Typography>
-                            <Typography style={{ color: '#938A88' }} variant="subtitle1"><strong>your booking has been recieved</strong></Typography>
+                            {isAccepted && (<Typography style={{ color: '#e51d51' }} variant="subtitle1"><strong>your booking is ready now</strong></Typography>)}
 
                         </Col>
 
                         <Col md="2" style={{ display: 'flex' }}>
-                            {isApproving && (<Button
-                                style={{ margin: 'auto', color: 'white', backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px', justifyContent: 'center', alignItems: 'center' }}
-                            >
-                                <strong>Back Home</strong>
-                            </Button>)}
+                            {isApproving && (
+                                <Button
+
+                                    onClick={handleBackHome}
+                                    style={{ margin: 'auto', color: 'white', backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px', justifyContent: 'center', alignItems: 'center' }}
+                                >
+                                    <strong>Back Home</strong>
+                                </Button>)}
                         </Col>
                     </Row>
 
@@ -203,8 +257,54 @@ const BookingTracking = () => {
                             </Row>
                         </div>
 
-
                         <Divider style={{ marginBottom: '20px', backgroundColor: '#000', opacity: 0.18 }} />
+
+                        <h4>Service</h4>
+                        {serviceList?.map((service, index) => (
+                            <>
+                                <Grid
+                                    key={index}
+                                    item
+                                    xs={12}
+                                    container
+                                    spacing={1}
+                                    alignItems="center"
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <Grid item xs={10}>
+                                        <Typography style={{ display: 'inline-block' }} variant="subtitle1" fontWeight="bold">
+                                            {service.name}
+                                        </Typography>
+                                        <Typography style={{ display: 'inline-block', color: 'white' }} variant="subtitle1" fontWeight="bold">
+                                            {'_'}
+                                        </Typography>
+                                        <Typography style={{ display: 'inline-block', color: '#BCBAC2' }} variant="subtitle1" fontWeight="bold">
+                                            {' x   ' + service.quantity}
+                                        </Typography>
+
+                                        <Typography
+                                            variant="body2"
+                                            style={{
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                color: '#b4b4b4'
+                                            }}
+                                        >
+                                            {'  '}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={2} container justifyContent="flex-end">
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <span style={{ margin: '0 10px' }}>{formatCurrency(service.price)}</span>
+                                        </div>
+                                    </Grid>
+                                </Grid>
+                            </>
+                        ))}
+
+
+                        <Divider style={{ marginTop: '20px', marginBottom: '20px', backgroundColor: '#000', opacity: 0.18 }} />
 
 
                         <Row>
@@ -221,7 +321,7 @@ const BookingTracking = () => {
 
                                     {/* {numberOfHours > 0 && (
                                         <div className="room-detail-header">
-                                            <Typography variant="subtitle2">{"VNĐ " + bookingEntity.price + " x " + numberOfHours + " giờ"}</Typography>
+                                            <Typography variant="subtitle2">{"VNĐ " + bookingEntity.price + " x " + numberOfHours + " hour"}</Typography>
                                         </div>
                                     )}
 
@@ -249,13 +349,14 @@ const BookingTracking = () => {
                             </Row>
 
                             <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
+                            <h4>Price details</h4>
                             <Row>
 
-                                <Col md="6">
+                                {/* <Col md="6">
                                     <div className="room-detail-header">
                                         <Typography variant="subtitle1"><strong>Total (VNĐ)</strong></Typography>
                                     </div>
-                                </Col>
+                                </Col> */}
 
                                 <Col md="4" style={{ marginLeft: 'auto' }}>
                                     <div className="room-detail-header">
@@ -264,23 +365,32 @@ const BookingTracking = () => {
                                 </Col>
                             </Row>
 
-                            <Col md="6">
-                                <div className="room-detail-header">
-                                    <Typography variant="subtitle2">{"VNĐ " + bookingEntity.price + " x 2 ngày"}</Typography>
-                                </div>
-                                <div className="room-detail-header">
-                                    <Typography variant="subtitle2">Phí dịch vụ</Typography>
-                                </div>
+                            <Col md="6" style={{ marginTop: '15px' }}>
+                                {numberOfHours > 0 && (
+                                    <div className="room-detail-header">
+                                        <Typography variant="subtitle2">{formatCurrency(roomEntity.price) + " x " + numberOfHours + " hour"}</Typography>
+                                    </div>
+                                )}
+
+                                {serviceFee > 0 && (<div className="room-detail-header">
+                                    <Typography variant="subtitle2">Service fee</Typography>
+                                </div>)}
                             </Col>
 
-                            <Col md="4" style={{ marginLeft: 'auto' }}>
-                                <div className="room-detail-header">
-                                    <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + bookingEntity.price * 2}</Typography>
-                                </div>
-                                <div className="room-detail-header">
-                                    <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + 100.000}</Typography>
-                                </div>
+
+                            <Col md="4" style={{ marginLeft: 'auto', marginTop: '15px' }}>
+                                {numberOfHours > 0 && (
+                                    <div className="room-detail-header">
+                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2">{formatCurrency(roomEntity.price * numberOfHours)}</Typography>
+                                    </div>
+                                )}
+                                {serviceFee > 0 && (
+                                    <div className="room-detail-header">
+                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2">{formatCurrency(serviceFee)}</Typography>
+                                    </div>
+                                )}
                             </Col>
+
                         </Row>
 
                         <Divider style={{ marginBottom: '20px', marginTop: '20px', backgroundColor: '#000', opacity: 0.18 }} />
@@ -294,7 +404,7 @@ const BookingTracking = () => {
 
                             <Col md="4" style={{ marginLeft: 'auto' }}>
                                 <div className="room-detail-header">
-                                    <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + bookingEntity.price * 2}</strong></Typography>
+                                    <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{formatCurrency(roomEntity?.price * numberOfHours + serviceFee)}</strong></Typography>
                                 </div>
                             </Col>
                         </Row>
@@ -320,6 +430,13 @@ const BookingTracking = () => {
                             >
                                 <strong>Cancel</strong>
                             </Button>)}
+
+                            {isAccepted && dayjs() >= dayjs(`${bookingEntity?.startTime}`) && (<Button
+                                style={{ margin: 'auto', color: 'white', backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px', justifyContent: 'center', alignItems: 'center' }}
+                                onClick={handleConfirm}
+                            >
+                                <strong>Confirm</strong>
+                            </Button>)}
                         </Col>
                     </Row>
 
@@ -341,18 +458,48 @@ const BookingTracking = () => {
                                 title="Serving"
                                 icon={<SmileOutlined />}
                                 // description={<Typography variant="body2">You are currently being served</Typography>}
-                                status={getStatus(bookingEntity?.status, 'SERVING')}
+                                status={getStatus(bookingEntity?.status, 'ACCEPTED')}
                             />
-                            <Step
-                                title="Payment"
+
+                            {isApproving && <Step
+                                title={"Payment"}
                                 icon={<DollarCircleOutlined />}
+
                                 // description={<Typography variant="body2">Payment completed</Typography>}
-                                status={getStatus(bookingEntity?.status, 'DONE')}
-                            />
+                                status={getStatus(bookingEntity?.status, 'SUCCESS')}
+                            />}
+
+                            {isAccepted && <Step
+                                title={"Payment"}
+                                icon={<DollarCircleOutlined />}
+
+                                // description={<Typography variant="body2">Payment completed</Typography>}
+                                status={getStatus(bookingEntity?.status, 'SUCCESS')}
+                            />}
+
+                            {isSuccess && <Step
+                                title={"Payment"}
+                                icon={<DollarCircleOutlined />}
+
+                                // description={<Typography variant="body2">Payment completed</Typography>}
+                                status={getStatus(bookingEntity?.status, 'SUCCESS')}
+                            />}
+
+                            {isCancel && <Step
+                                title={"Cancel"}
+                                icon={<DollarCircleOutlined style={{ color: "red" }} />}
+
+                                // description={<Typography variant="body2">Payment completed</Typography>}
+                                status={getStatus(bookingEntity?.status, 'CANCEL')}
+                            />}
+
+
+
+
                         </Steps>
                     </Row>
 
-           
+
 
                 </Container>
             </Grid>

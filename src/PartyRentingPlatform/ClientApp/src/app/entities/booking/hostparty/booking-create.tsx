@@ -39,6 +39,7 @@ const BookingCreate: React.FC<IBookingCreate> = (props) => {
     const handleFinish = (values: IRoom) => {
         const newValue = { ...values, formFiles: picture };
         dispatch(createEntityOfHost(newValue))
+        handleIsOpen()
 
     }
     return (
@@ -51,7 +52,6 @@ const BookingCreate: React.FC<IBookingCreate> = (props) => {
         >
             <Form
                 onFinish={handleFinish}
-
             >
                 <DialogTitle id="scroll-dialog-title">Create room</DialogTitle>
                 <DialogContent dividers>
@@ -153,7 +153,6 @@ const BookingCreate: React.FC<IBookingCreate> = (props) => {
                     </Form.Item> */}
                 </DialogContent>
                 <DialogActions>
-                    <Button>Cancle</Button>
                     <Button type="submit">Create</Button>
                 </DialogActions>
             </Form>

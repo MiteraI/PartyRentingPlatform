@@ -37,7 +37,7 @@ const ServiceModal: React.FC<IServiceModal> = (props) => {
                 <DialogTitle id="scroll-dialog-title">Create service</DialogTitle>
                 <DialogContent dividers>
                     <Form.Item
-                        label="serviceName"
+                        label="Service name"
                         name="serviceName"
                         rules={[
                             { required: true, message: "Please input service name " }
@@ -48,7 +48,7 @@ const ServiceModal: React.FC<IServiceModal> = (props) => {
                     </Form.Item>
 
                     <Form.Item
-                        label="price"
+                        label="Price"
                         name="price"
                         rules={[
                             { required: true, message: `The price of service must be between ${formatCurrency(10000)} and ${formatCurrency(5000000)}` }
@@ -58,7 +58,7 @@ const ServiceModal: React.FC<IServiceModal> = (props) => {
                         <InputNumber min={10000} max={5000000} />
                     </Form.Item>
                     <Form.Item
-                        label="description"
+                        label="Description"
                         name="description"
                         rules={[
                             { required: true, message: "Please input description" }

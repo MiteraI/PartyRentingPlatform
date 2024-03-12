@@ -31,7 +31,7 @@ const ListTabPanelRoomHost: React.FC<IListTabPanelRoomHost> = (props) => {
     return (
         <>
             <CustomeDetail data={detailRoomOfHost} handleOpen={handleOpenDetail} isOpen={open} title="Room detail" />
-            <List dense sx={{ height: "340.125px" }}>
+            <List dense sx={{ height: "340.125px", overflow: "scroll" }}>
                 {data?.length > 0 ?
                     data.map((room) => (
                         <ListItem
@@ -42,7 +42,7 @@ const ListTabPanelRoomHost: React.FC<IListTabPanelRoomHost> = (props) => {
                             key={room.id}
                             secondaryAction={
                                 <>
-                                    <IconButton onClick={() => editfunction(room.id)} edge="end" aria-label="edit">
+                                    <IconButton sx={{ marginLeft: "10px" }} onClick={() => editfunction(room.id)} edge="end" aria-label="edit">
                                         <EditIcon />
                                     </IconButton>
 
@@ -61,7 +61,11 @@ const ListTabPanelRoomHost: React.FC<IListTabPanelRoomHost> = (props) => {
                                 </ListItemAvatar>
                                 <ListItemText
                                     primary={room.roomName}
-                                    secondary={room.description}
+                                    secondary={
+                                        <div style={{width:"95%"}}>
+                                            {room.description}
+                                        </div>
+                                    }
                                 />
                             </ListItemButton>
                         </ListItem>

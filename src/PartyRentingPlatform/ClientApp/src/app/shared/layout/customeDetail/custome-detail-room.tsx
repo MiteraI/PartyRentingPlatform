@@ -23,7 +23,7 @@ interface ICustomeDetail {
 const CustomeDetail: React.FC<ICustomeDetail> = (props) => {
     const { title, data, handleOpen, isOpen } = props
     const colStyle: React.CSSProperties = {
-        textAlign: "center",
+        textAlign: "left",
         marginBottom: "10px"
     }
 
@@ -40,14 +40,13 @@ const CustomeDetail: React.FC<ICustomeDetail> = (props) => {
                 <Row md={12}>
                     <Col md={4}>
                         <Row md={12}>
-                            <img src="https://www.shutterstock.com/image-vector/zoo-map-enclosures-animals-outdoor-260nw-2148595493.jpg" alt="demo" />
+                            <img height="200px" src={data?.imageURLs[0]?.imageUrl ? data?.imageURLs[0]?.imageUrl : "https://www.shutterstock.com/image-vector/zoo-map-enclosures-animals-outdoor-260nw-2148595493.jpg"} alt="room image" />
                         </Row>
                     </Col>
                     <Col md={8}>
                         <Row md={12}>
                             <Col style={colStyle} md={6}>Room name: {data?.roomName}</Col>
                             <Col style={colStyle} md={6}>Address: {data?.address}</Col>
-                            <Col style={colStyle} md={6}>Description: {data?.description}</Col>
                             <Col style={colStyle} md={6}>Price: {formatCurrency(data?.price)}</Col>
                             <Col style={colStyle} md={6}>Room capacity: {data?.roomCapacity}</Col>
                             <Col style={colStyle} md={6}>Rating : {data?.rating}</Col>
@@ -59,6 +58,7 @@ const CustomeDetail: React.FC<ICustomeDetail> = (props) => {
                                     return <Tag color="blue-inverse">{service.serviceName}</Tag>
                                 })}
                             </Col>
+                            <Col style={colStyle} md={12}>Description: {data?.description}</Col>
                         </Row>
 
                     </Col>
