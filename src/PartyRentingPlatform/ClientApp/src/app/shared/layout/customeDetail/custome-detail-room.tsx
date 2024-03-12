@@ -40,7 +40,7 @@ const CustomeDetail: React.FC<ICustomeDetail> = (props) => {
                 <Row md={12}>
                     <Col md={4}>
                         <Row md={12}>
-                            <img src="https://www.shutterstock.com/image-vector/zoo-map-enclosures-animals-outdoor-260nw-2148595493.jpg" alt="demo" />
+                            <img height="200px" src={data?.imageURLs[0]?.imageUrl ? data?.imageURLs[0]?.imageUrl : "https://www.shutterstock.com/image-vector/zoo-map-enclosures-animals-outdoor-260nw-2148595493.jpg"} alt="room image" />
                         </Row>
                     </Col>
                     <Col md={8}>

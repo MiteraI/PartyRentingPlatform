@@ -42,7 +42,7 @@ const CustomeDetailRequestCustomer: React.FC<ICustomeDetail> = (props) => {
                 <Row md={12}>
                     <Col md={4}>
                         <Row md={12}>
-                            <img src="https://www.shutterstock.com/image-vector/zoo-map-enclosures-animals-outdoor-260nw-2148595493.jpg" alt="demo" />
+                            <img height={"200px"} src={"https://storage.googleapis.com/digital-platform/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e/chiem_nguong_20_mau_biet_thu_dep_sang_trong_bac_nhat_so_2_18ef110d5e.jpg"} alt="demo" />
                         </Row>
                     </Col>
                     <Col md={8}>

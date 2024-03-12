@@ -18,6 +18,7 @@ import { styled } from '@mui/system';
 import { AxiosResponse } from 'axios';
 import './requestToBook.scss';
 import { forEach } from 'lodash';
+import { formatCurrency } from 'app/shared/util/currency-utils';
 
 
 const RoomBookingForCustomer = () => {
@@ -50,17 +51,17 @@ const RoomBookingForCustomer = () => {
   const location = useLocation();
   // Lấy giá trị của selectedService từ URL parameter
   const bookingDetailsParam = new URLSearchParams(location.search).get('selectedService');
-  
+
   // Chuyển đổi chuỗi JSON thành mảng JavaScript
   // const bookingDetails = bookingDetailsParam ? JSON.parse(bookingDetailsParam) : [];
 
   const bookingDetails = bookingDetailsParam
-  ? JSON.parse(bookingDetailsParam).map((item) => ({
+    ? JSON.parse(bookingDetailsParam).map((item) => ({
       serviceId: item.id,
       serviceQuantity: item.quantity,
       // Bạn có thể sao chép các trường khác nếu cần
     }))
-  : [];
+    : [];
 
   const navigate = useNavigate();
 
@@ -406,7 +407,7 @@ const RoomBookingForCustomer = () => {
                     <Col md="6" style={{ marginTop: '15px' }}>
                       {numberOfHours > 0 && (
                         <div className="room-detail-header">
-                          <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x " + numberOfHours + " giờ"}</Typography>
+                          <Typography variant="subtitle2">{formatCurrency(roomEntity.price) + " x " + numberOfHours + " giờ"}</Typography>
                         </div>
                       )}
 
@@ -419,12 +420,12 @@ const RoomBookingForCustomer = () => {
                     <Col md="4" style={{ marginLeft: 'auto', marginTop: '15px' }}>
                       {numberOfHours > 0 && (
                         <div className="room-detail-header">
-                          <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * numberOfHours}</Typography>
+                          <Typography style={{ textAlign: 'end' }} variant="subtitle2">{formatCurrency(roomEntity.price * numberOfHours)}</Typography>
                         </div>
                       )}
                       {serviceFee > 0 && (
                         <div className="room-detail-header">
-                          <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + serviceFee}</Typography>
+                          <Typography style={{ textAlign: 'end' }} variant="subtitle2">{formatCurrency(serviceFee)}</Typography>
                         </div>
                       )}
                     </Col>
@@ -456,13 +457,13 @@ const RoomBookingForCustomer = () => {
 
                   <Col md="6">
                     <div className="room-detail-header">
-                      <Typography variant="subtitle1"><strong>Total (VNĐ)</strong></Typography>
+                      <Typography variant="subtitle1"><strong>Total ( VNĐ )</strong></Typography>
                     </div>
                   </Col>
 
                   <Col md="4" style={{ marginLeft: 'auto' }}>
                     <div className="room-detail-header">
-                      <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + "VNĐ " + (roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
+                      <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{formatCurrency(roomEntity.price * numberOfHours + serviceFee)}</strong></Typography>
                     </div>
                   </Col>
                 </Row>

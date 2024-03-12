@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Grid, Typography, Paper, Avatar, LinearProgress, Chip, Card, Box, Icon, Divider, CardMedia, Container } from '@mui/material';
 import { Rating } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
@@ -27,6 +27,7 @@ import { ClockCircleOutlined, CheckOutlined, CloseCircleOutlined, DollarCircleOu
 const { Step } = Steps;
 
 import { cancelBookingForCustomer } from 'app/entities/booking/booking.reducer';
+import { formatCurrency } from 'app/shared/util/currency-utils';
 // import TimelineItem from "examples/Timeline/TimelineItem";
 
 const BookingDetailContainer = styled('div')(({ theme }) => ({
@@ -125,6 +126,7 @@ function getStatus(currentStatus, targetStatus) {
 const BookingTracking = () => {
     const dispatch = useAppDispatch();
     const { id } = useParams<'id'>();
+    const navigate = useNavigate()
 
     useEffect(() => {
         dispatch(getEntityForCustomer(id));
@@ -171,18 +173,22 @@ const BookingTracking = () => {
     useEffect(() => {
         let totalFee = 0;
         serviceList?.map((selectedService) => {
-          totalFee += selectedService.quantity * selectedService.price;
+            totalFee += selectedService.quantity * selectedService.price;
         }
-    
+
         );
         setServiceFee(totalFee);
-    
-      }, [bookingEntity, roomEntity]);
+
+    }, [bookingEntity, roomEntity]);
 
     const handleCancel = () => {
 
         dispatch(cancelBookingForCustomer(id));
     };
+
+    const handleBackHome = () => {
+        navigate("/")
+    }
 
     const handlePayment = () => {
         // Add logic to handle payment here
@@ -203,11 +209,14 @@ const BookingTracking = () => {
                         </Col>
 
                         <Col md="2" style={{ display: 'flex' }}>
-                            {isApproving && (<Button
-                                style={{ margin: 'auto', color: 'white', backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px', justifyContent: 'center', alignItems: 'center' }}
-                            >
-                                <strong>Back Home</strong>
-                            </Button>)}
+                            {isApproving && (
+                                <Button
+
+                                    onClick={handleBackHome}
+                                    style={{ margin: 'auto', color: 'white', backgroundColor: '#dd1062', height: '48px', width: '100%', borderColor: '#dd1062', borderRadius: '10px', justifyContent: 'center', alignItems: 'center' }}
+                                >
+                                    <strong>Back Home</strong>
+                                </Button>)}
                         </Col>
                     </Row>
 
@@ -279,7 +288,7 @@ const BookingTracking = () => {
                                     </Grid>
                                     <Grid item xs={2} container justifyContent="flex-end">
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ margin: '0 10px' }}>{service.price}</span>
+                                            <span style={{ margin: '0 10px' }}>{formatCurrency(service.price)}</span>
                                         </div>
                                     </Grid>
                                 </Grid>
@@ -351,7 +360,7 @@ const BookingTracking = () => {
                             <Col md="6" style={{ marginTop: '15px' }}>
                                 {numberOfHours > 0 && (
                                     <div className="room-detail-header">
-                                        <Typography variant="subtitle2">{"VNĐ " + roomEntity.price + " x " + numberOfHours + " hour"}</Typography>
+                                        <Typography variant="subtitle2">{formatCurrency(roomEntity.price) + " x " + numberOfHours + " hour"}</Typography>
                                     </div>
                                 )}
 
@@ -364,12 +373,12 @@ const BookingTracking = () => {
                             <Col md="4" style={{ marginLeft: 'auto', marginTop: '15px' }}>
                                 {numberOfHours > 0 && (
                                     <div className="room-detail-header">
-                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + roomEntity.price * numberOfHours}</Typography>
+                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2">{formatCurrency(roomEntity.price * numberOfHours)}</Typography>
                                     </div>
                                 )}
                                 {serviceFee > 0 && (
                                     <div className="room-detail-header">
-                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2">{"VNĐ " + serviceFee}</Typography>
+                                        <Typography style={{ textAlign: 'end' }} variant="subtitle2">{formatCurrency(serviceFee)}</Typography>
                                     </div>
                                 )}
                             </Col>
@@ -387,7 +396,7 @@ const BookingTracking = () => {
 
                             <Col md="4" style={{ marginLeft: 'auto' }}>
                                 <div className="room-detail-header">
-                                    <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + "VNĐ " + (roomEntity?.price * numberOfHours + serviceFee)}</strong></Typography>
+                                    <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{formatCurrency(roomEntity?.price * numberOfHours + serviceFee)}</strong></Typography>
                                 </div>
                             </Col>
                         </Row>

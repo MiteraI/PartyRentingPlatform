@@ -20,6 +20,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import './home.scss';
 import { addDeposit } from 'app/entities/wallet/wallet.reducer';
 import { toast } from 'react-toastify';
+import { formatCurrency } from 'app/shared/util/currency-utils';
 
 const Home = () => {
   const dispatch = useAppDispatch();
@@ -257,7 +258,7 @@ const Home = () => {
                         </div>
                         {/* Giá tiền */}
                         <Typography style={{ marginTop: '2px' }} variant="body2" color="text.primary">
-                          <strong>{item.price} VND</strong> / hour
+                          <strong>{formatCurrency(item.price)}</strong> / hour
                         </Typography>
                       </div>
                       {/* Card actions */}

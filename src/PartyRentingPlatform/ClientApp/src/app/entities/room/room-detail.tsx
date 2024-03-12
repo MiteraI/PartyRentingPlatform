@@ -20,6 +20,7 @@ import './room-detail.scss';
 
 
 import moment from "moment";
+import { formatCurrency } from 'app/shared/util/currency-utils';
 
 
 // import "@vf-alchemy/vattenfall-design-system/scss/main.scss";
@@ -284,9 +285,9 @@ export const RoomDetail = () => {
         <Grid item xs={12} md={4} >
           <Container style={{ position: 'sticky', top: '100px', padding: '0' }}>
             <div className="booking-info" style={{ boxShadow: 'rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px', padding: '24px', borderRadius: '10px' }}>
-              <Typography mb={2} variant="h6"><strong>${roomEntity.price}</strong> slot</Typography>
+              <Typography mb={2} variant="h6"><strong>{formatCurrency(roomEntity.price)}</strong> slot</Typography>
               <Container style={{ marginBottom: '15px', padding: '0', width: '100%', textAlign: 'center' }}>
-                
+
               </Container>
               <Button
                 color="primary"
@@ -335,13 +336,13 @@ export const RoomDetail = () => {
 
                 <Col md="6">
                   <div className="room-detail-header">
-                    <Typography variant="subtitle1"><strong>Total (VNĐ)</strong></Typography>
+                    <Typography variant="subtitle1"><strong>Total ( VNĐ )</strong></Typography>
                   </div>
                 </Col>
 
                 <Col md="4" style={{ marginLeft: 'auto' }}>
                   <div className="room-detail-header">
-                    <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{"VNĐ " + roomEntity.price * 2}</strong></Typography>
+                    <Typography style={{ textAlign: 'end' }} variant="subtitle2"><strong>{formatCurrency(roomEntity.price * 2)}</strong></Typography>
                   </div>
                 </Col>
               </Row>
