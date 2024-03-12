@@ -8,6 +8,7 @@ import { formatCurrency } from "app/shared/util/currency-utils";
 import { convertDateTimeToVietName } from "app/shared/util/date-utils";
 import React, { ChangeEventHandler, useEffect, useState } from "react"
 import { Storage } from "react-jhipster";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface IWallet {
     open: boolean,
@@ -60,7 +61,7 @@ const Wallet: React.FC<IWallet> = (props) => {
                 style={{ height: "100%" }}
             >
                 <Box textAlign={"center"} >
-                    Số dư
+                    Balance
                 </Box>
                 <div style={{ textAlign: "center", marginBottom: "30px" }}>
                     <h1>{formatCurrency(balance ?? balance)}</h1>
@@ -78,17 +79,17 @@ const Wallet: React.FC<IWallet> = (props) => {
                                 style={{ marginBottom: "0px", marginRight: "3px", flexGrow: 1 }}
                                 name={"price"}
                             >
-                                <Input type="number" min={50000} max={10000000} style={{ padding: "8px" }}/>
+                                <Input type="number" min={50000} max={10000000} style={{ padding: "8px" }} />
                             </Form.Item>
-                            <Button loading={loading} htmlType="submit" size="large" >Nạp tiền</Button>
+                            <Button loading={loading} htmlType="submit" size="large" >Deposit</Button>
                         </Box>
                     </Form>
 
                 </Box>
-                <Button size="large" block>Rút tiền</Button>
+                <Button size="large" block>Withdrawn</Button>
 
                 <Box sx={{ marginTop: "30px" }}>
-                    <h2>Lịch sử giao dịch</h2>
+                    <h2>History transaction</h2>
                     <Box sx={{ height: "48vh", overflowY: "scroll" }}>
                         <Box sx={{ marginTop: "10px", padding: "5px" }}>
                             {historyTransactions?.map((history) => {
@@ -99,7 +100,7 @@ const Wallet: React.FC<IWallet> = (props) => {
                                                 Transaction No: {history.transactionNo}
                                             </div>
                                             <div>
-                                                Status: {history.status}
+                                                Status: {history.status == "SUCCESS" ? <CheckCircleIcon fontSize="small" color="success"/> : <CheckCircleIcon fontSize="small" color="error"/>}
                                             </div>
                                         </div>
                                         <div>Create at: {convertDateTimeToVietName(history.createdAt)}</div>

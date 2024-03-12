@@ -29,6 +29,7 @@ import { sample } from 'lodash';
 import { Tag } from 'antd';
 import { getEntitiesForCustomer } from 'app/entities/booking/booking.reducer';
 import { Link } from 'react-router-dom';
+import { formatCurrency } from 'app/shared/util/currency-utils';
 
 // ----------------------------------------------------------------------
 
@@ -109,7 +110,7 @@ export default function UserPage() {
     company: _.room.roomName,
     isVerified: 'faker.datatype.boolean()',
     status: _.status,
-    role: _.totalPrice,
+    role: formatCurrency(_.totalPrice),
   }));
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);

@@ -244,10 +244,10 @@ const Home = () => {
                         <Typography variant="h6" component="div" className='room-name'>
                           <strong>{item.roomName}</strong>
                         </Typography>
-                        <div className="rating">
+                        {/* <div className="rating">
                           {generateStarIcons(item.rating)}
-                        </div>
-                        <Typography variant="body2" color="text.secondary" className="description">
+                        </div> */}
+                        <Typography variant="body1" color="text.secondary" className="description">
                           {item.description}
                         </Typography>
                         <div className="address">
@@ -257,7 +257,7 @@ const Home = () => {
                           </Typography>
                         </div>
                         {/* Giá tiền */}
-                        <Typography style={{ marginTop: '2px' }} variant="body2" color="text.primary">
+                        <Typography style={{ marginTop: '8px' }} variant="body2" color="text.primary">
                           <strong>{formatCurrency(item.price)}</strong> / hour
                         </Typography>
                       </div>

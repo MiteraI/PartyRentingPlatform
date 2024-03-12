@@ -25,7 +25,7 @@ interface ICustomeDetail {
 const CustomeDetailRequestCustomer: React.FC<ICustomeDetail> = (props) => {
     const { title, data, handleOpen, isOpen } = props
     const colStyle: React.CSSProperties = {
-        textAlign: "center",
+        textAlign: "left",
         marginBottom: "10px"
     }
 

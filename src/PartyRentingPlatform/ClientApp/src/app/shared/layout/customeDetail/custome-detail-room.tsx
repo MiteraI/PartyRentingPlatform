@@ -23,7 +23,7 @@ interface ICustomeDetail {
 const CustomeDetail: React.FC<ICustomeDetail> = (props) => {
     const { title, data, handleOpen, isOpen } = props
     const colStyle: React.CSSProperties = {
-        textAlign: "center",
+        textAlign: "left",
         marginBottom: "10px"
     }
 
@@ -47,7 +47,6 @@ const CustomeDetail: React.FC<ICustomeDetail> = (props) => {
                         <Row md={12}>
                             <Col style={colStyle} md={6}>Room name: {data?.roomName}</Col>
                             <Col style={colStyle} md={6}>Address: {data?.address}</Col>
-                            <Col style={colStyle} md={6}>Description: {data?.description}</Col>
                             <Col style={colStyle} md={6}>Price: {formatCurrency(data?.price)}</Col>
                             <Col style={colStyle} md={6}>Room capacity: {data?.roomCapacity}</Col>
                             <Col style={colStyle} md={6}>Rating : {data?.rating}</Col>
@@ -59,6 +58,7 @@ const CustomeDetail: React.FC<ICustomeDetail> = (props) => {
                                     return <Tag color="blue-inverse">{service.serviceName}</Tag>
                                 })}
                             </Col>
+                            <Col style={colStyle} md={12}>Description: {data?.description}</Col>
                         </Row>
 
                     </Col>
