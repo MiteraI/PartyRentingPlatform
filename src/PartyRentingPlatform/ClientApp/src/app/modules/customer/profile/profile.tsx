@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Box, Avatar, Typography, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, Chip } from '@mui/material';
+import { Storage } from 'react-jhipster';
+
+import { Box, Avatar, Typography, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, Chip, TextField } from '@mui/material';
 import { Button, Layout, Menu } from 'antd';
 import { UserOutlined, MailOutlined } from '@ant-design/icons';
 
@@ -34,40 +36,73 @@ const modalStyles: ReactModalStyles = {
         transform: 'translate(-50%, -50%)',
     },
 };
-const handleBecomeHost = async () => {
-    try {
-        const res = await axios.put('/api/profile/become-host');
-        if (res.status === 200) {
-            toast.success("Bạn đã cập nhật thành host party")
-        }
-        // Nếu API trả về OK, bạn có thể thực hiện các bước cập nhật giao diện hoặc hiển thị thông báo thành công
-    } catch (error) {
-        toast.error('Error becoming host:', error);
-        // Xử lý lỗi, có thể hiển thị thông báo lỗi cho người dùng
-    }
-};
 
 const Profile = () => {
     const [profile, setProfile] = useState(null);
     const [isPartyHost, setIsPartyHost] = useState(false);
+    const [editFormVisible, setEditFormVisible] = useState(false);
+    const [editedProfile, setEditedProfile] = useState({ firstName: '', lastName: '' });
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const response = await axios.get('/api/profile');
-
                 setProfile(response.data);
-
-
-
-                // Kiểm tra nếu authorities chứa 'ROLE_HOST'
                 setIsPartyHost(response.data?.authorities?.includes('ROLE_HOST'));
             } catch (error) {
                 console.error('Error fetching profile:', error);
             }
         };
         fetchProfile();
-    }, []); // Chạy useEffect chỉ một lần khi component được mount
+    }, []);
+
+    const handleEditProfile = () => {
+        setEditedProfile({ firstName: profile.firstName, lastName: profile.lastName });
+        setEditFormVisible(true);
+    };
+
+    const handleCancelEdit = () => {
+        setEditFormVisible(false);
+    };
+
+    const handleConfirmEdit = async () => {
+        try {
+            // Bổ sung username vào editedProfile
+            const editedData = { ...editedProfile, id: profile?.id, login: Storage.local.get("user") };
+
+            // Gửi request API để cập nhật profile với editedData
+            const res = await axios.put('/api/profile', editedData);
+            console.log('Profile updated successfully');
+            setProfile({ ...profile, ...editedData });
+            setEditFormVisible(false);
+            if (res.status === 200) {
+                toast.success("Cập nhật thành công");
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            toast.error("Cập nhật không thành công");
+        }
+    };
+
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditedProfile((prevProfile) => ({
+            ...prevProfile,
+            [name]: value,
+        }));
+    };
+
+    const handleBecomeHost = async () => {
+        try {
+            const res = await axios.put('/api/profile/become-host');
+            if (res.status === 200) {
+                toast.success("Bạn đã cập nhật thành host party")
+            }
+        } catch (error) {
+            toast.error('Error becoming host:', error);
+        }
+    };
 
     console.log(profile);
 
@@ -103,18 +138,6 @@ const Profile = () => {
                                 <ListItemText primary="Booking List" />
                             </ListItem>
                         </List>
-                        {/* <List>
-                            <ListItem>
-                                <Typography variant="subtitle1" gutterBottom>
-                                    Roles:
-                                </Typography>
-                                <Box>
-                                    {profile?.authorities?.map((role, index) => (
-                                        <Chip key={index} label={role === 'ROLE_HOST' ? 'Host' : 'User'} color={role === 'ROLE_HOST' ? 'primary' : 'default'} style={{ margin: '4px' }} />
-                                    ))}
-                                </Box>
-                            </ListItem>
-                        </List> */}
                     </Box>
                 </Sider>
                 <Layout style={{ backgroundColor: 'transparent' }}>
@@ -123,6 +146,7 @@ const Profile = () => {
                         <Typography variant="h4" mt={1} textAlign="left"><strong>{'About ' + profile?.firstName}</strong></Typography>
                         <Button
                             size="large"
+                            onClick={handleEditProfile}
                             style={{ width: '120px', borderColor: 'black', backgroundColor: '#fafafa', color: 'black', height: '48px', borderRadius: '10px', marginBottom: '10px', marginTop: '20px', marginRight: '20px' }}
                         >
                             Edit Profile
@@ -131,10 +155,34 @@ const Profile = () => {
                             <Button
                                 size="large"
                                 onClick={handleBecomeHost}
-                                style={{ marginLeft: "10px", width: '120px', borderColor: 'black', backgroundColor: '#fafafa', color: 'black', height: '48px', borderRadius: '10px', marginBottom: '10px', marginTop: '20px' }}
+                                style={{ width: '120px', borderColor: 'black', backgroundColor: '#fafafa', color: 'black', height: '48px', borderRadius: '10px', marginBottom: '10px', marginTop: '20px' }}
                             >
                                 Become Host
                             </Button>
+                        )}
+                        {editFormVisible && (
+                            <Box mt={2}>
+                                <TextField
+                                    label="First Name"
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    name="firstName"
+                                    value={editedProfile.firstName}
+                                    onChange={handleInputChange}
+                                />
+                                <TextField
+                                    label="Last Name"
+                                    variant="outlined"
+                                    fullWidth
+                                    margin="normal"
+                                    name="lastName"
+                                    value={editedProfile.lastName}
+                                    onChange={handleInputChange}
+                                />
+                                <Button onClick={handleCancelEdit} style={{ marginRight: '10px' }}>Cancel</Button>
+                                <Button onClick={handleConfirmEdit} type="primary">Confirm</Button>
+                            </Box>
                         )}
                     </Content>
                 </Layout>
