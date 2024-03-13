@@ -40,6 +40,7 @@ namespace PartyRentingPlatform.Controllers
         private readonly IRoomService _roomService;
         private readonly IWalletService _walletService;
         private readonly IServiceService _serviceService;
+        private readonly INotificationService _notificationService;
         private readonly INotificationHub _notificationHub;
 
         public BookingsController(ILogger<BookingsController> log,
@@ -48,6 +49,7 @@ namespace PartyRentingPlatform.Controllers
         IRoomService roomService,
         IServiceService serviceService,
         IWalletService walletService,
+        INotificationService notificationService,
         INotificationHub notificationHub)
         {
             _log = log;
@@ -56,6 +58,7 @@ namespace PartyRentingPlatform.Controllers
             _roomService = roomService;
             _serviceService = serviceService;
             _walletService = walletService;
+            _notificationService = notificationService;
             _notificationHub = notificationHub;
         }
 
@@ -208,6 +211,17 @@ namespace PartyRentingPlatform.Controllers
 
             //It will automatically generate new booking details to database
             await _bookingService.Save(booking);
+
+            var notification = await _notificationService.Save(new Notification
+            {
+                Title = "New booking request",
+                Description = $"You have a new booking request from {User.FindFirst(ClaimTypes.NameIdentifier)}",
+                SentTime = DateTime.Now,
+                Enum = NotificationType.THANK,
+                UserId = bookedRoom.UserId
+            });
+            await _notificationHub.SendNotificationToUser(bookedRoom.UserId, notification);
+
             return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking)
                 .WithHeaders(HeaderUtil.CreateEntityCreationAlert(EntityName, booking.Id.ToString()));
         }
@@ -293,6 +307,17 @@ namespace PartyRentingPlatform.Controllers
             //Deposit money equals half total price and round it to 1000s
             await _walletService.IncreaseBalanceForUser(booking.Room.UserId, Math.Ceiling((double)booking.TotalPrice * 0.4 / 1000) * 1000);
             await _walletService.DeductBalanceForUser(booking.UserId, Math.Ceiling((double)booking.TotalPrice / 2 / 1000) * 1000);
+
+            var notification = await _notificationService.Save(new Notification
+            {
+                Title = "Payment confirmed",
+                Description = $"Thank you for using our service. Enjoy your party",
+                SentTime = DateTime.Now,
+                Enum = NotificationType.THANK,
+                UserId = booking.UserId
+            });
+
+            await _notificationHub.SendNotificationToUser(booking.UserId, notification);
 
             return Ok(booking)
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
@@ -384,6 +409,16 @@ namespace PartyRentingPlatform.Controllers
             await _walletService.IncreaseBalanceForUser(booking.Room.UserId, Math.Ceiling((double)booking.TotalPrice / 2 / 1000) * 1000);
             await _walletService.DeductBalanceForUser(booking.UserId, Math.Ceiling((double)booking.TotalPrice / 2 / 1000) * 1000);
 
+            var notification = await _notificationService.Save(new Notification
+            {
+                Title = "Booking accepted",
+                Description = $"Your booking has been accepted by room {room.RoomName}'s owner",
+                SentTime = DateTime.Now,
+                Enum = NotificationType.ACCEPTED,
+                UserId = booking.UserId
+            });
+            await _notificationHub.SendNotificationToUser(booking.UserId, notification);
+
             return Ok(booking)
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
         }
@@ -406,14 +441,15 @@ namespace PartyRentingPlatform.Controllers
             booking.Status = BookingStatus.REJECTED;
             await _bookingService.Save(booking);
 
-            await _notificationHub.SendNotificationToUser(booking.UserId
-                , new Notification
-                {
-                    Title = "Booking rejected",
-                    Description = "Your booking has been rejected",
-                    SentTime = DateTime.Now,
-                    Enum = NotificationType.REJECTED
-                });
+            var notification = await _notificationService.Save(new Notification
+            {
+                Title = "Booking rejected",
+                Description = $"Your booking has been rejected by room {room.RoomName}'s owner",
+                SentTime = DateTime.Now,
+                Enum = NotificationType.REJECTED,
+                UserId = booking.UserId
+            });
+            await _notificationHub.SendNotificationToUser(booking.UserId, notification);
 
             return Ok(booking)
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));

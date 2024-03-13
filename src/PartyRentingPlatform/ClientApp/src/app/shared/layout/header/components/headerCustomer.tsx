@@ -3,23 +3,16 @@ import React, { ChangeEvent, ChangeEventHandler, useState } from "react"
 import { AppBar, Autocomplete, Badge, Box, CircularProgress, IconButton, InputBase, TextField, Toolbar, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { AccountCircle, Image, Search } from '@mui/icons-material';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { json, useNavigate } from "react-router";
-import { styled, alpha } from '@mui/material/styles';
-import SearchIcon from '@mui/icons-material/Search';
-import { divide } from "lodash";
 import CustomeSearch from "../../search/customer-search";
 import { NavLink } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import PersonIcon from '@mui/icons-material/Person';
 import AuthenticateIcon from "./AuthenticateIcon";
 import { Storage } from "react-jhipster";
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import { Button, Drawer } from "antd";
+import NotificationHeader from "./notification/notification";
 import Wallet from "./wallet/wallet";
-import * as signalR from "@microsoft/signalr";
 
 interface HeaderCustomerProps {
     isAuthenticated: boolean
@@ -41,24 +34,6 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
     const handleFindRoom = (e) => {
         console.log(e.target.value);
 
-    }
-
-    const handleNotification = () => {
-        let jwt = Storage.session.get('jhi-authenticationToken');
-        console.log('blablabla')
-        console.log(jwt);
-        const connection = new signalR.HubConnectionBuilder()
-          .withUrl('/notificationHub', { accessTokenFactory: () => jwt })
-          .build();
-        connection
-          .start()
-          .then(() => {
-            console.log('Connected to SignalR Hub');
-          })
-          .catch(error => {
-            console.error(`Error connecting to SignalR Hub: ${error}`);
-          });
-        // setOpenNotification(!openNotification)
     }
 
     const handleWalletModal = () => {
@@ -102,16 +77,7 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
                             : <div></div>
                         }
 
-                        {userExisted? <IconButton
-                            size="small"
-                            aria-label="show 17 new notifications"
-                            color="inherit"
-                            onClick={handleNotification}
-                        >
-                            <Badge color="error">
-                                <NotificationsIcon color="warning" />
-                            </Badge>
-                        </IconButton>
+                        {userExisted? <NotificationHeader></NotificationHeader>
                         : <div></div>
                         }
                         
