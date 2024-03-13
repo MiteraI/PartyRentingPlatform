@@ -32,6 +32,19 @@ namespace PartyRentingPlatform.Hubs
                 userConnections.Add(userId, Context.ConnectionId);
             }
 
+            for (int i = 0; i < 10; i++)
+            {
+                await Task.Delay(1000);
+                await SendMessageToUser(userId, new Notification
+                {
+                    Id = i,
+                    Title = "Test",
+                    Description = "Test",
+                    SentTime = DateTime.Now,
+                    UserId = userId
+                });
+            };
+
             await base.OnConnectedAsync();
         }
 
@@ -52,6 +65,14 @@ namespace PartyRentingPlatform.Hubs
             {
                 var notificationDto = _mapper.Map<NotifyDto>(notification);
                 await Clients.Client(connectionId).SendAsync("ReceiveNotification", notificationDto);
+            }
+        }
+
+        private async Task SendMessageToUser(string userId, Notification notification)
+        {
+            if (userConnections.TryGetValue(userId, out var connectionId))
+            {
+                await Clients.Client(connectionId).SendAsync("ReceiveMessage", notification);
             }
         }
     }
