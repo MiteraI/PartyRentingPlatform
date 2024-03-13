@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Storage } from 'react-jhipster';
@@ -7,15 +7,10 @@ import { Box, Avatar, Typography, Divider, Drawer, List, ListItem, ListItemIcon,
 import { Button, Layout, Menu } from 'antd';
 import { UserOutlined, MailOutlined } from '@ant-design/icons';
 
-
-import type { Styles as ReactModalStyles } from 'react-modal';
+import { toast } from 'react-toastify';
 
 import { styled } from '@mui/system';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { toast } from 'react-toastify';
-
-const { Content, Sider } = Layout;
 
 const StyledRoomDetail = styled('div')(({ theme }) => ({
     padding: '70px',
@@ -26,22 +21,18 @@ const StyledRoomDetail = styled('div')(({ theme }) => ({
     backgroundColor: 'transparent',
 }));
 
-const modalStyles: ReactModalStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-    },
-};
+const { Content, Sider } = Layout;
 
 const Profile = () => {
     const [profile, setProfile] = useState(null);
     const [isPartyHost, setIsPartyHost] = useState(false);
     const [editFormVisible, setEditFormVisible] = useState(false);
     const [editedProfile, setEditedProfile] = useState({ firstName: '', lastName: '' });
+    const [avatar, setAvatar] = useState(null); // Thêm state hook để lưu trữ avatar mới
+    const fileInputRef = useRef(null); // Ref để truy cập vào thẻ input file
+    const [avatarFile, setAvatarFile] = useState(null);
+    const [avatarUpdated, setAvatarUpdated] = useState(false); // State để theo dõi việc cập nhật avatar đã hoàn thành hay chưa
+
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -67,10 +58,8 @@ const Profile = () => {
 
     const handleConfirmEdit = async () => {
         try {
-            // Bổ sung username vào editedProfile
             const editedData = { ...editedProfile, id: profile?.id, login: Storage.local.get("user") };
 
-            // Gửi request API để cập nhật profile với editedData
             const res = await axios.put('/api/profile', editedData);
             console.log('Profile updated successfully');
             setProfile({ ...profile, ...editedData });
@@ -83,7 +72,6 @@ const Profile = () => {
             toast.error("Cập nhật không thành công");
         }
     };
-
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -104,14 +92,50 @@ const Profile = () => {
         }
     };
 
-    console.log(profile);
+    const handleAvatarClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleAvatarSubmit = async () => {
+        try {
+            const formData = new FormData();
+            formData.append('avatar', avatarFile);
+
+            const response = await axios.post('/api/profile/avatar', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            if (response.status === 200) {
+                toast.success("Avatar updated successfully");
+                setAvatarUpdated(true); // Đã cập nhật avatar thành công
+                // setAvatarFile(null);
+            }
+        } catch (error) {
+            console.error('Error updating avatar:', error);
+            toast.error("Failed to update avatar");
+        }
+    };
+
+    const handleUploadAvatar = (e) => {
+        const file = e.target.files[0];
+        setAvatarFile(file);
+    };
 
     return (
         <StyledRoomDetail>
             <Layout style={{ backgroundColor: 'transparent' }}>
                 <Sider width={435} theme="light" style={{ backgroundColor: 'transparent' }}>
                     <Box mb={5} style={{ boxShadow: 'rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px', padding: '24px', borderRadius: '30px' }} display="flex" flexDirection="column" alignItems="center" height="40vh" justifyContent="center">
-                        <Avatar src={profile?.imageUrl} style={{ width: '130px', height: '130px' }} alt="User Avatar" />
+                        <Avatar src={avatarUpdated ? URL.createObjectURL(avatarFile) : profile?.imageUrl} style={{ width: '130px', height: '130px', cursor: 'pointer' }} alt="User Avatar" onClick={handleAvatarClick} />
+                        <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleUploadAvatar} />
+                        {avatarFile && ( // Hiển thị nút "Submit" chỉ khi avatarFile khác null
+                            <Button
+                                size="large"
+                                style={{ width: '120px', borderColor: 'black', backgroundColor: '#fafafa', color: 'black', height: '48px', borderRadius: '10px', marginBottom: '10px', marginTop: '20px' }}
+                                onClick={handleAvatarSubmit}>Submit</Button>
+                        )}
                         <Typography variant="h4" mt={1} textAlign="center"><strong>{profile?.firstName + ' ' + profile?.lastName}</strong></Typography>
                         <Typography variant="subtitle1" mt={1} textAlign="center">{/* Empty, or any other information you want to display */}</Typography>
                         <Box>
@@ -184,6 +208,9 @@ const Profile = () => {
                                 <Button onClick={handleConfirmEdit} type="primary">Confirm</Button>
                             </Box>
                         )}
+
+
+
                     </Content>
                 </Layout>
             </Layout>
