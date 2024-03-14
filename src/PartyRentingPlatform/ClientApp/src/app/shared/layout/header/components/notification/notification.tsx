@@ -1,9 +1,9 @@
-import { Badge, IconButton, Popover, Typography, List, ListItem, ListItemText } from "@mui/material";
+import { Badge, IconButton, Popover, Typography, List, ListItem, ListItemText, Button, ListItemIcon } from "@mui/material";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { Storage } from "react-jhipster";
 import * as signalR from "@microsoft/signalr";
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import FolderIcon from '@mui/icons-material/Folder';
 enum NotificationEnum {
   THANK, REJECTED, ACCEPTED
 }
@@ -18,13 +18,16 @@ interface NotifyDto {
 }
 
 const NotificationHeader = (props) => {
+
+
+
   const [openNotification, setOpenNotification] = useState(false);
   const [notificationMessages, setNotificationMessages] = useState<NotifyDto[]>([]);
 
-  const handleNotification = () => {
+  const handleNotification = async () => {
     let jwt = Storage.session.get('jhi-authenticationToken');
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl('/notificationHub', { accessTokenFactory: () => jwt })
+      .withUrl('http://localhost:5000/notificationHub', { accessTokenFactory: () => jwt })
       .build();
     connection
       .start()
@@ -35,58 +38,77 @@ const NotificationHeader = (props) => {
         console.error(`Error connecting to SignalR Hub: ${error}`);
       });
 
-    connection.on("ReceiveMessage", (message: NotifyDto) => {
+    await connection.on("ReceiveMessage", (message: NotifyDto) => {
       console.log(message);
       setNotificationMessages(prevMessages => [...prevMessages, message]);
     });
-    // setOpenNotification(!openNotification)
   };
 
-  const handleNotificationIconClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setOpenNotification(!openNotification);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
-  const handleCloseNotification = () => {
-    setOpenNotification(false);
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
+
+  useEffect(() => {
+    handleNotification();
+  },)
   return (
-    <>
-      <IconButton
-        size="small"
-        aria-label="show 17 new notifications"
-        color="inherit"
-        onClick={handleNotificationIconClick}
-      >
-        <Badge color="error" badgeContent={notificationMessages.length}>
-          <NotificationsIcon color="warning" />
-        </Badge>
-      </IconButton>
+    <div>
+      <Button size="small" aria-describedby={id} variant="text" onClick={handleClick}>
+        <IconButton
+          size="small"
+          edge="end"
+          aria-label="account of current user"
+          // aria-controls={menuId}
+          aria-haspopup="true"
+          color="warning"
+        >
+          <NotificationsIcon />
+        </IconButton>
+      </Button>
       <Popover
-        open={openNotification}
-        anchorEl={null}
-        onClose={handleCloseNotification}
+
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'center',
+          horizontal: 'left',
         }}
+
         transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
+          vertical: "top",
+          horizontal: "center"
         }}
       >
-        <List>
-          {notificationMessages.map((message: NotifyDto) => (
-            <ListItem key={message.id}>
+        <List sx={{ height: "auto", maxHeight: "90vh", overflowY: "scroll" }} dense>
+          {notificationMessages.map((noti) => (
+            <ListItem>
+              <ListItemIcon>
+                <FolderIcon />
+              </ListItemIcon>
               <ListItemText
-                primary={message.title}
-                secondary={message.description}
+                primary={noti?.title}
+                secondary={noti?.description}
               />
             </ListItem>
-          ))}
+          ))
+          }
         </List>
       </Popover>
-    </>
+    </div>
   );
 };
 

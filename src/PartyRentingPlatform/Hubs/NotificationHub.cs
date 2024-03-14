@@ -32,19 +32,6 @@ namespace PartyRentingPlatform.Hubs
                 userConnections.Add(userId, Context.ConnectionId);
             }
 
-            for (int i = 0; i < 10; i++)
-            {
-                await Task.Delay(1000);
-                await SendMessageToUser(userId, new Notification
-                {
-                    Id = i,
-                    Title = "Test",
-                    Description = "Test",
-                    SentTime = DateTime.Now,
-                    UserId = userId
-                });
-            };
-
             await base.OnConnectedAsync();
         }
 
