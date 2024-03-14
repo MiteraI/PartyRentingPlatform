@@ -14,5 +14,7 @@ namespace PartyRentingPlatform.Domain.Services.Interfaces
         Task<Notification> FindOne(long? id);
 
         Task Delete(long? id);
+
+        Task<IPage<Notification>> FindAllForUser(string userId, IPageable pageable);
     }
 }
