@@ -10,6 +10,7 @@ export interface IUser {
   createdBy?: string;
   createdDate?: Date | null;
   lastModifiedBy?: string;
+  imageUrl?: string | null;
   lastModifiedDate?: Date | null;
   password?: string;
 }
@@ -24,6 +25,7 @@ export const defaultValue: Readonly<IUser> = {
   langKey: '',
   authorities: [],
   createdBy: '',
+  imageUrl: 'https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp',
   createdDate: null,
   lastModifiedBy: '',
   lastModifiedDate: null,

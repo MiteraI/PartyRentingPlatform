@@ -45,4 +45,12 @@ public class NotificationService : INotificationService
         await _notificationRepository.DeleteByIdAsync(id);
         await _notificationRepository.SaveChangesAsync();
     }
+
+    public virtual async Task<IPage<Notification>> FindAllForUser(string userId, IPageable pageable)
+    {
+        return await _notificationRepository.QueryHelper()
+            .Include(notification => notification.User)
+            .Filter(notification => notification.UserId == userId)
+            .GetPageAsync(pageable);
+    }
 }

@@ -22,6 +22,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using PartyRentingPlatform.Dto.Booking;
 using PartyRentingPlatform.Crosscutting.Constants;
+using Microsoft.AspNetCore.SignalR;
+using PartyRentingPlatform.Hubs;
+using PartyRentingPlatform.Hubs.Interfaces;
 
 namespace PartyRentingPlatform.Controllers
 {
@@ -37,13 +40,17 @@ namespace PartyRentingPlatform.Controllers
         private readonly IRoomService _roomService;
         private readonly IWalletService _walletService;
         private readonly IServiceService _serviceService;
+        private readonly INotificationService _notificationService;
+        private readonly INotificationHub _notificationHub;
 
         public BookingsController(ILogger<BookingsController> log,
         IMapper mapper,
         IBookingService bookingService,
         IRoomService roomService,
         IServiceService serviceService,
-        IWalletService walletService)
+        IWalletService walletService,
+        INotificationService notificationService,
+        INotificationHub notificationHub)
         {
             _log = log;
             _mapper = mapper;
@@ -51,6 +58,8 @@ namespace PartyRentingPlatform.Controllers
             _roomService = roomService;
             _serviceService = serviceService;
             _walletService = walletService;
+            _notificationService = notificationService;
+            _notificationHub = notificationHub;
         }
 
         // Admin related/ Jhipster generated code
@@ -202,6 +211,17 @@ namespace PartyRentingPlatform.Controllers
 
             //It will automatically generate new booking details to database
             await _bookingService.Save(booking);
+
+            var notification = await _notificationService.Save(new Notification
+            {
+                Title = "New booking request",
+                Description = $"You have a new booking request",
+                SentTime = DateTime.Now,
+                Enum = NotificationType.THANK,
+                UserId = bookedRoom.UserId
+            });
+            await _notificationHub.SendNotificationToUser(bookedRoom.UserId, notification);
+
             return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking)
                 .WithHeaders(HeaderUtil.CreateEntityCreationAlert(EntityName, booking.Id.ToString()));
         }
@@ -258,7 +278,8 @@ namespace PartyRentingPlatform.Controllers
                 await _bookingService.Save(booking);
                 return Ok(booking)
                     .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
-            } else
+            }
+            else
             {
                 return BadRequest("Cannot cancel booking");
             }
@@ -284,8 +305,19 @@ namespace PartyRentingPlatform.Controllers
             // Pays rest of money to room's owner
             //Deduct balance from booking's user and increase balance for room's user
             //Deposit money equals half total price and round it to 1000s
-            await _walletService.IncreaseBalanceForUser(booking.Room.UserId, Math.Ceiling((double) booking.TotalPrice * 0.4 / 1000) * 1000);
+            await _walletService.IncreaseBalanceForUser(booking.Room.UserId, Math.Ceiling((double)booking.TotalPrice * 0.4 / 1000) * 1000);
             await _walletService.DeductBalanceForUser(booking.UserId, Math.Ceiling((double)booking.TotalPrice / 2 / 1000) * 1000);
+
+            var notification = await _notificationService.Save(new Notification
+            {
+                Title = "Payment confirmed",
+                Description = $"Thank you for using our service. Enjoy your party",
+                SentTime = DateTime.Now,
+                Enum = NotificationType.THANK,
+                UserId = booking.UserId
+            });
+
+            await _notificationHub.SendNotificationToUser(booking.UserId, notification);
 
             return Ok(booking)
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
@@ -341,7 +373,7 @@ namespace PartyRentingPlatform.Controllers
             return ActionResultUtil.WrapOrNotFound(bookingDto);
         }
 
-        [Authorize(Roles =RolesConstants.HOST)]
+        [Authorize(Roles = RolesConstants.HOST)]
         [HttpGet("host/{status}")]
         public async Task<ActionResult<IEnumerable<BookingCustomerDto>>> GetAllHostBookingsByStatus([FromRoute] BookingStatus status, IPageable pageable)
         {
@@ -377,6 +409,16 @@ namespace PartyRentingPlatform.Controllers
             await _walletService.IncreaseBalanceForUser(booking.Room.UserId, Math.Ceiling((double)booking.TotalPrice / 2 / 1000) * 1000);
             await _walletService.DeductBalanceForUser(booking.UserId, Math.Ceiling((double)booking.TotalPrice / 2 / 1000) * 1000);
 
+            var notification = await _notificationService.Save(new Notification
+            {
+                Title = "Booking accepted",
+                Description = $"Your booking has been accepted by room {room.RoomName}'s owner",
+                SentTime = DateTime.Now,
+                Enum = NotificationType.ACCEPTED,
+                UserId = booking.UserId
+            });
+            await _notificationHub.SendNotificationToUser(booking.UserId, notification);
+
             return Ok(booking)
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
         }
@@ -398,6 +440,17 @@ namespace PartyRentingPlatform.Controllers
             if (booking.Status != BookingStatus.APPROVING) return BadRequest("Booking cannot be rejected");
             booking.Status = BookingStatus.REJECTED;
             await _bookingService.Save(booking);
+
+            var notification = await _notificationService.Save(new Notification
+            {
+                Title = "Booking rejected",
+                Description = $"Your booking has been rejected by room {room.RoomName}'s owner",
+                SentTime = DateTime.Now,
+                Enum = NotificationType.REJECTED,
+                UserId = booking.UserId
+            });
+            await _notificationHub.SendNotificationToUser(booking.UserId, notification);
+
             return Ok(booking)
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, booking.Id.ToString()));
         }

@@ -3,21 +3,15 @@ import React, { ChangeEvent, ChangeEventHandler, useState } from "react"
 import { AppBar, Autocomplete, Badge, Box, CircularProgress, IconButton, InputBase, TextField, Toolbar, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { AccountCircle, Image, Search } from '@mui/icons-material';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { useNavigate } from "react-router";
-import { styled, alpha } from '@mui/material/styles';
-import SearchIcon from '@mui/icons-material/Search';
-import { divide } from "lodash";
+import { json, useNavigate } from "react-router";
 import CustomeSearch from "../../search/customer-search";
 import { NavLink } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import PersonIcon from '@mui/icons-material/Person';
 import AuthenticateIcon from "./AuthenticateIcon";
 import { Storage } from "react-jhipster";
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import { Button, Drawer } from "antd";
+import NotificationHeader from "./notification/notification";
 import Wallet from "./wallet/wallet";
 
 interface HeaderCustomerProps {
@@ -29,7 +23,8 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);
     const [options, setOptions] = React.useState([]);
-    const [openWallet, setOpenWallet] = useState<boolean>(false)
+    const [openWallet, setOpenWallet] = useState<boolean>(false);
+    const [openNotification, setOpenNotification] = useState<boolean>(false);
     const userExisted = Storage.local.get("user")
 
     const handleProfileMenuOpen = () => {
@@ -40,8 +35,6 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
         console.log(e.target.value);
 
     }
-
-
 
     const handleWalletModal = () => {
         setOpenWallet(!openWallet)
@@ -73,7 +66,9 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
                     <CustomeSearch />
 
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-
+                        {userExisted ? <NotificationHeader />
+                            : <div></div>
+                        }
                         {userExisted ?
                             <IconButton onClick={handleWalletModal} size="small" color="inherit">
                                 <Badge color="error">
@@ -85,15 +80,7 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
                         }
 
 
-                        <IconButton
-                            size="small"
-                            aria-label="show 17 new notifications"
-                            color="inherit"
-                        >
-                            <Badge color="error">
-                                <NotificationsIcon color="warning" />
-                            </Badge>
-                        </IconButton>
+
 
                         {userExisted ?
                             <AuthenticateIcon />
