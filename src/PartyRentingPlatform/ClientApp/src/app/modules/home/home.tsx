@@ -23,6 +23,7 @@ import { addDeposit } from 'app/entities/wallet/wallet.reducer';
 import { toast } from 'react-toastify';
 import { formatCurrency } from 'app/shared/util/currency-utils';
 import { IRoom } from 'app/shared/model/room.model';
+import { Storage } from 'react-jhipster';
 
 const Home = () => {
   const dispatch = useAppDispatch();
@@ -63,7 +64,7 @@ const Home = () => {
 
     if (urlParams && amount != 0 && transactionNo != 0) {
       dispatch(addDeposit({ amount, transactionNo, status: 1 })) // status 1 : success
-      window.history.replaceState({}, "", "http://localhost:9000/")
+      window.history.replaceState({}, "", Storage.local.get("dynamic-url"))
       toast.success("Bạn đã nạp tiền thành công")
     }
   })
