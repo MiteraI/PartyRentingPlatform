@@ -62,7 +62,9 @@ const NotificationHeader = (props) => {
 
   useEffect(() => {
     handleNotification();
-  },)
+  }, [])
+
+
   return (
     <div>
       <Button size="small" aria-describedby={id} variant="text" onClick={handleClick}>
