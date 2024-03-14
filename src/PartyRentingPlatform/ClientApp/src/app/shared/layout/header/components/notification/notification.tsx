@@ -4,6 +4,7 @@ import { Storage } from "react-jhipster";
 import * as signalR from "@microsoft/signalr";
 import React, { useEffect, useState } from "react";
 import FolderIcon from '@mui/icons-material/Folder';
+import axios from "axios";
 enum NotificationEnum {
   THANK, REJECTED, ACCEPTED
 }
@@ -39,7 +40,6 @@ const NotificationHeader = (props) => {
       });
 
     await connection.on("ReceiveNotification", (message: NotifyDto) => {
-      console.log(message);
       setNotificationMessages(prevMessages => [...prevMessages, message]);
     });
   };
@@ -60,6 +60,14 @@ const NotificationHeader = (props) => {
   };
 
 
+  const getAllNotiUser = async () => {
+    const requestUrl = await axios.get("/api/notifications/user");
+    console.log(requestUrl);
+
+  }
+
+
+
   useEffect(() => {
     handleNotification();
   }, [])
@@ -74,8 +82,11 @@ const NotificationHeader = (props) => {
           // aria-controls={menuId}
           aria-haspopup="true"
           color="warning"
+
         >
-          <NotificationsIcon />
+          <Badge color="error" badgeContent={notificationMessages?.length}>
+            <NotificationsIcon color="warning" />
+          </Badge>
         </IconButton>
       </Button>
       <Popover
@@ -94,19 +105,28 @@ const NotificationHeader = (props) => {
           horizontal: "center"
         }}
       >
-        <List sx={{ height: "auto", maxHeight: "90vh", overflowY: "scroll" }} dense>
-          {notificationMessages.map((noti) => (
-            <ListItem>
-              <ListItemIcon>
-                <FolderIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary={noti?.title}
-                secondary={noti?.description}
-              />
-            </ListItem>
-          ))
+        <List sx={{ width: "325px", height: "auto", maxHeight: "300px", overflowY: "scroll" }} dense>
+
+          {notificationMessages.length > 0
+            ?
+            notificationMessages.map((noti) => (
+              <ListItem>
+                <ListItemIcon>
+                  <FolderIcon />
+                </ListItemIcon>
+                <ListItemText
+                  sx={{ width: "300px", maxWidth: "250px", textOverflow: "ellipsis" }}
+                  primary={noti?.title}
+                  secondary={noti?.description}
+                />
+              </ListItem>
+            ))
+
+            : <div style={{ marginTop: "89px", width: "300px", height: "300px", textAlign: "center" }}>
+              There is no notification
+            </div>
           }
+
         </List>
       </Popover>
     </div>
