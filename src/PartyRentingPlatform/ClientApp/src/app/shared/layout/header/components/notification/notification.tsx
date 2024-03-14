@@ -22,13 +22,15 @@ const NotificationHeader = (props) => {
 
 
 
+
+
   const [openNotification, setOpenNotification] = useState(false);
   const [notificationMessages, setNotificationMessages] = useState<NotifyDto[]>([]);
 
   const handleNotification = async () => {
     let jwt = Storage.session.get('jhi-authenticationToken');
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5000/notificationHub', { accessTokenFactory: () => jwt })
+      .withUrl('/notificationHub', { accessTokenFactory: () => jwt })
       .build();
     connection
       .start()
