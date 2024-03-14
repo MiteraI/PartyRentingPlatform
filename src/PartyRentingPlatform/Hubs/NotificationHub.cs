@@ -19,9 +19,11 @@ namespace PartyRentingPlatform.Hubs
     {
         private static Dictionary<string, string> userConnections = new Dictionary<string, string>();
         private readonly IMapper _mapper;
-        public NotificationHub(IMapper mapper )
+        private readonly IHubContext<NotificationHub> _context;
+        public NotificationHub(IMapper mapper, IHubContext<NotificationHub> context)
         {
             _mapper = mapper;
+            _context = context;
         }
 
         public override async Task OnConnectedAsync()
@@ -50,8 +52,7 @@ namespace PartyRentingPlatform.Hubs
         {
             if (userConnections.TryGetValue(userId, out var connectionId))
             {
-                var notificationDto = _mapper.Map<NotifyDto>(notification);
-                await Clients.Client(connectionId).SendAsync("ReceiveNotification", notificationDto);
+                await _context.Clients.Client(connectionId).SendAsync("ReceiveNotification", notification);
             }
         }
 
@@ -59,7 +60,7 @@ namespace PartyRentingPlatform.Hubs
         {
             if (userConnections.TryGetValue(userId, out var connectionId))
             {
-                await Clients.Client(connectionId).SendAsync("ReceiveMessage", notification);
+                await _context.Clients.Client(connectionId).SendAsync("ReceiveMessage", notification);
             }
         }
     }

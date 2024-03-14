@@ -215,7 +215,7 @@ namespace PartyRentingPlatform.Controllers
             var notification = await _notificationService.Save(new Notification
             {
                 Title = "New booking request",
-                Description = $"You have a new booking request from {User.FindFirst(ClaimTypes.NameIdentifier)}",
+                Description = $"You have a new booking request",
                 SentTime = DateTime.Now,
                 Enum = NotificationType.THANK,
                 UserId = bookedRoom.UserId

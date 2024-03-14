@@ -131,7 +131,7 @@ public class BookingService : IBookingService
         var result = await _bookingRepository.QueryHelper()
             .Filter(booking => booking.RoomId == roomId)
             .Filter(booking => booking.Status == BookingStatus.ACCEPTED)
-            .Filter(booking => booking.BookTime < endTime && booking.EndTime > startTime)
+            .Filter(booking => booking.StartTime < endTime && booking.EndTime > startTime)
             .GetAllAsync();
         return result.ToList().Count > 0;
     }

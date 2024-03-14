@@ -38,7 +38,7 @@ const NotificationHeader = (props) => {
         console.error(`Error connecting to SignalR Hub: ${error}`);
       });
 
-    await connection.on("ReceiveMessage", (message: NotifyDto) => {
+    await connection.on("ReceiveNotification", (message: NotifyDto) => {
       console.log(message);
       setNotificationMessages(prevMessages => [...prevMessages, message]);
     });
@@ -63,7 +63,6 @@ const NotificationHeader = (props) => {
   useEffect(() => {
     handleNotification();
   }, [])
-
 
   return (
     <div>
