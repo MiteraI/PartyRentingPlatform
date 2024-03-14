@@ -57,6 +57,7 @@ namespace PartyRentingPlatform.Configuration.AutoMapper
 
             // Notification mappings
             CreateMap<Notification, NotificationDto>().ReverseMap();
+            CreateMap<Notification, NotifyDto>().ReverseMap();
         }
     }
 }

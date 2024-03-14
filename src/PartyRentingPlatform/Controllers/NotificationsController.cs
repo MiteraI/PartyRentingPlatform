@@ -19,6 +19,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using PartyRentingPlatform.Dto.Booking;
+using System.Security.Claims;
+using PartyRentingPlatform.Crosscutting.Constants;
 
 namespace PartyRentingPlatform.Controllers
 {
@@ -41,6 +44,7 @@ namespace PartyRentingPlatform.Controllers
             _notificationService = notificationService;
         }
 
+        [Authorize(Roles = RolesConstants.ADMIN)]
         [HttpPost]
         public async Task<ActionResult<NotificationDto>> CreateNotification([FromBody] NotificationDto notificationDto)
         {
@@ -54,6 +58,7 @@ namespace PartyRentingPlatform.Controllers
                 .WithHeaders(HeaderUtil.CreateEntityCreationAlert(EntityName, notification.Id.ToString()));
         }
 
+        [Authorize(Roles = RolesConstants.ADMIN)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateNotification(long? id, [FromBody] NotificationDto notificationDto)
         {
@@ -66,6 +71,7 @@ namespace PartyRentingPlatform.Controllers
                 .WithHeaders(HeaderUtil.CreateEntityUpdateAlert(EntityName, notification.Id.ToString()));
         }
 
+        [Authorize(Roles = RolesConstants.ADMIN)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NotificationDto>>> GetAllNotifications(IPageable pageable)
         {
@@ -75,6 +81,7 @@ namespace PartyRentingPlatform.Controllers
             return Ok(((IPage<NotificationDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
         }
 
+        [Authorize(Roles = RolesConstants.ADMIN)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetNotification([FromRoute] long? id)
         {
@@ -90,6 +97,16 @@ namespace PartyRentingPlatform.Controllers
             _log.LogDebug($"REST request to delete Notification : {id}");
             await _notificationService.Delete(id);
             return NoContent().WithHeaders(HeaderUtil.CreateEntityDeletionAlert(EntityName, id.ToString()));
+        }
+
+        [Authorize(Roles = RolesConstants.USER)]
+        [HttpGet("user")]
+        public async Task<ActionResult<IEnumerable<NotifyDto>>> GetAllNotificationsForUser(IPageable pageable)
+        {
+            _log.LogDebug("REST request to get a page of Notifications for the current user");
+            var result = await _notificationService.FindAllForUser(User.FindFirst(ClaimTypes.Name).Value, pageable);
+            var page = new Page<NotifyDto>(result.Content.Select(entity => _mapper.Map<NotifyDto>(entity)).ToList(), pageable, result.TotalElements);
+            return Ok(((IPage<NotifyDto>)page).Content).WithHeaders(page.GeneratePaginationHttpHeaders());
         }
     }
 }

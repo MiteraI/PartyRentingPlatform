@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using PartyRentingPlatform.Hubs;
 
 [assembly: ApiController]
 
@@ -26,6 +27,7 @@ public class Startup : IStartup
         AddVnpay(configuration, services);
         AddAzureBlob(configuration, services);
         AddBackgroundWorker(configuration, services);
+        AddSignalRHubs(services);
     }
 
     public virtual void ConfigureServices(IServiceCollection services, IHostEnvironment environment)
@@ -56,7 +58,11 @@ public class Startup : IStartup
     {
         app
             .UseApplicationSwagger()
-            .UseApplicationWeb(environment);
+            .UseApplicationWeb(environment)
+            .UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<NotificationHub>("/notificationHub");
+            });
     }
 
     protected virtual void AddDatabase(IConfiguration configuration, IServiceCollection services)
@@ -72,6 +78,11 @@ public class Startup : IStartup
     protected virtual void AddVnpay(IConfiguration configuration, IServiceCollection services)
     {
         services.AddVnpayModule(configuration);
+    }
+
+    protected virtual void AddSignalRHubs(IServiceCollection services)
+    {
+        services.AddHubModule();
     }
 
     protected virtual void AddAzureBlob(IConfiguration configuration, IServiceCollection services)
