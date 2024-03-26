@@ -1,9 +1,10 @@
-import { Badge, IconButton, Popover, Typography, List, ListItem, ListItemText } from "@mui/material";
+import { Badge, IconButton, Popover, Typography, List, ListItem, ListItemText, Button, ListItemIcon } from "@mui/material";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { Storage } from "react-jhipster";
 import * as signalR from "@microsoft/signalr";
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import FolderIcon from '@mui/icons-material/Folder';
+import axios from "axios";
 enum NotificationEnum {
   THANK, REJECTED, ACCEPTED
 }
@@ -19,7 +20,14 @@ interface NotifyDto {
 
 const NotificationHeader = (props) => {
 
-  const handleNotification = () => {
+
+
+
+
+  const [openNotification, setOpenNotification] = useState(false);
+  const [notificationMessages, setNotificationMessages] = useState<NotifyDto[]>([]);
+
+  const handleNotification = async () => {
     let jwt = Storage.session.get('jhi-authenticationToken');
     const connection = new signalR.HubConnectionBuilder()
       .withUrl('/notificationHub', { accessTokenFactory: () => jwt })
@@ -33,47 +41,97 @@ const NotificationHeader = (props) => {
         console.error(`Error connecting to SignalR Hub: ${error}`);
       });
 
-    connection.on("ReceiveMessage", (message: NotifyDto) => {
-      console.log(message);
+    await connection.on("ReceiveNotification", (message: NotifyDto) => {
+      setNotificationMessages(prevMessages => [...prevMessages, message]);
     });
   };
 
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+
+  const getAllNotiUser = async () => {
+    const requestUrl = await axios.get("/api/notifications/user");
+    console.log(requestUrl);
+
+  }
+
+
+
+  useEffect(() => {
+    handleNotification();
+  }, [])
+
   return (
-    <>
-      <IconButton
-        size="small"
-        aria-label="show 17 new notifications"
-        color="inherit"
-        onClick={handleNotification}
-      >
-        <Badge color="error">
-          <NotificationsIcon color="warning" />
-        </Badge>
-      </IconButton>
-      {/* <Popover
-        open={openNotification}
-        onClose={handleCloseNotification}
+    <div>
+      <Button size="small" aria-describedby={id} variant="text" onClick={handleClick}>
+        <IconButton
+          size="small"
+          edge="end"
+          aria-label="account of current user"
+          // aria-controls={menuId}
+          aria-haspopup="true"
+          color="warning"
+
+        >
+          <Badge color="error" badgeContent={notificationMessages?.length}>
+            <NotificationsIcon color="warning" />
+          </Badge>
+        </IconButton>
+      </Button>
+      <Popover
+
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'center',
+          horizontal: 'left',
         }}
+
         transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
+          vertical: "top",
+          horizontal: "center"
         }}
       >
-        <List>
-          {notificationMessages.map((message: NotifyDto) => (
-            <ListItem key={message.id}>
-              <ListItemText
-                primary={message.title}
-                secondary={message.description}
-              />
-            </ListItem>
-          ))}
+        <List sx={{ width: "325px", height: "auto", maxHeight: "300px", overflowY: "scroll" }} dense>
+
+          {notificationMessages.length > 0
+            ?
+            notificationMessages.map((noti) => (
+              <ListItem>
+                <ListItemIcon>
+                  <FolderIcon />
+                </ListItemIcon>
+                <ListItemText
+                  sx={{ width: "300px", maxWidth: "250px", textOverflow: "ellipsis" }}
+                  primary={noti?.title}
+                  secondary={noti?.description}
+                />
+              </ListItem>
+            ))
+
+            : <div style={{ marginTop: "89px", width: "300px", height: "300px", textAlign: "center" }}>
+              There is no notification
+            </div>
+          }
+
         </List>
-      </Popover> */}
-    </>
+      </Popover>
+    </div>
   );
 };
 

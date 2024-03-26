@@ -302,12 +302,12 @@ const RoomDetailForCustomer = () => {
                         <Grid item xs={12} md={8}>
                             <div className="host-info" style={{ display: 'flex', alignItems: 'center' }}>
                                 <Avatar
-                                    src="https://th.bing.com/th/id/OIP.Rx2i9gGIkn78qbbIF_m3IgHaJ0?pid=ImgDet&w=208&h=276&c=7&dpr=2"
+                                    src={roomEntity.user?.imageUrl}
                                     alt="Host Avatar"
                                     style={{ width: '50px', height: '50px' }} // Adjust the width and height as needed
                                 />
                                 <div style={{ marginLeft: '15px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                                    <Typography variant="subtitle1"><strong>{roomEntity.user?.login}</strong></Typography>
+                                    <Typography variant="subtitle1"><strong>{roomEntity.user?.firstName + " " + roomEntity.user?.lastName}</strong></Typography>
                                     <Typography variant="body2">Host party • 10 months hosting</Typography>
                                 </div>
                             </div>

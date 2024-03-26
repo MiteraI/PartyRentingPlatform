@@ -15,7 +15,7 @@ import { updateEntity, createEntityByCustomer, reset } from 'app/entities/bookin
 import { getEntityForCustomer } from 'app/entities/room/room.reducer';
 import { Avatar, CardMedia, Container, Divider, Grid, Typography } from '@mui/material';
 import { styled } from '@mui/system';
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import './requestToBook.scss';
 import { forEach } from 'lodash';
 import { formatCurrency } from 'app/shared/util/currency-utils';
@@ -31,7 +31,7 @@ const RoomBookingForCustomer = () => {
   }, [dispatch, id]);
 
 
-
+  const [profile, setProfile] = useState(null);
   const [createdBookingId, setCreatedBookingId] = useState<number | null>(null); // State to hold the created booking
   const [startDateFromUrl, setStartDateFromUrl] = useState<string | null>(null);
   const [endDateFromUrl, setEndDateFromUrl] = useState<string | null>(null);
@@ -74,7 +74,19 @@ const RoomBookingForCustomer = () => {
 
   const roomEntity = useAppSelector(state => state.room.entity);
   const serviceList = roomEntity.services || [];
-  console.log(new URLSearchParams(location.search).get('selectedService'));
+  console.log(roomEntity);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+        try {
+            const response = await axios.get('/api/profile');
+            setProfile(response.data);
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+        }
+    };
+    fetchProfile();
+}, []);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -201,7 +213,9 @@ const RoomBookingForCustomer = () => {
         // price: roomEntity.price,
 
         price: roomEntity.price * numberOfHours + serviceFee,
-        customerName: Storage.local.get("user"),
+        customerName: profile?.firstName + " " + profile?.lastName,
+
+        // customerName: Storage.local.get("user"),
       }
       : {
         status: 'APPROVING',

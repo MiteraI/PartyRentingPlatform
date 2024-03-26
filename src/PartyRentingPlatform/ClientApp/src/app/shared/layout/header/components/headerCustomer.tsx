@@ -66,7 +66,9 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
                     <CustomeSearch />
 
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-
+                        {userExisted ? <NotificationHeader />
+                            : <div></div>
+                        }
                         {userExisted ?
                             <IconButton onClick={handleWalletModal} size="small" color="inherit">
                                 <Badge color="error">
@@ -77,10 +79,8 @@ const HeaderCustomer: React.FC<HeaderCustomerProps> = (props) => {
                             : <div></div>
                         }
 
-                        {userExisted? <NotificationHeader></NotificationHeader>
-                        : <div></div>
-                        }
-                        
+
+
 
                         {userExisted ?
                             <AuthenticateIcon />
